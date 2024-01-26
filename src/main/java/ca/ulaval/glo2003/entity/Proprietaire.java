@@ -1,16 +1,22 @@
 package ca.ulaval.glo2003.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Proprietaire {
     private int noProprietaire;
     private String nom;
     private String prenom;
     private String telephone;
 
+    private List<Restaurant> restaurants;
+
     public Proprietaire( String nom, String prenom, String telephone) {
 
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
+        this.restaurants = new ArrayList<>();
     }
 
     public int getNoProprietaire() {
