@@ -9,14 +9,22 @@ public class Proprietaire {
     private String prenom;
     private String telephone;
 
+    private static int cp=1000;
+
     private List<Restaurant> restaurants;
 
     public Proprietaire( String nom, String prenom, String telephone) {
 
+        this.noProprietaire=cp;
+        cp++;
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
         this.restaurants = new ArrayList<>();
+    }
+
+    public List<Restaurant> getRestaurants() {
+        return restaurants;
     }
 
     public int getNoProprietaire() {
@@ -58,6 +66,7 @@ public class Proprietaire {
                 ", nom='" + nom + '\'' +
                 ", prenom='" + prenom + '\'' +
                 ", telephone='" + telephone + '\'' +
-                '}';
+                ", restaurants='" + restaurants + '\'' +
+                '}'+ "\n" ;
     }
 }

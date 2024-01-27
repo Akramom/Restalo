@@ -8,7 +8,11 @@ public class Restaurant {
 
     private Hours hours;
 
-    public Restaurant(String name, int capacity, int noRestaurant, Hours hours) {
+    private static int cp=1000;
+
+    public Restaurant(String name, int capacity, Hours hours) {
+        this.noRestaurant=cp;
+        cp++;
         this.name = name;
         this.capacity = capacity;
         this.noRestaurant = noRestaurant;
