@@ -10,7 +10,6 @@ public class Hours {
     public Hours(LocalTime open, LocalTime close) {
         this.open = open;
         this.close = close;
-
     }
 
     public LocalTime getOpen() {
@@ -28,4 +27,12 @@ public class Hours {
     public void setClose(LocalTime close) {
         this.close = close;
     }
+    @Override
+    public String toString() {
+        return "Hours{" +
+                "open=" + open +
+                ", close=" + close +
+                '}';
+    }
+
 }
