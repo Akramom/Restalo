@@ -50,7 +50,7 @@ public class RestaurantRespository {
         return restaurant;
     }
 
-    public List<Restaurant> getAllRestaurants(int  _noProprietaire){
+    public  List<Restaurant> getAllRestaurants(int  _noProprietaire){
         List<Restaurant> restaurants = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
                 .toList().get(0).getRestaurants();
         return restaurants;
