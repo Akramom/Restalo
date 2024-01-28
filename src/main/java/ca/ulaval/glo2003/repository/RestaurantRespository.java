@@ -42,6 +42,7 @@ public class RestaurantRespository {
 
 
 
+    // Methode dans le repository pour retrouver un restaurant par son id
     public Restaurant getRestaurant(int  _noProprietaire, int _noRestaurant){
         Restaurant restaurant = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
                 .toList().get(0).getRestaurants().stream()
@@ -49,8 +50,28 @@ public class RestaurantRespository {
         return restaurant;
     }
 
+    public List<Restaurant> getAllRestaurants(int  _noProprietaire){
+        List<Restaurant> restaurants = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
+                .toList().get(0).getRestaurants();
+        return restaurants;
+    }
 
 
+
+    public static void main(String[] args) {
+        RestaurantRespository restaurantRespository =   new RestaurantRespository();
+        System.out.println(restaurantRespository.proprietaires);
+
+        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant(1001, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+
+        System.out.println(restaurantRespository.proprietaires);
+
+        System.out.println(restaurantRespository.getAllRestaurants(1002));
+
+    }
 
 
 }
