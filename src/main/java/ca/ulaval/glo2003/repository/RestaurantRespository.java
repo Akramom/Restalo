@@ -39,4 +39,18 @@ public class RestaurantRespository {
 
         return _restaurant;
     }
+
+
+
+    public Restaurant getRestaurant(int  _noProprietaire, int _noRestaurant){
+        Restaurant restaurant = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
+                .toList().get(0).getRestaurants().stream()
+                .filter(r->r.getNoRestaurant()==_noRestaurant).findFirst().orElse(null);
+        return restaurant;
+    }
+
+
+
+
+
 }
