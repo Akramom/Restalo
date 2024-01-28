@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Proprietaire {
     private int noProprietaire;
+
     private String nom;
     private String prenom;
     private String telephone;
