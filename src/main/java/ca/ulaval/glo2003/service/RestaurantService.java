@@ -2,103 +2,88 @@ package ca.ulaval.glo2003.service;
 
 import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.entity.*;
-import jakarta.ws.rs.core.Response;
 
 import java.time.LocalTime;
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
 
 public class RestaurantService {
 
-    private RestaurantRespository restaurantRepository;
+    private final RestaurantRespository restaurantRepository;
 
     public RestaurantService() {
+        this.restaurantRepository = new RestaurantRespository();
     }
 
-    public Response verifyCreateRestaurantReq(String ID, String restaurantInfos){
-        if(!isExistingOwnerID(ID)){
-            return invalidParameterResponse("Invalid owner ID.");
+    public ca.ulaval.glo2003.entity.Error verifyOwnerID(int _ownerID){
+        if(_ownerID == 0){
+            return createMissingError("Missing owner ID.");
         }
+        if(!isExistingOwnerID(_ownerID)){
+            return createInvalidError("Invalid owner ID.");
+        }
+        return null;
+    }
 
-        List<List<String>> infos = parseRestaurantInfos(restaurantInfos);
-        if(!validName(infos.get(0))){
-            return missingParameterResponse("Missing restaurant name.");
+    public ca.ulaval.glo2003.entity.Error verifyCreateRestaurantReq(Restaurant _restaurant){
+        if(emptyRestaurantParameter(_restaurant)){
+            return createMissingError("Missing restaurant parameter.");
         }
-        if(!validCapacity(infos.get(1))){
-            if(infos.get(1).get(0) == ""){
-                return missingParameterResponse("Missing restaurant capacity.");
+        if(!validRestaurant(_restaurant)){
+            return createInvalidError("Invalid restaurant parameter.");
+        }
+        return null;
+    }
+
+    private Boolean isExistingOwnerID(int _ID){
+        for (Proprietaire owner: restaurantRepository.getProprietaires()){
+            int ownerID = owner.getNoProprietaire();
+            if (_ID == ownerID){
+                return true;
             }
-            else{
-                return invalidParameterResponse("Restaurant capacity must be greater than 0.");
-            }
+        }
+        return false;
+    }
+
+    private Boolean emptyRestaurantParameter(Restaurant _restaurant){
+        String name = _restaurant.getName();
+        LocalTime openTime = _restaurant.getHours().getOpen();
+        LocalTime closeTime = _restaurant.getHours().getClose();
+
+        if(checkStringEmpty(name) || (name == null)){
+            return true;
         }
 
-        List<Integer> openHour;
-        List<Integer> closeHour;
-        try{
-            openHour = hourStrToInt(infos.get(2).get(0));
-            closeHour = hourStrToInt(infos.get(2).get(1));
-        } catch(Exception e){
-            return invalidParameterResponse("Hours can only contain numbers.");
+        if(openTime == null || closeTime == null){
+            return true;
         }
 
-        if(!validOpeningHours(openHour, closeHour)){
-            return invalidOpeningHoursResponse(openHour, closeHour);
+        return false;
+    }
+
+    private Boolean validRestaurant(Restaurant _restaurant){
+        if(!validOpeningHours(_restaurant.getHours())){
+            return false;
         }
-        
-        Restaurant restaurant = createRestaurant(infos, openHour, closeHour);
-        addRestaurantRepository(ID, restaurant);
-
-        return validCreateRestaurantResponse(restaurant);
-    }
-    
-    private void addRestaurantRepository(String ID, Restaurant restaurant){
-        restaurantRepository.addRestaurant(Integer.parseInt(ID), restaurant);
-    }
-    private Restaurant createRestaurant(List<List<String>> infos, List<Integer> openHour, List<Integer> closeHour){
-        String name = infos.get(0).get(0);
-        int capacity = Integer.parseInt(infos.get(1).get(0));
-        Hours hourObj = createHourObj(openHour,closeHour);
-        return new Restaurant(name,  capacity, hourObj);
-    }
-
-    private Hours createHourObj(List<Integer> openHour, List<Integer> closeHour){
-        LocalTime open = LocalTime.of(openHour.get(0), openHour.get(1), openHour.get(2));
-        LocalTime close = LocalTime.of(closeHour.get(0), closeHour.get(1), closeHour.get(2));
-        return new Hours(open, close);
-    }
-
-    private Boolean validName(List<String> parsedName){
-        if (checkListEmpty(parsedName)){
+        if(!validCapacity(_restaurant.getCapacity())){
             return false;
         }
         return true;
     }
 
-    private Boolean validCapacity(List<String> parsedCapacity){
-        if (checkListEmpty(parsedCapacity)){
-            return false;
-        }
 
-        int capacity;
-        try{
-            capacity = Integer.parseInt(parsedCapacity.getFirst());
-        } catch (Exception e){
-            return false;
-        }
-        if(capacity <= 0){
+    private Boolean validCapacity(int _capacity){
+        if(_capacity <= 0){
             return false;
         }
         return true;
     }
 
-    private Boolean validOpeningHours(List<Integer> openHour, List<Integer> closeHour){
-        if (!validTime(openHour) || !validTime(closeHour)){
-            return false;
-        }
+    private Boolean validOpeningHours(Hours _openingHours){
+        LocalTime openTime = _openingHours.getOpen();
+        LocalTime closeTime = _openingHours.getClose();
 
-        int timeOpen = closeHour.get(0) - openHour.get(0);
+        int timeOpen = closeTime.getHour() - openTime.getHour();
         if (timeOpen < 1){
             return false;
         }
@@ -106,106 +91,21 @@ public class RestaurantService {
         return true;
     }
 
-    private Boolean validTime(List<Integer> time){
-        int hour = time.get(0);
-        int minutes = time.get(1);
-        int seconds = time.get(2);
 
-        if(hour > 23){
-            return false;
-        }
-        if(minutes > 59 || seconds > 59){
-            return false;
-        }
-        return true;
-    }
-
-    private Boolean isExistingOwnerID(String ID){
-        for (Proprietaire owner: restaurantRepository.getProprietaires()){
-            String ownerID = Integer.toString(owner.getNoProprietaire());
-            if (ID.equals(ownerID)){
-                return true;
-            }
+    private Boolean checkStringEmpty(String _string){
+        String stringWithoutSpaces = _string.replaceAll("\\s", "");
+        if(stringWithoutSpaces.isEmpty()){
+            return true;
         }
         return false;
     }
 
-    private Boolean checkListEmpty(List<String> list){
-        for (String string: list){
-            if (!string.isEmpty()){
-                return false;
-            }
-        }
-        return true;
+    private ca.ulaval.glo2003.entity.Error createInvalidError(String _description){
+        return new ca.ulaval.glo2003.entity.Error(ErrorType.INVALID_PARAMETER, _description);
     }
 
-    private Response validCreateRestaurantResponse(Restaurant restaurant){
-        int restaurantIDInt = restaurant.getNoRestaurant();
-        String restaurantID = Integer.toString(restaurantIDInt);
-        String header = "http://localhost:8080/restaurants/" + restaurantID;
-        return Response.status(201).header("URL", header).build();
+    private ca.ulaval.glo2003.entity.Error createMissingError(String _description){
+        return new ca.ulaval.glo2003.entity.Error(ErrorType.MISSING_PARAMETER, _description);
     }
 
-    private Response invalidOpeningHoursResponse(List<Integer> openHour, List<Integer> closeHour){
-        if(!validTime(openHour)){
-            return invalidParameterResponse("Invalid opening hour.");
-        }
-        if(!validTime(closeHour)){
-            return invalidParameterResponse("Invalid closing hour.");
-        }
-        return invalidParameterResponse("The restaurant as to be open for at least an hour.");
-    }
-
-    private Response invalidParameterResponse(String reason){
-        String body = """      
-        {
-            error: "INVALID_PARAMETER",
-            description: " """ + reason + """ 
-        "
-        }
-        """;
-        return Response.status(400).entity(body).build();
-    }
-
-    private Response missingParameterResponse(String reason){
-        String body = """
-        {
-            error: "MISSING_PARAMETER",
-                    description: " """ + reason + """
-        "
-        }
-        """;
-        return Response.status(400).entity(body).build();
-    }
-
-    private List<Integer> hourStrToInt(String time) throws Exception{
-        List<Integer> hourInInt = new ArrayList<Integer>();
-        int hour;
-        int minute;
-        int second;
-
-        try{
-            String hourStr = time.substring(0,2);
-            hour = Integer.parseInt(hourStr);
-            hourInInt.add(hour);
-
-            String minuteStr = time.substring(3,5);
-            minute = Integer.parseInt(minuteStr);
-            hourInInt.add(minute);
-
-            String secondStr = time.substring(6,8);
-            second = Integer.parseInt(secondStr);
-            hourInInt.add(second);
-        } catch(Exception e){
-            throw new Exception("Time cannot contain letters or special characters");
-        }
-
-        return hourInInt;
-    }
-
-    private List<List<String>> parseRestaurantInfos(String restaurantInfos){
-        List<List<String>> parsedInfos = new ArrayList<List<String>>();
-
-        return parsedInfos;
-    }
 }
