@@ -1,5 +1,6 @@
 package ca.ulaval.glo2003.resource;
 
+import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.entity.ErrorType;
 import ca.ulaval.glo2003.entity.Proprietaire;
 import ca.ulaval.glo2003.entity.Restaurant;
@@ -18,21 +19,23 @@ public class RestaurantResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addRestaurant(@HeaderParam("propriétaire") int noProprietaire, Restaurant newRestaurant) {
 
-        if (!RestaurantRespository.proprietaireExiste(noProprietaire))
-            return Response.status(Response.Status.BAD_REQUEST).entity("Le propriétaire spécifié n'existe pas.").build();
+        Error exist = restaurantService.verifyOwnerID(noProprietaire);
+
+        if (exist!= null)
+            return Response.status(Response.Status.BAD_REQUEST).entity(exist).build();
 
 
-        Error valid = restaurantService.validerParametrePresent(newRestaurant);
-
-        if (valid!=null)
-            return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
-
-        valid = restaurantService.validerParametreValide(newRestaurant);
+        Error valid = restaurantService.verifyCreateRestaurantReq(newRestaurant);
 
         if (valid!=null)
             return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
 
-        restaurantService.addRestaurant(noProprietaire,newRestaurant);
+        valid = restaurantService.verifyCreateRestaurantReq(newRestaurant);
+
+        if (valid!=null)
+            return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
+
+        restaurantService.addRestaurant(noProprietaire,new Restaurant(newRestaurant.getName(), newRestaurant.getCapacity(), newRestaurant.getHours()));
 
         return Response.created(URI.create("http://localhost:8080/api/restautant/" + newRestaurant.getNoRestaurant())).build();
     }
