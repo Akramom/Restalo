@@ -14,13 +14,6 @@ public class RestaurantService {
     public RestaurantService() {
         this.restaurantRepository = new RestaurantRespository();
     }
-    public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant){
-        return restaurantRepository.getRestaurant(noOwner, noRestaurant);
-    }
-
-    public List<Restaurant> getAllOwnerRestaurants(String noOwner){
-        return restaurantRepository.getAllRestaurants(noOwner);
-    }
 
     public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant){
         if(noOwner == null || checkStringEmpty(noOwner)){
@@ -54,14 +47,14 @@ public class RestaurantService {
 
     public ca.ulaval.glo2003.entity.Error verifyGetRestaurantReq(String noOwner, String noRestaurant){
         Restaurant restaurant = restaurantRepository.getRestaurant(noOwner, noRestaurant);
-        if(restaurant == null){
+        if(restaurant == null || noRestaurantExists(noRestaurant)){
             return createInvalidError("Invalid restaurant ID.");
         }
         return null;
     }
 
     public Boolean noRestaurantExists(String noRestaurant){
-        return restaurantRepository.restaurantExists(noRestaurant);
+        return restaurantRepository.noRestaurantExists(noRestaurant);
     }
 
     public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant){
