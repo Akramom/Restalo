@@ -18,6 +18,10 @@ public class RestaurantRespository {
         init();
     }
 
+    public List<Proprietaire> getProprietaires(){
+        return proprietaires;
+    }
+
     public void init() {
         Proprietaire proprietaire1 = new Proprietaire("alice", "gill", "418-999-999");
         Proprietaire proprietaire2 = new Proprietaire("bob", "samuel", "581-999-999");

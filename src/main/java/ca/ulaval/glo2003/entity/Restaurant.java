@@ -19,6 +19,10 @@ public class Restaurant {
         this.hours = hours;
     }
 
+    public Restaurant(){
+
+    }
+
     public String getName() {
         return name;
     }
