@@ -1,7 +1,7 @@
 package ca.ulaval.glo2003.repository;
 
 import ca.ulaval.glo2003.entity.Hours;
-import ca.ulaval.glo2003.entity.Proprietaire;
+import ca.ulaval.glo2003.entity.Owner;
 import ca.ulaval.glo2003.entity.Restaurant;
 
 import java.time.LocalTime;
@@ -10,28 +10,32 @@ import java.util.List;
 
 public class RestaurantRespository {
 
-    private List<Proprietaire> proprietaires;
+    private static List<Owner> owners;
 
 
     public RestaurantRespository() {
-        proprietaires = new ArrayList<>();
+        owners = new ArrayList<>();
         init();
     }
 
-    public void init() {
-        Proprietaire proprietaire1 = new Proprietaire("alice", "gill", "418-999-999");
-        Proprietaire proprietaire2 = new Proprietaire("bob", "samuel", "581-999-999");
-        Proprietaire proprietaire3 = new Proprietaire("franck", "poulin", "581-988-999");
-
-
-        proprietaires.add(proprietaire1);
-        proprietaires.add(proprietaire2);
-        proprietaires.add(proprietaire3);
+    public List<Owner> getOwner(){
+        return owners;
     }
 
-    public Restaurant addRestaurant(int _noProprietaire, Restaurant _restaurant) {
+    public void init() {
+        Owner owner1 = new Owner("1000","alice", "gill", "418-999-999");
+        Owner owner2 = new Owner("2000","bob", "samuel", "581-999-999");
+        Owner owner3 = new Owner("3000","franck", "poulin", "581-988-999");
 
-        proprietaires.stream().filter(p -> p.getNoProprietaire() == _noProprietaire)
+
+        owners.add(owner1);
+        owners.add(owner2);
+        owners.add(owner3);
+    }
+
+    public Restaurant addRestaurant(String _noOwner, Restaurant _restaurant) {
+
+        owners.stream().filter(p -> p.getNoOwner().equals(_noOwner))
                 .toList()
                 .get(0)
                 .getRestaurants()
@@ -43,15 +47,15 @@ public class RestaurantRespository {
 
 
     // Methode dans le repository pour retrouver un restaurant par son id
-    public Restaurant getRestaurant(int  _noProprietaire, int _noRestaurant){
-        Restaurant restaurant = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
+    public Restaurant getRestaurant(String  _noOwner, String _noRestaurant){
+        Restaurant restaurant = owners.stream().filter(p-> p.getNoOwner().equals(_noOwner))
                 .toList().get(0).getRestaurants().stream()
-                .filter(r->r.getNoRestaurant()==_noRestaurant).findFirst().orElse(null);
+                .filter(r->r.getNoRestaurant().equals(_noRestaurant)).findFirst().orElse(null);
         return restaurant;
     }
 
-    public  List<Restaurant> getAllRestaurants(int  _noProprietaire){
-        List<Restaurant> restaurants = proprietaires.stream().filter(p-> p.getNoProprietaire()==_noProprietaire)
+    public List<Restaurant> getAllRestaurants(String  _noOwner){
+        List<Restaurant> restaurants = owners.stream().filter(p-> p.getNoOwner().equals(_noOwner))
                 .toList().get(0).getRestaurants();
         return restaurants;
     }
@@ -60,16 +64,16 @@ public class RestaurantRespository {
 
     public static void main(String[] args) {
         RestaurantRespository restaurantRespository =   new RestaurantRespository();
-        System.out.println(restaurantRespository.proprietaires);
+        System.out.println(restaurantRespository.owners);
 
-        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
-        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
-        restaurantRespository.addRestaurant(1000, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
-        restaurantRespository.addRestaurant(1001, new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant("1000", new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant("1000", new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant("1000", new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
+        restaurantRespository.addRestaurant("1001", new Restaurant("Carthage", 20, new Hours( LocalTime.now(), LocalTime.now().plusHours(10))));
 
-        System.out.println(restaurantRespository.proprietaires);
+        System.out.println(restaurantRespository.owners);
 
-        System.out.println(restaurantRespository.getAllRestaurants(1002));
+        System.out.println(restaurantRespository.getAllRestaurants("1002"));
 
     }
 

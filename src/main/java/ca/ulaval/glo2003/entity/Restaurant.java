@@ -1,22 +1,29 @@
 package ca.ulaval.glo2003.entity;
 
+import java.util.UUID;
+
 public class Restaurant {
 
     private String name;
     private int capacity;
-    private int noRestaurant;
+    private String noRestaurant;
 
     private Hours hours;
 
-    private static int cp=1000;
 
     public Restaurant(String name, int capacity, Hours hours) {
-        this.noRestaurant=cp;
-        cp++;
+        this.noRestaurant= UUID.randomUUID().toString().substring(0,8);
         this.name = name;
         this.capacity = capacity;
-        this.noRestaurant = noRestaurant;
         this.hours = hours;
+    }
+
+    public void generateId(){
+        this.noRestaurant=UUID.randomUUID().toString().substring(0,8);
+    }
+
+    public Restaurant(){
+
     }
 
     public String getName() {
@@ -35,11 +42,11 @@ public class Restaurant {
         this.capacity = capacity;
     }
 
-    public int getNoRestaurant() {
+    public String getNoRestaurant() {
         return noRestaurant;
     }
 
-    public void setNoRestaurant(int noRestaurant) {
+    public void setNoRestaurant(String noRestaurant) {
         this.noRestaurant = noRestaurant;
     }
 
