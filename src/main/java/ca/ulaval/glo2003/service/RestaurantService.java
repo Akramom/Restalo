@@ -5,8 +5,6 @@ import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.entity.*;
 
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 public class RestaurantService {
 
@@ -16,11 +14,11 @@ public class RestaurantService {
         this.restaurantRepository = new RestaurantRespository();
     }
 
-    public Error verifyOwnerID(int _ownerID){
-        if(_ownerID == 0){
+    public Error verifyOwnerID(String _noOwner){
+        if((_noOwner == null) || checkStringEmpty(_noOwner)){
             return createMissingError("Missing owner ID.");
         }
-        if(!isExistingOwnerID(_ownerID)){
+        if(!isExistingOwnerID(_noOwner)){
             return createInvalidError("Invalid owner ID.");
         }
         return null;
@@ -36,10 +34,10 @@ public class RestaurantService {
         return null;
     }
 
-    private Boolean isExistingOwnerID(int _ID){
-        for (Proprietaire owner: restaurantRepository.getProprietaires()){
-            int ownerID = owner.getNoProprietaire();
-            if (_ID == ownerID){
+    private Boolean isExistingOwnerID(String _noOwner){
+        for (Owner owner: restaurantRepository.getOwner()){
+            String noOwner = owner.getNoOwner();
+            if (_noOwner.equals(noOwner) ){
                 return true;
             }
         }
@@ -97,8 +95,8 @@ public class RestaurantService {
     }
 
 
-    private Boolean checkStringEmpty(String _string){
-        String stringWithoutSpaces = _string.replaceAll("\\s", "");
+    private Boolean checkStringEmpty(String value){
+        String stringWithoutSpaces = value.replaceAll("\\s", "");
         if(stringWithoutSpaces.isEmpty()){
             return true;
         }
@@ -106,8 +104,8 @@ public class RestaurantService {
     }
 
 
-    public void addRestaurant(int noProprietaire, Restaurant newRestaurant) {
-        restaurantRepository.addRestaurant(noProprietaire,newRestaurant);
+    public Restaurant addRestaurant(String noOwner, Restaurant newRestaurant) {
+        return  restaurantRepository.addRestaurant(noOwner,newRestaurant);
     }
 
     private Error createInvalidError(String _description){

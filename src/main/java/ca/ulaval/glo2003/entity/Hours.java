@@ -12,6 +12,9 @@ public class Hours {
         this.close = close;
     }
 
+    public Hours() {
+    }
+
     public LocalTime getOpen() {
         return open;
     }
