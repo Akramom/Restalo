@@ -8,6 +8,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
+import java.util.List;
+
+import static ca.ulaval.glo2003.entity.ErrorType.MISSING_PARAMETER;
+import static jakarta.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Path("/restaurants")
 public class RestaurantResource {
@@ -45,5 +49,38 @@ public class RestaurantResource {
         return Response.created(URI.create("http://localhost:8080/api/restautant/" + restaurant.getNoRestaurant())).build();
     }
 
+    @GET
+    @Path("/owner/{ownerId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getOwnerRestaurants(@PathParam("ownerId") String ownerId) {
+        Error error = restaurantService.verifyOwnerID(ownerId);
+        if (error != null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+        }
+
+        List<Restaurant> restaurants = restaurantService.getAllOwnerRestaurants(ownerId);
+        if (restaurants.isEmpty()) {
+            return Response.status(NOT_FOUND).entity(new Error(MISSING_PARAMETER, "No restaurants found for the owner.")).build();
+        }
+
+        return Response.ok(restaurants).build();
+    }
+
+    @GET
+    @Path("/{restaurantId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRestaurant(@HeaderParam("Owner") String ownerId, @PathParam("restaurantId") String restaurantId) {
+        Error ownerError = restaurantService.verifyOwnerID(ownerId);
+        if (ownerError != null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(ownerError).build();
+        }
+
+        Restaurant restaurant = restaurantService.getOwnerRestaurant(ownerId, restaurantId);
+        if (restaurant == null) {
+            return Response.status(NOT_FOUND).entity(new Error(MISSING_PARAMETER, "Restaurant not found or does not belong to the owner.")).build();
+        }
+
+        return Response.ok(restaurant).build();
+    }
 
 }
