@@ -10,7 +10,7 @@ import java.util.List;
 
 public class RestaurantRespository {
 
-    private List<Proprietaire> proprietaires;
+    private static List<Proprietaire> proprietaires;
 
 
     public RestaurantRespository() {
@@ -29,6 +29,10 @@ public class RestaurantRespository {
         proprietaires.add(proprietaire3);
     }
 
+    public static boolean proprietaireExiste(int noProprietaire) {
+
+        return proprietaires.stream().anyMatch(proprietaire -> proprietaire.getNoProprietaire() == noProprietaire);
+    }
     public Restaurant addRestaurant(int _noProprietaire, Restaurant _restaurant) {
 
         proprietaires.stream().filter(p -> p.getNoProprietaire() == _noProprietaire)
