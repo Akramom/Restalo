@@ -50,9 +50,9 @@ public class RestaurantResource {
     }
 
     @GET
-    @Path("/owner/{ownerId}")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOwnerRestaurants(@PathParam("ownerId") String ownerId) {
+    public Response getOwnerRestaurants(@HeaderParam("Owner") String ownerId) {
         Error error = restaurantService.verifyOwnerID(ownerId);
         if (error != null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
