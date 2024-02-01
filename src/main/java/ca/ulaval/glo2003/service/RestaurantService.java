@@ -16,7 +16,7 @@ public class RestaurantService {
     }
 
     public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant){
-        if(checkStringEmpty(noOwner)){
+        if(noOwner == null || checkStringEmpty(noOwner)){
             return createMissingError("Missing owner ID.");
         }
         if(emptyRestaurantParameter(restaurant)){
