@@ -1,5 +1,6 @@
 package ca.ulaval.glo2003.service;
 
+import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.entity.*;
 
@@ -15,7 +16,7 @@ public class RestaurantService {
         this.restaurantRepository = new RestaurantRespository();
     }
 
-    public ca.ulaval.glo2003.entity.Error verifyOwnerID(int _ownerID){
+    public Error verifyOwnerID(int _ownerID){
         if(_ownerID == 0){
             return createMissingError("Missing owner ID.");
         }
@@ -25,7 +26,7 @@ public class RestaurantService {
         return null;
     }
 
-    public ca.ulaval.glo2003.entity.Error verifyCreateRestaurantReq(Restaurant _restaurant){
+    public Error verifyCreateRestaurantReq(Restaurant _restaurant){
         if(emptyRestaurantParameter(_restaurant)){
             return createMissingError("Missing restaurant parameter.");
         }
@@ -51,7 +52,7 @@ public class RestaurantService {
             return true;
         }
 
-        LocalTime hours = _restaurant.getHours();
+        Hours hours = _restaurant.getHours();
         if(hours == null){
             return true;
         }
@@ -104,12 +105,16 @@ public class RestaurantService {
         return false;
     }
 
-    private ca.ulaval.glo2003.entity.Error createInvalidError(String _description){
-        return new ca.ulaval.glo2003.entity.Error(ErrorType.INVALID_PARAMETER, _description);
+
+    public void addRestaurant(int noProprietaire, Restaurant newRestaurant) {
+        restaurantRepository.addRestaurant(noProprietaire,newRestaurant);
     }
 
-    private ca.ulaval.glo2003.entity.Error createMissingError(String _description){
-        return new ca.ulaval.glo2003.entity.Error(ErrorType.MISSING_PARAMETER, _description);
+    private Error createInvalidError(String _description){
+        return new Error(ErrorType.INVALID_PARAMETER, _description);
     }
 
+    private Error createMissingError(String _description){
+        return new Error(ErrorType.MISSING_PARAMETER, _description);
+    }
 }

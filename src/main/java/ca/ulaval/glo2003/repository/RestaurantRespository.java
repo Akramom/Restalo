@@ -10,7 +10,7 @@ import java.util.List;
 
 public class RestaurantRespository {
 
-    private List<Proprietaire> proprietaires;
+    private static List<Proprietaire> proprietaires;
 
 
     public RestaurantRespository() {
