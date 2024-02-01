@@ -64,7 +64,9 @@ public class RestaurantRespository {
     }
 
     public List<Restaurant> getAllRestaurants(String  _noOwner){
+
         List<Restaurant> ownerRestaurants = owners.stream().filter(p-> p.getNoOwner().equals(_noOwner))
+
                 .toList().get(0).getRestaurants();
         return ownerRestaurants;
     }

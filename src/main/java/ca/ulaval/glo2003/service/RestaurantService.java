@@ -14,6 +14,13 @@ public class RestaurantService {
     public RestaurantService() {
         this.restaurantRepository = new RestaurantRespository();
     }
+    public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant){
+        return restaurantRepository.getRestaurant(noOwner, noRestaurant);
+    }
+
+    public List<Restaurant> getAllOwnerRestaurants(String noOwner){
+        return restaurantRepository.getAllRestaurants(noOwner);
+    }
 
     public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant){
         if(noOwner == null || checkStringEmpty(noOwner)){

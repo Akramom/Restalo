@@ -54,6 +54,7 @@ public class Restaurant {
         return hours;
     }
 
+
     public void setHours(Hours hours) {
         this.hours = hours;
     }
