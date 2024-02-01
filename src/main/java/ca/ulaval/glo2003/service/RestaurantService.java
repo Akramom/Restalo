@@ -53,8 +53,8 @@ public class RestaurantService {
         return null;
     }
 
-    public Boolean restaurantExists(Restaurant restaurant){
-        return restaurantRepository.restaurantExists(restaurant);
+    public Boolean noRestaurantExists(String noRestaurant){
+        return restaurantRepository.restaurantExists(noRestaurant);
     }
 
     public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant){
