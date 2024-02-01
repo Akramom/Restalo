@@ -11,10 +11,12 @@ import java.util.List;
 public class RestaurantRespository {
 
     private static List<Owner> owners;
+    private List<Restaurant> restaurants;
 
 
     public RestaurantRespository() {
         owners = new ArrayList<>();
+        restaurants = new ArrayList<>();
         init();
     }
 
@@ -40,8 +42,15 @@ public class RestaurantRespository {
                 .get(0)
                 .getRestaurants()
                 .add(_restaurant);
+        restaurants.add(_restaurant);
 
         return _restaurant;
+    }
+
+    public void addOwner(String noOwner){
+        Owner owner = new Owner("Doe", "John", "418-222-2222");
+        owner.setNoOwner(noOwner);
+        owners.add(owner);
     }
 
 
@@ -55,9 +64,20 @@ public class RestaurantRespository {
     }
 
     public List<Restaurant> getAllRestaurants(String  _noOwner){
-        List<Restaurant> restaurants = owners.stream().filter(p-> p.getNoOwner().equals(_noOwner))
+
+        List<Restaurant> ownerRestaurants = owners.stream().filter(p-> p.getNoOwner().equals(_noOwner))
+
                 .toList().get(0).getRestaurants();
-        return restaurants;
+        return ownerRestaurants;
+    }
+
+    public Boolean noRestaurantExists(String noRestaurant){
+        for (Restaurant restaurant: restaurants){
+            if(restaurant.getNoRestaurant() == noRestaurant){
+                return true;
+            }
+        }
+        return false;
     }
 
 
