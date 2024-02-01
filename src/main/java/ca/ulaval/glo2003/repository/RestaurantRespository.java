@@ -69,8 +69,13 @@ public class RestaurantRespository {
         return ownerRestaurants;
     }
 
-    public Boolean restaurantExists(Restaurant restaurant){
-        return restaurants.contains(restaurant);
+    public Boolean noRestaurantExists(String noRestaurant){
+        for (Restaurant restaurant: restaurants){
+            if(restaurant.getNoRestaurant() == noRestaurant){
+                return true;
+            }
+        }
+        return false;
     }
 
 
