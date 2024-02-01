@@ -23,26 +23,14 @@ public class RestaurantResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response addRestaurant(@HeaderParam("Owner") String  Owner, Restaurant newRestaurant) {
-
-        Error exist = restaurantService.verifyOwnerID(Owner);
-
-        if (exist!= null)
-            return Response.status(Response.Status.BAD_REQUEST).entity(exist).build();
-
-
-        Error valid = restaurantService.verifyCreateRestaurantReq(newRestaurant);
+        Error valid = restaurantService.verifyCreateRestaurantReq(Owner, newRestaurant);
 
         if (valid!=null)
             return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
 
-        valid = restaurantService.verifyCreateRestaurantReq(newRestaurant);
+       restaurantService.addRestaurantRepository(Owner,newRestaurant);
 
-        if (valid!=null)
-            return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
-
-       Restaurant restaurant= restaurantService.addRestaurant(Owner,new Restaurant(newRestaurant.getName(), newRestaurant.getCapacity(), newRestaurant.getHours()));
-
-        return Response.created(URI.create("http://localhost:8080/api/restautant/" + restaurant.getNoRestaurant())).build();
+        return Response.created(URI.create("http://localhost:8080/api/restautant/" + newRestaurant.getNoRestaurant())).build();
     }
 
 
