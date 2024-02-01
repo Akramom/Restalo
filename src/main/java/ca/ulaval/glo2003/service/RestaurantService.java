@@ -47,13 +47,17 @@ public class RestaurantService {
 
     private Boolean emptyRestaurantParameter(Restaurant _restaurant){
         String name = _restaurant.getName();
-        LocalTime openTime = _restaurant.getHours().getOpen();
-        LocalTime closeTime = _restaurant.getHours().getClose();
-
-        if(checkStringEmpty(name) || (name == null)){
+        if((name == null) || checkStringEmpty(name)){
             return true;
         }
 
+        LocalTime hours = _restaurant.getHours();
+        if(hours == null){
+            return true;
+        }
+
+        LocalTime openTime = hours.getOpen();
+        LocalTime closeTime = hours.getClose();
         if(openTime == null || closeTime == null){
             return true;
         }
