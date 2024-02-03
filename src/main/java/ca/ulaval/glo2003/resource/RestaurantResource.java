@@ -41,7 +41,7 @@ public class RestaurantResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOwnerRestaurants(@HeaderParam("Owner") String ownerId) {
-        Error error = restaurantService.verifyOwnerID(ownerId);
+        Error error = restaurantService.verifyNoOwner(ownerId);
         if (error != null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
         }
@@ -58,7 +58,7 @@ public class RestaurantResource {
     @Path("/{restaurantId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRestaurant(@HeaderParam("Owner") String ownerId, @PathParam("restaurantId") String restaurantId) {
-        Error ownerError = restaurantService.verifyOwnerID(ownerId);
+        Error ownerError = restaurantService.verifyNoOwner(ownerId);
         if (ownerError != null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(ownerError).build();
         }
