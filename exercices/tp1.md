@@ -13,7 +13,7 @@
 
 commande maven 
 
-- verifier  si le  formatage est correct :  mvn spotless:apply
+- verifier  si le  formatage est correct :  mvn spotless:check
 
 - appliquer le fix du formatage aux fichiers touché  :mvn spotless:apply
 
