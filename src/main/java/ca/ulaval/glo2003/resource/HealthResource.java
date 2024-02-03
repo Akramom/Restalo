@@ -6,14 +6,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-
 @Path("/health")
 public class HealthResource {
 
-    @GET
-    @Path("")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response healthCheck() {
-        return Response.ok("Service is healthy").build();
-    }
+  @GET
+  @Path("")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response healthCheck() {
+    return Response.ok("Service is healthy").build();
+  }
 }
