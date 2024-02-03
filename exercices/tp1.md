@@ -1,5 +1,6 @@
 # Exercices - TP1
-Nommage de commit:
+
+## Nommage de commit:
 1-Notre équipe a décidé de suivre cette convention pour le nommage des commits, soit: <type>[optional scope]: <description>
 
 [optional body]
@@ -7,3 +8,14 @@ Nommage de commit:
 [optional footer(s)] # issues associé à la tâche.
 
 2- On commit lorsqu'une tâche associée à un issue est complétée. Autrement dit, la personne assignée à un issue commit le code fonctionnel relié à celui-ci. 
+
+## Clean code (outil : Spotless)
+
+commande maven 
+
+- verifier  si le  formatage est correct :  mvn spotless:apply
+
+- appliquer le fix du formatage aux fichiers touché  :mvn spotless:apply
+
+
+

@@ -1,40 +1,34 @@
 package ca.ulaval.glo2003.entity;
 
 public class Error {
-    private ErrorType error;
-    private String description;
+  private ErrorType error;
+  private String description;
 
-    public Error() {
-    }
+  public Error() {}
 
-    public Error(ErrorType error, String description) {
-        this.error = error;
-        this.description = description;
-    }
+  public Error(ErrorType error, String description) {
+    this.error = error;
+    this.description = description;
+  }
 
-    public ErrorType getError() {
-        return error;
-    }
+  public ErrorType getError() {
+    return error;
+  }
 
-    public void setError(ErrorType error) {
-        this.error = error;
-    }
+  public void setError(ErrorType error) {
+    this.error = error;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-
-
-    @Override
-    public String toString() {
-        return "Error{" +
-                "error=" + error +
-                ", description='" + description + '\'' +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Error{" + "error=" + error + ", description='" + description + '\'' + '}';
+  }
 }
