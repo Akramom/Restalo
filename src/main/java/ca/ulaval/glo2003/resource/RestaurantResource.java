@@ -29,6 +29,7 @@ public class RestaurantResource {
     Error valid = restaurantService.verifyCreateRestaurantReq(Owner, newRestaurant);
 
     if (valid != null) return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
+    newRestaurant.generateId();
 
     restaurantService.addRestaurantRepository(Owner, newRestaurant);
 
