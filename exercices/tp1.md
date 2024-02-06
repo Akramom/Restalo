@@ -3,7 +3,9 @@
 ## Fichiers ignorés:
 Nous avons utilisé l'outil gitignore.io de toptal qui permet de generer un fichier .gitignore  selon nos besoins d'element a ignoré a partir 
 du langage du projet ,des frameworks utilisés ou de notre IDE.
-<img src="/Users/willyjuvenalkonlackfoning/Desktop/restalo/src/main/resources/image/gitignore.png"/>
+
+<img src="../src/main/resources/image/gitignore.png"/>
+
 source: getignore.io, https://www.toptal.com/developers/gitignore/
 
 ## Nommage de commit:
