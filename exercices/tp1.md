@@ -41,11 +41,38 @@ source: GitHub flow, https://githubflow.github.io
 
 ## Clean code (outil : Spotless)
 
-documentation:https://github.com/diffplug/spotless
+documentation: https://github.com/diffplug/spotless
 
 commande maven
 - verifier  si le  formatage est correct :  mvn spotless:check
 - appliquer le fix du formatage aux fichiers touché  :mvn spotless:apply
 
+## Planification du travail
+
+### Github Project
+<img src="../src/main/resources/image/githubProject.jpeg"/>
+
+### Milestone
+<img src="../src/main/resources/image/millestone.png"/>
+
+### Issues
+
+- issue 1
+<img src="../src/main/resources/image/issue1.png"/>
+- issue 2
+<img src="../src/main/resources/image/issue2.png"/>
+- issue 3
+<img src="../src/main/resources/image/issue3.jpeg"/>
+
+### Pull requests
+
+- PullRequest 1
+<img src="../src/main/resources/image/PullR1.jpeg"/>
+<img src="../src/main/resources/image/PullR12.jpeg"/>
+- PullRequest 2
+<img src="../src/main/resources/image/PullR2.jpeg"/>
+
+### Arbre de commits
+<img src="../src/main/resources/image/arbreCommit.png"/>
 
 
