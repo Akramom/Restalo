@@ -4,35 +4,34 @@ import java.time.LocalTime;
 
 public class Hours {
 
-    private LocalTime open;
-    private LocalTime close;
+  private LocalTime open;
+  private LocalTime close;
 
-    public Hours(LocalTime open, LocalTime close) {
-        this.open = open;
-        this.close = close;
-    }
+  public Hours(LocalTime open, LocalTime close) {
+    this.open = open;
+    this.close = close;
+  }
 
-    public LocalTime getOpen() {
-        return open;
-    }
+  public Hours() {}
 
-    public void setOpen(LocalTime open) {
-        this.open = open;
-    }
+  public LocalTime getOpen() {
+    return open;
+  }
 
-    public LocalTime getClose() {
-        return close;
-    }
+  public void setOpen(LocalTime open) {
+    this.open = open;
+  }
 
-    public void setClose(LocalTime close) {
-        this.close = close;
-    }
-    @Override
-    public String toString() {
-        return "Hours{" +
-                "open=" + open +
-                ", close=" + close +
-                '}';
-    }
+  public LocalTime getClose() {
+    return close;
+  }
 
+  public void setClose(LocalTime close) {
+    this.close = close;
+  }
+
+  @Override
+  public String toString() {
+    return "Hours{" + "open=" + open + ", close=" + close + '}';
+  }
 }

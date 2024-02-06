@@ -1,120 +1,142 @@
 package ca.ulaval.glo2003.service;
 
+import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.repository.*;
-import ca.ulaval.glo2003.entity.*;
-
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantService {
 
-    private final RestaurantRespository restaurantRepository;
+  private final RestaurantRespository restaurantRepository;
 
-    public RestaurantService() {
-        this.restaurantRepository = new RestaurantRespository();
+  public RestaurantService() {
+    this.restaurantRepository = new RestaurantRespository();
+  }
+
+  public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant) {
+    if (noOwner == null || checkStringEmpty(noOwner)) {
+      return createMissingError("Missing owner ID.");
     }
-
-    public Error verifyOwnerID(int _ownerID){
-        if(_ownerID == 0){
-            return createMissingError("Missing owner ID.");
-        }
-        if(!isExistingOwnerID(_ownerID)){
-            return createInvalidError("Invalid owner ID.");
-        }
-        return null;
+    if (emptyRestaurantParameter(restaurant)) {
+      return createMissingError("Missing restaurant parameter.");
     }
-
-    public Error verifyCreateRestaurantReq(Restaurant _restaurant){
-        if(emptyRestaurantParameter(_restaurant)){
-            return createMissingError("Missing restaurant parameter.");
-        }
-        if(!validRestaurant(_restaurant)){
-            return createInvalidError("Invalid restaurant parameter.");
-        }
-        return null;
+    if (!validRestaurant(restaurant)) {
+      return createInvalidError("Invalid restaurant parameter.");
     }
+    return null;
+  }
 
-    private Boolean isExistingOwnerID(int _ID){
-        for (Proprietaire owner: restaurantRepository.getProprietaires()){
-            int ownerID = owner.getNoProprietaire();
-            if (_ID == ownerID){
-                return true;
-            }
-        }
-        return false;
+  public void addRestaurantRepository(String noOwner, Restaurant restaurant) {
+    if (!isExistingNoOwner(noOwner)) {
+      restaurantRepository.addOwner(noOwner);
     }
+    restaurantRepository.addRestaurant(noOwner, restaurant);
+  }
 
-    private Boolean emptyRestaurantParameter(Restaurant _restaurant){
-        String name = _restaurant.getName();
-        if((name == null) || checkStringEmpty(name)){
-            return true;
-        }
-
-        Hours hours = _restaurant.getHours();
-        if(hours == null){
-            return true;
-        }
-
-        LocalTime openTime = hours.getOpen();
-        LocalTime closeTime = hours.getClose();
-        if(openTime == null || closeTime == null){
-            return true;
-        }
-
-        return false;
+  public Error verifyNoOwner(String noOwner) {
+    if ((noOwner == null) || checkStringEmpty(noOwner)) {
+      return createMissingError("Missing owner ID.");
     }
+    if (!isExistingNoOwner(noOwner)) {
+      return createInvalidError("Invalid owner ID.");
+    }
+    return null;
+  }
 
-    private Boolean validRestaurant(Restaurant _restaurant){
-        if(!validOpeningHours(_restaurant.getHours())){
-            return false;
-        }
-        if(!validCapacity(_restaurant.getCapacity())){
-            return false;
-        }
+  public ca.ulaval.glo2003.entity.Error verifyGetRestaurantReq(
+      String noOwner, String noRestaurant) {
+    Restaurant restaurant = restaurantRepository.getRestaurant(noOwner, noRestaurant);
+    if (restaurant == null || noRestaurantExists(noRestaurant)) {
+      return createInvalidError("Invalid restaurant ID.");
+    }
+    return null;
+  }
+
+  public Boolean noRestaurantExists(String noRestaurant) {
+    return restaurantRepository.noRestaurantExists(noRestaurant);
+  }
+
+  public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant) {
+    return restaurantRepository.getRestaurant(noOwner, noRestaurant);
+  }
+
+  public List<Restaurant> getAllOwnerRestaurants(String noOwner) {
+    return restaurantRepository.getAllRestaurants(noOwner);
+  }
+
+  private Boolean isExistingNoOwner(String noOwner) {
+    for (Owner owner : restaurantRepository.getOwner()) {
+      String existingNoOwner = owner.getNoOwner();
+      if (noOwner.equals(existingNoOwner)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  private Boolean emptyRestaurantParameter(Restaurant restaurant) {
+    String name = restaurant.getName();
+    if ((name == null) || checkStringEmpty(name)) {
+      return true;
     }
 
-
-    private Boolean validCapacity(int _capacity){
-        if(_capacity <= 0){
-            return false;
-        }
-        return true;
+    Hours hours = restaurant.getHours();
+    if (hours == null) {
+      return true;
     }
 
-    private Boolean validOpeningHours(Hours _openingHours){
-        LocalTime openTime = _openingHours.getOpen();
-        LocalTime closeTime = _openingHours.getClose();
-
-        int timeOpen = closeTime.getHour() - openTime.getHour();
-        if (timeOpen < 1){
-            return false;
-        }
-
-        return true;
+    LocalTime openTime = hours.getOpen();
+    LocalTime closeTime = hours.getClose();
+    if (openTime == null || closeTime == null) {
+      return true;
     }
 
+    return false;
+  }
 
-    private Boolean checkStringEmpty(String _string){
-        String stringWithoutSpaces = _string.replaceAll("\\s", "");
-        if(stringWithoutSpaces.isEmpty()){
-            return true;
-        }
-        return false;
+  private Boolean validRestaurant(Restaurant restaurant) {
+    if (!validOpeningHours(restaurant.getHours())) {
+      return false;
+    }
+    if (!validCapacity(restaurant.getCapacity())) {
+      return false;
+    }
+    return true;
+  }
+
+  private Boolean validCapacity(int capacity) {
+    if (capacity <= 0) {
+      return false;
+    }
+    return true;
+  }
+
+  private Boolean validOpeningHours(Hours openingHours) {
+    LocalTime openTime = openingHours.getOpen();
+    LocalTime closeTime = openingHours.getClose();
+
+    int timeOpen = closeTime.getHour() - openTime.getHour();
+    if (timeOpen < 1) {
+      return false;
     }
 
+    return true;
+  }
 
-    public void addRestaurant(int noProprietaire, Restaurant newRestaurant) {
-        restaurantRepository.addRestaurant(noProprietaire,newRestaurant);
+  private Boolean checkStringEmpty(String value) {
+    String stringWithoutSpaces = value.replaceAll("\\s", "");
+    if (stringWithoutSpaces.isEmpty()) {
+      return true;
     }
+    return false;
+  }
 
-    private Error createInvalidError(String _description){
-        return new Error(ErrorType.INVALID_PARAMETER, _description);
-    }
+  private Error createInvalidError(String description) {
+    return new Error(ErrorType.INVALID_PARAMETER, description);
+  }
 
-    private Error createMissingError(String _description){
-        return new Error(ErrorType.MISSING_PARAMETER, _description);
-    }
+  private Error createMissingError(String description) {
+    return new Error(ErrorType.MISSING_PARAMETER, description);
+  }
 }

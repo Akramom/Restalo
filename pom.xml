@@ -14,6 +14,7 @@
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <maven.plugin.validation>verbose</maven.plugin.validation>
     </properties>
 
     <dependencyManagement>
@@ -65,6 +66,46 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.3</version>
             </plugin>
+
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.43.0</version>
+                <executions>
+                    <execution>
+                        <id>spotless-apply</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>apply</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+                <configuration>
+                    <java>
+                        <includes>
+                            <include>src/main/java/**/*.java</include>
+                            <include>src/test/java/**/*.java</include>
+                        </includes>
+                        <removeUnusedImports />
+                        <formatAnnotations />
+                        <importOrder />
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                        <indent>
+                            <tabs>true</tabs>
+                            <spacesPerTab>4</spacesPerTab>
+                        </indent>
+                       <googleJavaFormat>
+                            <version>1.19.1</version>
+                            <style>GOOGLE</style>
+                        </googleJavaFormat>
+
+                    </java>
+
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 </project>

@@ -5,11 +5,13 @@ Nous avons sutilisé l'outil Toptal afin de générer notre fichier .gitignore.
 
 
 Nommage de commit:
+
 1-Notre équipe a décidé de suivre cette convention pour le nommage des commits, soit: <type>[optional scope]: <description>
 
 [optional body]
 
 [optional footer(s)] # issues associé à la tâche.
+
 
 2- On "commit" lorsqu'une tâche associée à un issue est complétée. Autrement dit, la personne assignée à un issue "commit" le code fonctionnel relié à celui-ci. 
 
@@ -23,9 +25,16 @@ Dans le cadre de ce travail, nous avons choisi la stratégie GitHub flow.
 4)Nous faisons une demande de pull Request, lorsq'un ou des issues sont résolus. Pour l'intégrer au code principal(dans le main), un autre membre doit vérifier et approuver les changements envoyés. Chaque membre envoit ses changements sur sa branche correspondante, selon l'issue résolu.
 
 
-
-
 Source:
 -Convential commits, https://www.conventionalcommits.org/en/v1.0.0/
 -getignore.io, https://www.toptal.com/developers/gitignore/
 -GitHub flow, https://githubflow.github.io
+
+## Clean code (outil : Spotless)
+
+commande maven 
+
+- verifier  si le  formatage est correct :  mvn spotless:check
+
+- appliquer le fix du formatage aux fichiers touché  :mvn spotless:apply
+
