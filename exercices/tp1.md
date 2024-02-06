@@ -1,7 +1,7 @@
 # Exercices - TP1
 
 Fichiers ignorés:
-Nous avons sutilisé l'outil Toptal afin de générer notre fichier .gitignore.
+Nous avons utilisé l'outil Toptal afin de générer notre fichier .gitignore.
 
 
 Nommage de commit:
