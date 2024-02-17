@@ -32,10 +32,11 @@ public class RestaurantRespository {
     return _restaurant;
   }
 
-  public void addOwner(String noOwner) {
+  public Owner addOwner(String noOwner) {
     Owner owner = new Owner("Doe", "John", "418-222-2222");
     owner.setOwnerId(noOwner);
     owners.add(owner);
+    return owner;
   }
 
   // Methode dans le repository pour retrouver un restaurant par son id

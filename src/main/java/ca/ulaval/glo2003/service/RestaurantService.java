@@ -34,7 +34,12 @@ public class RestaurantService {
     return restaurantRepository.getAllRestaurants(noOwner);
   }
 
-  private Boolean isExistingNoOwner(String noOwner) {
+  public Owner addOwner(String ownerId) {
+    if (isExistingNoOwner(ownerId)) return null;
+    return restaurantRepository.addOwner(ownerId);
+  }
+
+  public Boolean isExistingNoOwner(String noOwner) {
     for (Owner owner : restaurantRepository.getOwner()) {
       String existingNoOwner = owner.getOwnerId();
       if (noOwner.equals(existingNoOwner)) {
