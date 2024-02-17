@@ -7,7 +7,7 @@ import java.util.List;
 
 public class RestaurantRespository {
 
-  private static List<Owner> owners;
+  private List<Owner> owners;
   private List<Restaurant> restaurants;
 
   public RestaurantRespository() {
@@ -62,14 +62,5 @@ public class RestaurantRespository {
             .get(0)
             .getRestaurants();
     return ownerRestaurants;
-  }
-
-  public Boolean noRestaurantExists(String noRestaurant) {
-    for (Restaurant restaurant : restaurants) {
-      if (restaurant.getId() == noRestaurant) {
-        return true;
-      }
-    }
-    return false;
   }
 }

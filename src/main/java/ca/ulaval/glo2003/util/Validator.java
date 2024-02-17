@@ -8,18 +8,13 @@ public class Validator {
 
   public Boolean emptyRestaurantParameter(Restaurant restaurant) {
     String name = restaurant.getName();
+    Hours hours = restaurant.getHours();
+
     if (checkStringEmpty(name)) {
       return true;
     }
 
-    Hours hours = restaurant.getHours();
-    if (hours == null) {
-      return true;
-    }
-
-    LocalTime openTime = hours.getOpen();
-    LocalTime closeTime = hours.getClose();
-    if (openTime == null || closeTime == null) {
+    if (hours == null || hours.getOpen() == null || hours.getClose() == null) {
       return true;
     }
 
@@ -50,6 +45,6 @@ public class Validator {
   }
 
   public Boolean checkStringEmpty(String value) {
-    return value == null || value.isEmpty();
+    return value == null || value.trim().isEmpty();
   }
 }
