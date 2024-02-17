@@ -6,19 +6,19 @@ public class Restaurant {
 
   private String name;
   private int capacity;
-  private String noRestaurant;
+  private String id;
 
   private Hours hours;
 
   public Restaurant(String name, int capacity, Hours hours) {
-    this.noRestaurant = UUID.randomUUID().toString().substring(0, 8);
+    this.id = UUID.randomUUID().toString().substring(0, 8);
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
   }
 
   public void generateId() {
-    this.noRestaurant = UUID.randomUUID().toString().substring(0, 8);
+    this.id = UUID.randomUUID().toString().substring(0, 8);
   }
 
   public Restaurant() {}
@@ -39,12 +39,12 @@ public class Restaurant {
     this.capacity = capacity;
   }
 
-  public String getNoRestaurant() {
-    return noRestaurant;
+  public String getId() {
+    return id;
   }
 
-  public void setNoRestaurant(String noRestaurant) {
-    this.noRestaurant = noRestaurant;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public Hours getHours() {
@@ -63,8 +63,8 @@ public class Restaurant {
         + '\''
         + ", capacity="
         + capacity
-        + ", noRestaurant="
-        + noRestaurant
+        + ", id="
+        + id
         + ", hours="
         + hours
         + '}';

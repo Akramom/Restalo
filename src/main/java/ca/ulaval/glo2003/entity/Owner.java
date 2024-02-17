@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class Owner {
-  private String noOwner;
+  private String ownerId;
   private String lastname;
   private String firstname;
   private String phoneNumer;
@@ -14,7 +14,7 @@ public class Owner {
 
   public Owner(String lastname, String firstname, String phoneNumer) {
 
-    this.noOwner = UUID.randomUUID().toString().substring(0, 8);
+    this.ownerId = UUID.randomUUID().toString().substring(0, 8);
     ;
     this.lastname = lastname;
     this.firstname = firstname;
@@ -22,9 +22,9 @@ public class Owner {
     this.restaurants = new ArrayList<>();
   }
 
-  public Owner(String noOwner, String lastname, String firstname, String phoneNumer) {
+  public Owner(String ownerId, String lastname, String firstname, String phoneNumer) {
 
-    this.noOwner = noOwner;
+    this.ownerId = ownerId;
     this.lastname = lastname;
     this.firstname = firstname;
     this.phoneNumer = phoneNumer;
@@ -32,19 +32,19 @@ public class Owner {
   }
 
   public void generateId() {
-    this.noOwner = UUID.randomUUID().toString().substring(0, 8);
+    this.ownerId = UUID.randomUUID().toString().substring(0, 8);
   }
 
   public List<Restaurant> getRestaurants() {
     return restaurants;
   }
 
-  public String getNoOwner() {
-    return noOwner;
+  public String getOwnerId() {
+    return ownerId;
   }
 
-  public void setNoOwner(String noOwner) {
-    this.noOwner = noOwner;
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
   }
 
   public String getLastname() {
@@ -75,7 +75,7 @@ public class Owner {
   public String toString() {
     return "Owner{"
         + "noOwner="
-        + noOwner
+        + ownerId
         + ", lastname='"
         + lastname
         + '\''
