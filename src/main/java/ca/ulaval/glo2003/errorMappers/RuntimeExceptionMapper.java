@@ -5,11 +5,12 @@ import jakarta.ws.rs.ext.ExceptionMapper;
 
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
-    @Override
-    public Response toResponse(RuntimeException exception){
-        return Response.status(500).entity(
-                "{\n\"error\": \"ERROR\"," +
-                        "\n\"description\": \"An unexpected error occurred. Please review your request.\"}"
-        ).build();
-    }
+  @Override
+  public Response toResponse(RuntimeException exception) {
+    return Response.status(500)
+        .entity(
+            "{\n\"error\": \"ERROR\","
+                + "\n\"description\": \"An unexpected error occurred. Please review your request.\"}")
+        .build();
+  }
 }

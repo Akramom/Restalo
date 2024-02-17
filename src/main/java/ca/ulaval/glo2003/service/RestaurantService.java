@@ -3,28 +3,20 @@ package ca.ulaval.glo2003.service;
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.repository.*;
-import java.time.LocalTime;
+import ca.ulaval.glo2003.util.ErrorBuilder;
+import ca.ulaval.glo2003.util.Validator;
 import java.util.List;
 
 public class RestaurantService {
 
   private final RestaurantRespository restaurantRepository;
+  private final Validator validator;
+  private final ErrorBuilder errorBuilder;
 
   public RestaurantService() {
     this.restaurantRepository = new RestaurantRespository();
-  }
-
-  public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant) {
-    if (noOwner == null || checkStringEmpty(noOwner)) {
-      return createMissingError("Missing owner ID.");
-    }
-    if (emptyRestaurantParameter(restaurant)) {
-      return createMissingError("Missing restaurant parameter.");
-    }
-    if (!validRestaurant(restaurant)) {
-      return createInvalidError("Invalid restaurant parameter.");
-    }
-    return null;
+    this.validator = new Validator();
+    this.errorBuilder = new ErrorBuilder();
   }
 
   public void addRestaurantRepository(String noOwner, Restaurant restaurant) {
@@ -32,29 +24,6 @@ public class RestaurantService {
       restaurantRepository.addOwner(noOwner);
     }
     restaurantRepository.addRestaurant(noOwner, restaurant);
-  }
-
-  public Error verifyNoOwner(String noOwner) {
-    if ((noOwner == null) || checkStringEmpty(noOwner)) {
-      return createMissingError("Missing owner ID.");
-    }
-    if (!isExistingNoOwner(noOwner)) {
-      return createInvalidError("Invalid owner ID.");
-    }
-    return null;
-  }
-
-  public ca.ulaval.glo2003.entity.Error verifyGetRestaurantReq(
-      String noOwner, String noRestaurant) {
-    Restaurant restaurant = restaurantRepository.getRestaurant(noOwner, noRestaurant);
-    if (restaurant == null || noRestaurantExists(noRestaurant)) {
-      return createInvalidError("Invalid restaurant ID.");
-    }
-    return null;
-  }
-
-  public Boolean noRestaurantExists(String noRestaurant) {
-    return restaurantRepository.noRestaurantExists(noRestaurant);
   }
 
   public Restaurant getOwnerRestaurant(String noOwner, String noRestaurant) {
@@ -65,9 +34,14 @@ public class RestaurantService {
     return restaurantRepository.getAllRestaurants(noOwner);
   }
 
-  private Boolean isExistingNoOwner(String noOwner) {
+  public Owner addOwner(String ownerId) {
+    if (isExistingNoOwner(ownerId)) return null;
+    return restaurantRepository.addOwner(ownerId);
+  }
+
+  public Boolean isExistingNoOwner(String noOwner) {
     for (Owner owner : restaurantRepository.getOwner()) {
-      String existingNoOwner = owner.getNoOwner();
+      String existingNoOwner = owner.getOwnerId();
       if (noOwner.equals(existingNoOwner)) {
         return true;
       }
@@ -75,68 +49,26 @@ public class RestaurantService {
     return false;
   }
 
-  private Boolean emptyRestaurantParameter(Restaurant restaurant) {
-    String name = restaurant.getName();
-    if ((name == null) || checkStringEmpty(name)) {
-      return true;
+  public Error verifyOwnerId(String noOwner) {
+    if (this.validator.checkStringEmpty(noOwner)) {
+      return this.errorBuilder.missingError("Missing owner ID.");
     }
-
-    Hours hours = restaurant.getHours();
-    if (hours == null) {
-      return true;
+    if (!isExistingNoOwner(noOwner)) {
+      return this.errorBuilder.invalidError("Invalid owner ID.");
     }
-
-    LocalTime openTime = hours.getOpen();
-    LocalTime closeTime = hours.getClose();
-    if (openTime == null || closeTime == null) {
-      return true;
-    }
-
-    return false;
+    return null;
   }
 
-  private Boolean validRestaurant(Restaurant restaurant) {
-    if (!validOpeningHours(restaurant.getHours())) {
-      return false;
+  public Error verifyCreateRestaurantReq(String noOwner, Restaurant restaurant) {
+    if (this.validator.checkStringEmpty(noOwner)) {
+      return this.errorBuilder.missingError("Missing owner ID.");
     }
-    if (!validCapacity(restaurant.getCapacity())) {
-      return false;
+    if (this.validator.emptyRestaurantParameter(restaurant)) {
+      return this.errorBuilder.invalidError("Missing restaurant parameter.");
     }
-    return true;
-  }
-
-  private Boolean validCapacity(int capacity) {
-    if (capacity <= 0) {
-      return false;
+    if (!this.validator.validRestaurant(restaurant)) {
+      return this.errorBuilder.invalidError("Invalid restaurant parameter.");
     }
-    return true;
-  }
-
-  private Boolean validOpeningHours(Hours openingHours) {
-    LocalTime openTime = openingHours.getOpen();
-    LocalTime closeTime = openingHours.getClose();
-
-    int timeOpen = closeTime.getHour() - openTime.getHour();
-    if (timeOpen < 1) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private Boolean checkStringEmpty(String value) {
-    String stringWithoutSpaces = value.replaceAll("\\s", "");
-    if (stringWithoutSpaces.isEmpty()) {
-      return true;
-    }
-    return false;
-  }
-
-  private Error createInvalidError(String description) {
-    return new Error(ErrorType.INVALID_PARAMETER, description);
-  }
-
-  private Error createMissingError(String description) {
-    return new Error(ErrorType.MISSING_PARAMETER, description);
+    return null;
   }
 }
