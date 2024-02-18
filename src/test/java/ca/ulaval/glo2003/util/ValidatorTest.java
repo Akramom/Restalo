@@ -105,13 +105,22 @@ class ValidatorTest {
 
   @ParameterizedTest
   @NullSource
+
+  
   @EmptySource
+
+
   @ValueSource(strings = {"", "   ", "\t", "\n"})
   void givenARestaurant_WhenNameIsNullOrEmpty_thenEmptyRestaurantParameterShouldReturnTrue(
       String name) {
 
     when(restaurant.getName()).thenReturn(name);
+
+
     when(restaurant.getHours()).thenReturn(hours);
+
+
+
 
     assertTrue(validator.emptyRestaurantParameter(restaurant));
   }
