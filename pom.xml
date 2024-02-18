@@ -123,10 +123,10 @@
                 <version>2.43.0</version>
                 <executions>
                     <execution>
-                        <id>spotless-apply</id>
-                        <phase>package</phase>
+                        <id>spotless-check</id>
+                        <phase>validate</phase>
                         <goals>
-                            <goal>apply</goal>
+                            <goal>check</goal>
                         </goals>
                     </execution>
 
