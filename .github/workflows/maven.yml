@@ -22,8 +22,12 @@ jobs:
 
     - name: clean
       run: mvn clean
-    - name: Compile
-      run: mvn validate compile
+    - name: validate
+      run: mvn validate
+    - name: apply format code
+      if: failure()
+      run: mvn spotless:apply
+
     - name: Test
       run: mvn test
     - name: package
