@@ -22,7 +22,7 @@ jobs:
 
     - name: clean
       run: mvn clean
-    - name: Compile
+    - name: compile
       run: mvn validate compile
     - name: Test
       run: mvn test

@@ -111,6 +111,7 @@ class ValidatorTest {
       String name) {
 
     when(restaurant.getName()).thenReturn(name);
+
     when(restaurant.getHours()).thenReturn(hours);
 
     assertTrue(validator.emptyRestaurantParameter(restaurant));
