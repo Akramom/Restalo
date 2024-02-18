@@ -31,10 +31,11 @@ public class RestaurantResource {
     if (valid != null) return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
     newRestaurant.generateId();
 
-    restaurantService.addRestaurantRepository(Owner, newRestaurant);
+    Restaurant restaurant = new Restaurant(newRestaurant.getName(), newRestaurant.getCapacity(), newRestaurant.getHours(),newRestaurant.getReservations());
+    restaurantService.addRestaurantRepository(Owner, restaurant);
 
     return Response.created(
-            URI.create("http://localhost:8080/restaurants/" + newRestaurant.getId()))
+            URI.create("http://localhost:8080/restaurants/" + restaurant.getId()))
         .build();
   }
 

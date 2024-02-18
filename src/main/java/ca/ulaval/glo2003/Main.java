@@ -1,10 +1,14 @@
 package ca.ulaval.glo2003;
 
+import ca.ulaval.glo2003.entity.Hours;
+import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.errorMappers.ProcessingExceptionMapper;
 import ca.ulaval.glo2003.errorMappers.RuntimeExceptionMapper;
 import ca.ulaval.glo2003.resource.HealthResource;
 import ca.ulaval.glo2003.resource.RestaurantResource;
 import java.net.URI;
+import java.time.LocalTime;
+
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
