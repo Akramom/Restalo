@@ -19,12 +19,14 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-        
+
+    - name: clean
+      run: mvn clean
     - name: Compile
-      run: mvn clean compile
+      run: mvn validate compile
     - name: Test
       run: mvn test
     - name: package
-      run: mvn  package 
+      run: mvn  package verify
 
  
