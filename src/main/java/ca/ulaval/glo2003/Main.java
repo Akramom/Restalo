@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003;
 
+import ca.ulaval.glo2003.errorMappers.ProcessingExceptionMapper;
+import ca.ulaval.glo2003.errorMappers.RuntimeExceptionMapper;
 import ca.ulaval.glo2003.resource.HealthResource;
 import ca.ulaval.glo2003.resource.RestaurantResource;
 import java.net.URI;
@@ -14,7 +16,10 @@ public class Main {
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();
-    rc.register(healthCheckResource).register(new RestaurantResource());
+    rc.register(healthCheckResource)
+        .register(new RestaurantResource())
+        .register(new RuntimeExceptionMapper())
+        .register(new ProcessingExceptionMapper());
     return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
   }
 

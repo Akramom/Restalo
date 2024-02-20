@@ -29,11 +29,12 @@ public class RestaurantResource {
     Error valid = restaurantService.verifyCreateRestaurantReq(Owner, newRestaurant);
 
     if (valid != null) return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
+    newRestaurant.generateId();
 
     restaurantService.addRestaurantRepository(Owner, newRestaurant);
 
     return Response.created(
-            URI.create("http://localhost:8080/api/restautant/" + newRestaurant.getNoRestaurant()))
+            URI.create("http://localhost:8080/restaurants/" + newRestaurant.getId()))
         .build();
   }
 
@@ -41,7 +42,7 @@ public class RestaurantResource {
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getOwnerRestaurants(@HeaderParam("Owner") String ownerId) {
-    Error error = restaurantService.verifyNoOwner(ownerId);
+    Error error = restaurantService.verifyOwnerId(ownerId);
     if (error != null) {
       return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
@@ -57,11 +58,11 @@ public class RestaurantResource {
   }
 
   @GET
-  @Path("/{restaurantId}")
+  @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getRestaurant(
-      @HeaderParam("Owner") String ownerId, @PathParam("restaurantId") String restaurantId) {
-    Error ownerError = restaurantService.verifyNoOwner(ownerId);
+      @HeaderParam("Owner") String ownerId, @PathParam("id") String restaurantId) {
+    Error ownerError = restaurantService.verifyOwnerId(ownerId);
     if (ownerError != null) {
       return Response.status(Response.Status.BAD_REQUEST).entity(ownerError).build();
     }
