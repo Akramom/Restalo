@@ -32,11 +32,11 @@ public class RestaurantResource {
     restaurantService.verifyRestaurantParameter(restaurantDto);
 
     restaurantDto.generateId();
-
-    restaurantService.addRestaurant(ownerId, restaurantDto);
+    Restaurant restaurant = new Restaurant(restaurantDto.getName(), restaurantDto.getCapacity(), restaurantDto.getHours(),restaurantDto.getReservations());
+    restaurantService.addRestaurant(ownerId, restaurant);
 
     return Response.created(
-            URI.create("http://localhost:8080/restaurants/" + restaurantDto.getId()))
+            URI.create("http://localhost:8080/restaurants/" + restaurant.getId()))
         .build();
   }
 
