@@ -5,7 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo2003.entity.*;
-import ca.ulaval.glo2003.entity.Error;
+import ca.ulaval.glo2003.exception.InvalidParameterException;
+import ca.ulaval.glo2003.exception.MissingParameterException;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +20,15 @@ import org.mockito.MockitoAnnotations;
 
 class RestaurantServiceTest {
 
-  public static final String UN_NOM = "un nom";
+  public final String UN_NOM = "un nom";
+  private final String RESTAURANT_ID = "10000";
+  private final String OWNER_ID = "00001";
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
   private final int CAPACITY = 0;
   private Hours hours;
   private RestaurantService service;
   @Mock private Restaurant restaurant;
-  private final String RESTAURANT_ID = "10000";
-  private final String OWNER_ID = "00001";
 
   @BeforeEach
   void setUp() {
@@ -37,47 +38,35 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void canAddRestaurant() {
+  void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository() {
     when(restaurant.getId()).thenReturn(RESTAURANT_ID);
-    when(restaurant.getName()).thenReturn("restau1");
+    when(restaurant.getName()).thenReturn(UN_NOM);
 
-    service.addRestaurantRepository(OWNER_ID, restaurant);
+    service.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant = service.getOwnerRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant unRestaurant = service.getRestaurantByIdOfOwner(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
-    assertThat(unRestaurant.getName()).isEqualTo("restau1");
+    assertThat(unRestaurant.getName()).isEqualTo(UN_NOM);
     assertThat(unRestaurant.getId()).isEqualTo(RESTAURANT_ID);
   }
 
   @Test
-  void getOwnerRestaurant_returnRestaurant_WhenRestaurantInRepository() {
-    when(restaurant.getId()).thenReturn(RESTAURANT_ID);
-    when(restaurant.getName()).thenReturn("restau1");
-    service.addRestaurantRepository(OWNER_ID, restaurant);
-
-    Restaurant unRestaurant = service.getOwnerRestaurant(OWNER_ID, RESTAURANT_ID);
-
-    assertThat(unRestaurant.getName()).isEqualTo("restau1");
-    assertThat(unRestaurant.getId()).isEqualTo(RESTAURANT_ID);
-    assertThat(unRestaurant).isEqualTo(restaurant);
-  }
-
-  @Test
-  void getOwnerRestaurant_returnNull_whenRestaurantNotInRepository() {
+  void
+      givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerReturnNull() {
     service.addOwner(OWNER_ID);
 
-    Restaurant unRestaurant = service.getOwnerRestaurant(OWNER_ID, "autre id");
+    Restaurant unRestaurant = service.getRestaurantByIdOfOwner(OWNER_ID, "autre id");
 
     assertThat(unRestaurant).isEqualTo(null);
   }
 
   @Test
-  void getAllOwnerRestaurants_returnListOfRestaurants() {
-    service.addRestaurantRepository(OWNER_ID, restaurant);
-    service.addRestaurantRepository(OWNER_ID, restaurant);
+  void givenOwneriD_WhenGetAllRestaurantsOfOwner_ThenReturnListOfRestaurantsOfOwner() {
+    service.addRestaurant(OWNER_ID, restaurant);
+    service.addRestaurant(OWNER_ID, restaurant);
 
-    List<Restaurant> restaurantList = service.getAllOwnerRestaurants(OWNER_ID);
+    List<Restaurant> restaurantList = service.getAllRestaurantsOfOwner(OWNER_ID);
 
     assertThat(restaurantList).isNotEmpty();
     assertThat(restaurantList.size()).isEqualTo(2);
@@ -85,7 +74,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void addOwner_returnNull_whenOwnerExists() {
+  void givenOwnerId_whenOwnerExists_ThenAddOwnerReturnNull() {
     service.addOwner(OWNER_ID);
 
     Owner owner = service.addOwner(OWNER_ID);
@@ -94,123 +83,115 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void isExistingNoOwner_returnTrue_whenOwnerExists() {
+  void givenOwnerId_whenExist_thenIsExistOwnerIdReturnTrue() {
+
     service.addOwner(OWNER_ID);
 
-    assertEquals(true, service.isExistingNoOwner(OWNER_ID));
+    assertEquals(true, service.isExistOwnerId(OWNER_ID));
   }
 
   @Test
-  void isExistingNoOwner_returnFalse_whenOwnerExists() {
-    assertEquals(false, service.isExistingNoOwner(OWNER_ID));
+  void givenOwnerId_whenNotExist_thenIsExistOwnerIdReturnFalse() {
+    assertEquals(false, service.isExistOwnerId(OWNER_ID));
   }
 
   @ParameterizedTest
   @NullSource
   @EmptySource
   @ValueSource(strings = {"", "   ", "\t", "\n"})
-  public void givenOwner_whenOwnerIdIsNullOrEmpty_thenVerifyOwnerIdReturnMissingError(
+  public void givenOwnerId_whenNullOrEmpty_TheVerifyOwnerIdThrowMissingParameterException(
       String ownerId) {
 
-    Error missingError = service.verifyOwnerId(ownerId);
+    MissingParameterException missingParameterException =
+        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(ownerId));
 
-    assertThat(missingError).isNotNull();
-    assertThat(missingError.getError()).isEqualTo(ErrorType.MISSING_PARAMETER);
-    assertThat(missingError.getDescription()).isEqualTo("Missing owner ID.");
-  }
-
-  @ParameterizedTest
-  @NullSource
-  @EmptySource
-  @ValueSource(strings = {"", "   ", "\t", "\n"})
-  public void givenOwner_whenOwnerIdIsNotExist_thenVerifyOwnerIdReturnMissingError(String ownerId) {
-
-    Error missingError = service.verifyCreateRestaurantReq(ownerId, restaurant);
-
-    assertThat(missingError).isNotNull();
-    assertThat(missingError.getError()).isEqualTo(ErrorType.MISSING_PARAMETER);
-    assertThat(missingError.getDescription()).isEqualTo("Missing owner ID.");
+    assertThat(missingParameterException.getMessage()).isEqualTo("Missing owner ID.");
   }
 
   @Test
-  public void givenRestaurant_whenNameIsEmty_thenVerifyOwnerIdReturnInvalidError() {
+  public void givenOwnerId_whenNotExist_TheVerifyOwnerIdThrowInvalidParameterException() {
+
+    InvalidParameterException invalidParameterException =
+        assertThrows(InvalidParameterException.class, () -> service.verifyOwnerId(OWNER_ID));
+
+    assertThat(invalidParameterException.getMessage()).isEqualTo("Invalid owner ID.");
+  }
+
+  @Test
+  public void
+      givenRestaurant_whenNameIsNullorEmpty_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
     when(restaurant.getName()).thenReturn(null);
-    Error invalidError = service.verifyCreateRestaurantReq(OWNER_ID, restaurant);
+    MissingParameterException missingParameterException =
+        assertThrows(
+            MissingParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
 
-    assertThat(invalidError).isNotNull();
-    assertThat(invalidError.getError()).isEqualTo(ErrorType.INVALID_PARAMETER);
-    assertThat(invalidError.getDescription()).isEqualTo("Missing restaurant parameter.");
+    assertThat(missingParameterException.getMessage()).isEqualTo("Missing restaurant parameter.");
   }
 
   @Test
-  public void givenRestaurant_whenHoursIsNull_thenVerifyOwnerIdReturnInvalidError() {
+  public void
+      givenRestaurant_whenHoursIsNull_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
     when(restaurant.getName()).thenReturn(UN_NOM);
     when(restaurant.getHours()).thenReturn(null);
-    Error invalidError = service.verifyCreateRestaurantReq(OWNER_ID, restaurant);
 
-    assertThat(invalidError).isNotNull();
-    assertThat(invalidError.getError()).isEqualTo(ErrorType.INVALID_PARAMETER);
-    assertThat(invalidError.getDescription()).isEqualTo("Missing restaurant parameter.");
+    MissingParameterException missingParameterException =
+        assertThrows(
+            MissingParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
+
+    assertThat(missingParameterException.getMessage()).isEqualTo("Missing restaurant parameter.");
   }
 
   @Test
-  public void givenRestaurant_whenHoursIsInvalid_thenVerifyOwnerIdReturnInvalidError() {
+  public void
+      givenRestaurant_whenHoursIsInvald_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
     when(restaurant.getName()).thenReturn(UN_NOM);
     hours.setOpen(CLOSE);
     hours.setClose(OPEN);
     when(restaurant.getHours()).thenReturn(hours);
 
-    Error invalidError = service.verifyCreateRestaurantReq(OWNER_ID, restaurant);
+    InvalidParameterException invalidParameterException =
+        assertThrows(
+            InvalidParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
 
-    assertThat(invalidError).isNotNull();
-    assertThat(invalidError.getError()).isEqualTo(ErrorType.INVALID_PARAMETER);
-    assertThat(invalidError.getDescription()).isEqualTo("Invalid restaurant parameter.");
+    assertThat(invalidParameterException.getMessage()).isEqualTo("Invalid restaurant parameter.");
   }
 
   @Test
-  public void givenRestaurant_whenCapasityisLesTanOne_thenVerifyOwnerIdReturnInvalidError() {
+  public void
+      givenRestaurant_whenCapacityLessThanOne_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
     when(restaurant.getName()).thenReturn(UN_NOM);
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(CAPACITY);
 
-    Error invalidError = service.verifyCreateRestaurantReq(OWNER_ID, restaurant);
+    InvalidParameterException invalidParameterException =
+        assertThrows(
+            InvalidParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
 
-    assertThat(invalidError).isNotNull();
-    assertThat(invalidError.getError()).isEqualTo(ErrorType.INVALID_PARAMETER);
-    assertThat(invalidError.getDescription()).isEqualTo("Invalid restaurant parameter.");
+    assertThat(invalidParameterException.getMessage()).isEqualTo("Invalid restaurant parameter.");
   }
 
   @Test
-  public void givenRestaurant_whenRestaurantIsValid_thenVerifyOwnerIdReturnNull() {
-
-    when(restaurant.getName()).thenReturn(UN_NOM);
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getCapacity()).thenReturn(CAPACITY + 3);
-
-    Error invalidError = service.verifyCreateRestaurantReq(OWNER_ID, restaurant);
-
-    assertThat(invalidError).isNull();
-  }
-
-  @Test
-  public void givenOwner_whenOwnerIdIsValidAndExist_thenVerifyOwnerIdNull() {
+  public void givenOwnerId_whenOwnerIdIsEmptyOrNull_verifyOwnerIdThrowMissingParameterException()
+      throws Exception {
 
     service.addOwner(OWNER_ID);
-    Error missingError = service.verifyOwnerId(OWNER_ID);
+    MissingParameterException missingParameterException =
+        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
 
-    assertThat(missingError).isNull();
+    assertThat(missingParameterException.getMessage()).isEqualTo("Missing owner ID.");
   }
 
   @Test
-  public void whenOwnerIdIsEmptyOrNull_verifyCreateRestaurantReqReturnMissingError() {
+  public void givenOwnerId_whenOwnerIdIsNostExist_verifyOwnerIdThrowMissingParameterException()
+      throws Exception {
 
-    service.addOwner(OWNER_ID);
-    Error missingError = service.verifyOwnerId(OWNER_ID);
+    InvalidParameterException invalidParameterException =
+        assertThrows(InvalidParameterException.class, () -> service.verifyOwnerId(OWNER_ID));
 
-    assertThat(missingError).isNull();
+    assertThat(invalidParameterException.getMessage()).isEqualTo("Invalid owner ID.");
   }
 }

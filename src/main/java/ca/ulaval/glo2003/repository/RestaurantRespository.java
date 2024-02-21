@@ -19,46 +19,46 @@ public class RestaurantRespository {
     return owners;
   }
 
-  public Restaurant addRestaurant(String _noOwner, Restaurant _restaurant) {
+  public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
 
     owners.stream()
-        .filter(p -> p.getOwnerId().equals(_noOwner))
+        .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
         .get(0)
         .getRestaurants()
-        .add(_restaurant);
-    restaurants.add(_restaurant);
+        .add(restaurant);
+    restaurants.add(restaurant);
 
-    return _restaurant;
+    return restaurant;
   }
 
-  public Owner addOwner(String noOwner) {
+  public Owner addOwner(String ownerId) {
     Owner owner = new Owner("Doe", "John", "418-222-2222");
-    owner.setOwnerId(noOwner);
+    owner.setOwnerId(ownerId);
     owners.add(owner);
     return owner;
   }
 
   // Methode dans le repository pour retrouver un restaurant par son id
-  public Restaurant getRestaurant(String _noOwner, String _noRestaurant) {
+  public Restaurant getRestaurant(String ownerId, String RestaurantId) {
     Restaurant restaurant =
         owners.stream()
-            .filter(p -> p.getOwnerId().equals(_noOwner))
+            .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
             .get(0)
             .getRestaurants()
             .stream()
-            .filter(r -> r.getId().equals(_noRestaurant))
+            .filter(r -> r.getId().equals(RestaurantId))
             .findFirst()
             .orElse(null);
     return restaurant;
   }
 
-  public List<Restaurant> getAllRestaurants(String _noOwner) {
+  public List<Restaurant> getAllRestaurants(String ownerId) {
 
     List<Restaurant> ownerRestaurants =
         owners.stream()
-            .filter(p -> p.getOwnerId().equals(_noOwner))
+            .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
             .get(0)
             .getRestaurants();
