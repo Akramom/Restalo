@@ -1,7 +1,5 @@
 package ca.ulaval.glo2003.errorMappers;
 
-import ca.ulaval.glo2003.entity.Error;
-import ca.ulaval.glo2003.entity.ErrorType;
 import ca.ulaval.glo2003.exception.MissingParameterException;
 import ca.ulaval.glo2003.util.ErrorBuilder;
 import jakarta.ws.rs.core.Response;
@@ -14,7 +12,7 @@ public class MissingParameterExceptionMapper implements ExceptionMapper<MissingP
   public Response toResponse(MissingParameterException exception) {
     this.errorBuilder = new ErrorBuilder();
     return Response.status(Response.Status.BAD_REQUEST)
-            .entity(errorBuilder.missingError(exception.getMessage()))
+        .entity(errorBuilder.missingError(exception.getMessage()))
         .build();
   }
 }
