@@ -25,30 +25,30 @@ public class RestaurantResource {
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response addRestaurant(@HeaderParam("Owner") String Owner, Restaurant newRestaurant) {
-    Error valid = restaurantService.verifyCreateRestaurantReq(Owner, newRestaurant);
+  public Response addRestaurant(@HeaderParam("Owner") String ownerId, Restaurant restaurantDto)
+      throws Exception {
 
-    if (valid != null) return Response.status(Response.Status.BAD_REQUEST).entity(valid).build();
-    newRestaurant.generateId();
+    restaurantService.isValidOwnerId(ownerId);
+    restaurantService.verifyRestaurantParameter(restaurantDto);
 
-    Restaurant restaurant = new Restaurant(newRestaurant.getName(), newRestaurant.getCapacity(), newRestaurant.getHours(),newRestaurant.getReservations());
-    restaurantService.addRestaurantRepository(Owner, restaurant);
+    restaurantDto.generateId();
+
+    restaurantService.addRestaurant(ownerId, restaurantDto);
 
     return Response.created(
-            URI.create("http://localhost:8080/restaurants/" + restaurant.getId()))
+            URI.create("http://localhost:8080/restaurants/" + restaurantDto.getId()))
         .build();
   }
 
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getOwnerRestaurants(@HeaderParam("Owner") String ownerId) {
-    Error error = restaurantService.verifyOwnerId(ownerId);
-    if (error != null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
-    }
+  public Response getOwnerRestaurants(@HeaderParam("Owner") String ownerId) throws Exception {
 
-    List<Restaurant> restaurants = restaurantService.getAllOwnerRestaurants(ownerId);
+    restaurantService.verifyOwnerId(ownerId);
+
+    List<Restaurant> restaurants = restaurantService.getAllRestaurantsOfOwner(ownerId);
+
     if (restaurants.isEmpty()) {
       return Response.status(NOT_FOUND)
           .entity(new Error(MISSING_PARAMETER, "No restaurants found for the owner."))
@@ -62,13 +62,12 @@ public class RestaurantResource {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getRestaurant(
-      @HeaderParam("Owner") String ownerId, @PathParam("id") String restaurantId) {
-    Error ownerError = restaurantService.verifyOwnerId(ownerId);
-    if (ownerError != null) {
-      return Response.status(Response.Status.BAD_REQUEST).entity(ownerError).build();
-    }
+      @HeaderParam("Owner") String ownerId, @PathParam("id") String restaurantId) throws Exception {
 
-    Restaurant restaurant = restaurantService.getOwnerRestaurant(ownerId, restaurantId);
+    restaurantService.verifyOwnerId(ownerId);
+
+    Restaurant restaurant = restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
+
     if (restaurant == null) {
       return Response.status(NOT_FOUND)
           .entity(

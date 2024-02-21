@@ -32,29 +32,21 @@ class ValidatorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {2, 3, 0, -3, 6})
-  @Disabled
-  void testValidCapacity(int capacity) {
-    if (capacity > 0) assertTrue(validator.validCapacity(capacity));
-    else assertFalse(validator.validCapacity(capacity));
-  }
-
-  @ParameterizedTest
   @ValueSource(ints = {1, 6, 8})
   void givenCapacityBiggerThanZezo_validCapacityShoulReturnTrue(int capacity) {
-    assertTrue(validator.validCapacity(capacity));
+    assertTrue(validator.isValidCapacity(capacity));
   }
 
   @ParameterizedTest
   @ValueSource(ints = {0, -1, -2})
   void givenCapacityLowerThanOne_validCapacityShoulReturnfalse(int capacity) {
-    assertFalse(validator.validCapacity(capacity));
+    assertFalse(validator.isValidCapacity(capacity));
   }
 
   @Test
   void
       givenAnHours_WhenOpenIsLongerThanCloseOfAtLeastOneHour_ThenValidOpeningHoursShouldReturnTrue() {
-    assertTrue(validator.validOpeningHours(hours));
+    assertTrue(validator.isValidOpeningHours(hours));
   }
 
   @Test
@@ -63,7 +55,7 @@ class ValidatorTest {
 
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
-    assertFalse(validator.validOpeningHours(hours));
+    assertFalse(validator.isValidOpeningHours(hours));
   }
 
   @ParameterizedTest
@@ -71,7 +63,7 @@ class ValidatorTest {
   @EmptySource
   @ValueSource(strings = {"", "   ", "\t", "\n"})
   void givenAString_whenEmptyOrNull_ThencheckStringEmptyShouldReturnTrue(String value) {
-    assertTrue(validator.checkStringEmpty(value));
+    assertTrue(validator.isStringEmpty(value));
   }
 
   @Test
@@ -82,7 +74,7 @@ class ValidatorTest {
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(2);
 
-    assertFalse(validator.validRestaurant(restaurant));
+    assertFalse(validator.isValidRestaurant(restaurant));
   }
 
   @Test
@@ -91,7 +83,7 @@ class ValidatorTest {
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(0);
 
-    assertFalse(validator.validRestaurant(restaurant));
+    assertFalse(validator.isValidRestaurant(restaurant));
   }
 
   @Test
@@ -100,7 +92,7 @@ class ValidatorTest {
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(2);
 
-    assertTrue(validator.validRestaurant(restaurant));
+    assertTrue(validator.isValidRestaurant(restaurant));
   }
 
   @ParameterizedTest
@@ -111,19 +103,21 @@ class ValidatorTest {
       String name) {
 
     when(restaurant.getName()).thenReturn(name);
+
     when(restaurant.getHours()).thenReturn(hours);
 
-    assertTrue(validator.emptyRestaurantParameter(restaurant));
+    assertTrue(validator.isRestaurantParameterEmpty(restaurant));
   }
 
   @ParameterizedTest
-  @MethodSource("invalidHours")
-  void givenARestaurant_WhenHoursIsNull_thenEmptyRestaurantParameterShouldReturnTrue(Hours hours) {
+  @MethodSource("provideInvalidHours")
+  void givenARestaurant_WhenHoursIsNull_thenIsRestaurantParameterEmptyShouldReturnTrue(
+      Hours hours) {
 
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getName()).thenReturn("name");
 
-    assertTrue(validator.emptyRestaurantParameter(restaurant));
+    assertTrue(validator.isRestaurantParameterEmpty(restaurant));
   }
 
   @Test
@@ -133,10 +127,10 @@ class ValidatorTest {
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getName()).thenReturn("name");
 
-    assertFalse(validator.emptyRestaurantParameter(restaurant));
+    assertFalse(validator.isRestaurantParameterEmpty(restaurant));
   }
 
-  private static Stream<Hours> invalidHours() {
+  private static Stream<Hours> provideInvalidHours() {
     Hours hours1 = null;
     Hours hours2 = new Hours(null, LocalTime.now());
     Hours hours3 = new Hours(LocalTime.now(), null);

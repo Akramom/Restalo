@@ -18,6 +18,7 @@ class RestaurantRespositoryTest {
 
   private final String RESTAURANT_ID = "10000";
   private final String OWNER_ID = "00001";
+  public static final String UN_NOM = "un nom";
 
   @BeforeEach
   void setUp() {
@@ -26,9 +27,9 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void canaddRestaurant() {
+  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository() {
     when(restaurant.getId()).thenReturn(RESTAURANT_ID);
-    when(restaurant.getName()).thenReturn("restau1");
+    when(restaurant.getName()).thenReturn(UN_NOM);
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -36,12 +37,13 @@ class RestaurantRespositoryTest {
     Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
-    assertThat(unRestaurant.getName()).isEqualTo("restau1");
+    assertThat(unRestaurant.getName()).isEqualTo(UN_NOM);
     assertThat(unRestaurant.getId()).isEqualTo(RESTAURANT_ID);
   }
 
   @Test
-  void whenGetRestaurant_returnRestaurantWhenRestaurantInRepository() {
+  void
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant() {
     when(restaurant.getId()).thenReturn(RESTAURANT_ID);
 
     repository.addOwner(OWNER_ID);
@@ -54,7 +56,7 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void whenGetRestaurant_returnNullWhenRestaurantNotInRepository() {
+  void givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantNotInRepository_ThenReturnNull() {
     repository.addOwner(OWNER_ID);
 
     Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
@@ -63,7 +65,7 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void whenGetAllRestaurants_returnListOfRestaurants() {
+  void givenAnOwnerId_whenGetAllRestaurants_thenReturnListOfRestaurantsForTheOwner() {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);

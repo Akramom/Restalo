@@ -8,20 +8,22 @@ public class Restaurant {
   private int capacity;
   private String id;
 
-  private Reservations reservations;
   private Hours hours;
 
-
-  public Restaurant(String name, int capacity, Hours hours, Reservations reservation) {
+  public Restaurant(String name, int capacity, Hours hours) {
     this.id = UUID.randomUUID().toString().substring(0, 8);
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    if (reservation == null){
-      this.reservations = new Reservations(60);
-    }
-   else this.reservations = reservation;
   }
+
+  public Restaurant(String id, String name, int capacity, Hours hours) {
+    this.id = id;
+    this.name = name;
+    this.capacity = capacity;
+    this.hours = hours;
+  }
+
   public void generateId() {
     this.id = UUID.randomUUID().toString().substring(0, 8);
   }
@@ -38,9 +40,6 @@ public class Restaurant {
 
   public int getCapacity() {
     return capacity;
-  }
-  public Reservations getReservations(){
-    return this.reservations;
   }
 
   public void setCapacity(int capacity) {
@@ -59,10 +58,6 @@ public class Restaurant {
     return hours;
   }
 
-  public void setReservations(Reservations reservations) {
-    this.reservations = reservations;
-  }
-
   public void setHours(Hours hours) {
     this.hours = hours;
   }
@@ -79,8 +74,6 @@ public class Restaurant {
         + id
         + ", hours="
         + hours
-        + '}'
-        + "duration:";
-
+        + '}';
   }
 }

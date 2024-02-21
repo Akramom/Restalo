@@ -22,7 +22,7 @@ class ErrorBuilderTest {
   }
 
   @Test
-  void testInvalidError() {
+  void givenDescription_WhenMissingError_thenReturnMissingError() {
     missingError = errorBuilder.missingError(MISSING_MESSAGE);
 
     assertAll(
@@ -33,7 +33,7 @@ class ErrorBuilderTest {
   }
 
   @Test
-  void testMissingError() {
+  void givenDescription_WhenInvalidError_thenReturnInvalidError() {
     invalidError = errorBuilder.invalidError(INVALID_MESSAGE);
 
     assertAll(

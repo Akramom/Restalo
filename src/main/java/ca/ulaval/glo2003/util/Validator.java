@@ -6,11 +6,11 @@ import java.time.LocalTime;
 public class Validator {
   public Validator() {}
 
-  public Boolean emptyRestaurantParameter(Restaurant restaurant) {
+  public Boolean isRestaurantParameterEmpty(Restaurant restaurant) {
     String name = restaurant.getName();
     Hours hours = restaurant.getHours();
 
-    if (checkStringEmpty(name)) {
+    if (isStringEmpty(name)) {
       return true;
     }
 
@@ -21,11 +21,11 @@ public class Validator {
     return false;
   }
 
-  public Boolean validCapacity(int capacity) {
+  public Boolean isValidCapacity(int capacity) {
     return capacity > 0;
   }
 
-  public Boolean validOpeningHours(Hours openingHours) {
+  public Boolean isValidOpeningHours(Hours openingHours) {
     LocalTime openTime = openingHours.getOpen();
     LocalTime closeTime = openingHours.getClose();
 
@@ -34,17 +34,17 @@ public class Validator {
     return timeOpen >= 1;
   }
 
-  public Boolean validRestaurant(Restaurant restaurant) {
-    if (!validOpeningHours(restaurant.getHours())) {
+  public Boolean isValidRestaurant(Restaurant restaurant) {
+    if (!isValidOpeningHours(restaurant.getHours())) {
       return false;
     }
-    if (!validCapacity(restaurant.getCapacity())) {
+    if (!isValidCapacity(restaurant.getCapacity())) {
       return false;
     }
     return true;
   }
 
-  public Boolean checkStringEmpty(String value) {
+  public Boolean isStringEmpty(String value) {
     return value == null || value.trim().isEmpty();
   }
 }
