@@ -17,6 +17,13 @@ public class Restaurant {
     this.hours = hours;
   }
 
+  public Restaurant(String id, String name, int capacity, Hours hours) {
+    this.id = id;
+    this.name = name;
+    this.capacity = capacity;
+    this.hours = hours;
+  }
+
   public void generateId() {
     this.id = UUID.randomUUID().toString().substring(0, 8);
   }
