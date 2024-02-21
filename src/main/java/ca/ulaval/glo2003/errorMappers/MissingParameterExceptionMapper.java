@@ -14,7 +14,7 @@ public class MissingParameterExceptionMapper implements ExceptionMapper<MissingP
   public Response toResponse(MissingParameterException exception) {
     this.errorBuilder = new ErrorBuilder();
     return Response.status(Response.Status.BAD_REQUEST)
-        .entity(new Error(ErrorType.MISSING_PARAMETER, exception.getMessage()))
+            .entity(errorBuilder.missingError(exception.getMessage()))
         .build();
   }
 }
