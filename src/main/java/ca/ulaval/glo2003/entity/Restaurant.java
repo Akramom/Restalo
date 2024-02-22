@@ -11,17 +11,16 @@ public class Restaurant {
   private ReservationsRequest reservations;
   private Hours hours;
 
-
   public Restaurant(String name, int capacity, Hours hours, ReservationsRequest reservation) {
     this.id = UUID.randomUUID().toString().substring(0, 8);
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    if (reservation == null){
+    if (reservation == null) {
       this.reservations = new ReservationsRequest(60);
-    }
-    else this.reservations = reservation;
+    } else this.reservations = reservation;
   }
+
   public void generateId() {
     this.id = UUID.randomUUID().toString().substring(0, 8);
   }
@@ -39,7 +38,8 @@ public class Restaurant {
   public int getCapacity() {
     return capacity;
   }
-  public ReservationsRequest getReservations(){
+
+  public ReservationsRequest getReservations() {
     return this.reservations;
   }
 
@@ -70,17 +70,16 @@ public class Restaurant {
   @Override
   public String toString() {
     return "Restaurant{"
-            + "name='"
-            + name
-            + '\''
-            + ", capacity="
-            + capacity
-            + ", id="
-            + id
-            + ", hours="
-            + hours
-            + '}'
-            + "duration:";
-
+        + "name='"
+        + name
+        + '\''
+        + ", capacity="
+        + capacity
+        + ", id="
+        + id
+        + ", hours="
+        + hours
+        + '}'
+        + "duration:";
   }
 }
