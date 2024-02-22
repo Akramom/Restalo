@@ -16,11 +16,11 @@ public class Hours {
 
   public Hours() {}
 
-  public int getReservationDuration(){
+  public int getReservationDuration() {
     return reservationDuration;
   }
-  public Hours(LocalTime now, LocalTime localTime) {
-  }
+
+  public Hours(LocalTime now, LocalTime localTime) {}
 
   public LocalTime getOpen() {
     return open;
