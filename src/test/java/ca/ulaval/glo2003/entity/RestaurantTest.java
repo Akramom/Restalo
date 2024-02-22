@@ -10,12 +10,12 @@ class RestaurantTest {
 
   private Restaurant restaurant;
   private Hours hours;
-  private ReservationsRequest reservations;
+  private ReservationDuration reservations;
 
   @BeforeEach
   void setUp() {
     hours = new Hours(LocalTime.NOON, LocalTime.MIDNIGHT);
-    reservations = new ReservationsRequest(60);
+    reservations = new ReservationDuration(60);
     restaurant = new Restaurant("Poulet_Rouge", 100, hours, reservations);
   }
 
@@ -91,7 +91,7 @@ class RestaurantTest {
 
   @Test
   void testSetReservations() {
-    ReservationsRequest newReservations = new ReservationsRequest(30);
+    ReservationDuration newReservations = new ReservationDuration(30);
     restaurant.setReservations(newReservations);
     assertEquals(newReservations, restaurant.getReservations());
   }

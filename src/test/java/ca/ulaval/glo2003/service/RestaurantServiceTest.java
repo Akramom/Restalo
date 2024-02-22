@@ -23,7 +23,10 @@ class RestaurantServiceTest {
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
   private final int CAPACITY = 0;
+
+  private final ReservationDuration reservation = new ReservationDuration(60);
   private Hours hours;
+
   private RestaurantService service;
   private Restaurant restaurant;
 
@@ -31,7 +34,7 @@ class RestaurantServiceTest {
   void setUp() {
     service = new RestaurantService();
     hours = new Hours(OPEN, CLOSE);
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservation);
   }
 
   @Test
