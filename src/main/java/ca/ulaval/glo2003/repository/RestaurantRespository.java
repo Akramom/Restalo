@@ -64,4 +64,9 @@ public class RestaurantRespository {
             .getRestaurants();
     return ownerRestaurants;
   }
+
+  //  public void addReservation(Reservation reservation){
+  //
+  //    this.reservations.add(reservation);
+  //  }
 }
