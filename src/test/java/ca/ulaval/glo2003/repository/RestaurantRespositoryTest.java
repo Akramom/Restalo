@@ -2,34 +2,35 @@ package ca.ulaval.glo2003.repository;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
+import ca.ulaval.glo2003.entity.Hours;
 import ca.ulaval.glo2003.entity.Restaurant;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 class RestaurantRespositoryTest {
 
+  public static final int CAPACITY = 100;
   private RestaurantRespository repository;
-  @Mock private Restaurant restaurant;
-
+  private Restaurant restaurant;
   private final String RESTAURANT_ID = "10000";
   private final String OWNER_ID = "00001";
   public static final String UN_NOM = "un nom";
+  private Hours hours;
+  private final LocalTime OPEN = LocalTime.of(10, 30, 45);
+  private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.initMocks(this);
+    hours = new Hours(OPEN, CLOSE);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours);
     repository = new RestaurantRespository();
   }
 
   @Test
   void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository() {
-    when(restaurant.getId()).thenReturn(RESTAURANT_ID);
-    when(restaurant.getName()).thenReturn(UN_NOM);
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -44,7 +45,6 @@ class RestaurantRespositoryTest {
   @Test
   void
       givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant() {
-    when(restaurant.getId()).thenReturn(RESTAURANT_ID);
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);

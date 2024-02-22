@@ -2,7 +2,6 @@ package ca.ulaval.glo2003.service;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
@@ -15,8 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 class RestaurantServiceTest {
 
@@ -28,19 +25,17 @@ class RestaurantServiceTest {
   private final int CAPACITY = 0;
   private Hours hours;
   private RestaurantService service;
-  @Mock private Restaurant restaurant;
+  private Restaurant restaurant;
 
   @BeforeEach
   void setUp() {
-    MockitoAnnotations.initMocks(this);
     service = new RestaurantService();
     hours = new Hours(OPEN, CLOSE);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours);
   }
 
   @Test
   void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository() {
-    when(restaurant.getId()).thenReturn(RESTAURANT_ID);
-    when(restaurant.getName()).thenReturn(UN_NOM);
 
     service.addRestaurant(OWNER_ID, restaurant);
 
@@ -121,7 +116,7 @@ class RestaurantServiceTest {
   public void
       givenRestaurant_whenNameIsNullorEmpty_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
-    when(restaurant.getName()).thenReturn(null);
+    restaurant.setName(null);
     MissingParameterException missingParameterException =
         assertThrows(
             MissingParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
@@ -133,9 +128,7 @@ class RestaurantServiceTest {
   public void
       givenRestaurant_whenHoursIsNull_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
-    when(restaurant.getName()).thenReturn(UN_NOM);
-    when(restaurant.getHours()).thenReturn(null);
-
+    restaurant.setHours(null);
     MissingParameterException missingParameterException =
         assertThrows(
             MissingParameterException.class, () -> service.verifyRestaurantParameter(restaurant));
@@ -147,10 +140,9 @@ class RestaurantServiceTest {
   public void
       givenRestaurant_whenHoursIsInvald_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
-    when(restaurant.getName()).thenReturn(UN_NOM);
     hours.setOpen(CLOSE);
     hours.setClose(OPEN);
-    when(restaurant.getHours()).thenReturn(hours);
+    restaurant.setHours(hours);
 
     InvalidParameterException invalidParameterException =
         assertThrows(
@@ -162,10 +154,6 @@ class RestaurantServiceTest {
   @Test
   public void
       givenRestaurant_whenCapacityLessThanOne_thenVerifyRestaurantParameterThrowInvalidParameterException() {
-
-    when(restaurant.getName()).thenReturn(UN_NOM);
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getCapacity()).thenReturn(CAPACITY);
 
     InvalidParameterException invalidParameterException =
         assertThrows(
