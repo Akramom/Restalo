@@ -38,8 +38,6 @@ class RestaurantRespositoryTest {
     Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
-    assertThat(unRestaurant.getName()).isEqualTo(UN_NOM);
-    assertThat(unRestaurant.getId()).isEqualTo(RESTAURANT_ID);
   }
 
   @Test
@@ -49,10 +47,9 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    assertThat(repository.getOwner().size()).isEqualTo(1);
-    assertThat(repository.getOwner().get(0).getOwnerId()).isEqualTo(OWNER_ID);
-    assertThat(repository.getOwner().get(0).getRestaurants().get(0).getId())
-        .isEqualTo(RESTAURANT_ID);
+    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+
+    assertThat(unRestaurant).isEqualTo(restaurant);
   }
 
   @Test

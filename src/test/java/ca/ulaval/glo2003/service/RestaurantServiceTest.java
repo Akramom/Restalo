@@ -42,8 +42,6 @@ class RestaurantServiceTest {
     Restaurant unRestaurant = service.getRestaurantByIdOfOwner(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
-    assertThat(unRestaurant.getName()).isEqualTo(UN_NOM);
-    assertThat(unRestaurant.getId()).isEqualTo(RESTAURANT_ID);
   }
 
   @Test
