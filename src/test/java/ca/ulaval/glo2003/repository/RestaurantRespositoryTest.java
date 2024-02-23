@@ -1,9 +1,9 @@
 package ca.ulaval.glo2003.repository;
 
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import ca.ulaval.glo2003.entity.Hours;
+import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
 import java.time.LocalTime;
 import java.util.List;
@@ -19,13 +19,15 @@ class RestaurantRespositoryTest {
   private final String OWNER_ID = "00001";
   public static final String UN_NOM = "un nom";
   private Hours hours;
+  private final ReservationDuration reservation = new ReservationDuration(60);
+
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
 
   @BeforeEach
   void setUp() {
     hours = new Hours(OPEN, CLOSE);
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservation);
     repository = new RestaurantRespository();
   }
 
