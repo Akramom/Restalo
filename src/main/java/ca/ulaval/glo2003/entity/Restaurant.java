@@ -8,28 +8,24 @@ public class Restaurant {
   private int capacity;
   private String id;
 
-  private ReservationDuration reservations;
+  private int reservationDuration;
+
   private Hours hours;
 
-  public Restaurant(String name, int capacity, Hours hours, ReservationDuration reservation) {
+  public Restaurant(String name, int capacity, Hours hours, int reservationDuration) {
     this.id = UUID.randomUUID().toString().substring(0, 8);
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    if (reservation == null) {
-      this.reservations = new ReservationDuration(60);
-    } else this.reservations = reservation;
+    this.reservationDuration = reservationDuration;
   }
 
-  public Restaurant(
-      String id, String name, int capacity, Hours hours, ReservationDuration reservation) {
+  public Restaurant(String id, String name, int capacity, Hours hours, int reservationDuration) {
     this.id = id;
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    if (reservation == null) {
-      this.reservations = new ReservationDuration(60);
-    } else this.reservations = reservation;
+    this.reservationDuration = reservationDuration;
   }
 
   public void generateId() {
@@ -50,8 +46,8 @@ public class Restaurant {
     return capacity;
   }
 
-  public ReservationDuration getReservations() {
-    return this.reservations;
+  public int getReservationDuration() {
+    return this.reservationDuration;
   }
 
   public void setCapacity(int capacity) {
@@ -62,21 +58,19 @@ public class Restaurant {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public Hours getHours() {
     return hours;
   }
 
-  public void setReservations(ReservationDuration reservations) {
-    this.reservations = reservations;
+  public void setReservationDuration(int reservationDuration) {
+    this.reservationDuration = reservationDuration;
   }
 
   public void setHours(Hours hours) {
     this.hours = hours;
   }
+
+  public void addReservation(Reservation reservation) {}
 
   @Override
   public String toString() {

@@ -3,8 +3,8 @@ package ca.ulaval.glo2003.util;
 import ca.ulaval.glo2003.entity.*;
 import java.time.LocalTime;
 
-public class Validator {
-  public Validator() {}
+public class RestaurantValidator {
+  public RestaurantValidator() {}
 
   public Boolean isRestaurantParameterEmpty(Restaurant restaurant) {
     String name = restaurant.getName();
@@ -19,6 +19,10 @@ public class Validator {
     }
 
     return false;
+  }
+
+  public Boolean isStringEmpty(String value) {
+    return value == null || value.trim().isEmpty();
   }
 
   public Boolean isValidCapacity(int capacity) {
@@ -42,9 +46,5 @@ public class Validator {
       return false;
     }
     return true;
-  }
-
-  public Boolean isStringEmpty(String value) {
-    return value == null || value.trim().isEmpty();
   }
 }

@@ -3,7 +3,6 @@ package ca.ulaval.glo2003.repository;
 import static com.google.common.truth.Truth.assertThat;
 
 import ca.ulaval.glo2003.entity.Hours;
-import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
 import java.time.LocalTime;
 import java.util.List;
@@ -19,7 +18,7 @@ class RestaurantRespositoryTest {
   private final String OWNER_ID = "00001";
   public static final String UN_NOM = "un nom";
   private Hours hours;
-  private final ReservationDuration reservation = new ReservationDuration(60);
+  private final int reservationDuration = 70;
 
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
@@ -27,17 +26,18 @@ class RestaurantRespositoryTest {
   @BeforeEach
   void setUp() {
     hours = new Hours(OPEN, CLOSE);
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservation);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     repository = new RestaurantRespository();
   }
 
   @Test
-  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository() {
+  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddedInRepository() {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant unRestaurant =
+        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
   }
@@ -49,18 +49,20 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant aRestaurant =
+        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
 
-    assertThat(unRestaurant).isEqualTo(restaurant);
+    assertThat(aRestaurant).isEqualTo(restaurant);
   }
 
   @Test
   void givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantNotInRepository_ThenReturnNull() {
     repository.addOwner(OWNER_ID);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant aRestaurant =
+        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
 
-    assertThat(unRestaurant).isEqualTo(null);
+    assertThat(aRestaurant).isEqualTo(null);
   }
 
   @Test
@@ -75,5 +77,15 @@ class RestaurantRespositoryTest {
     assertThat(restaurantList).isNotEmpty();
     assertThat(restaurantList.size()).isEqualTo(2);
     assertThat(restaurantList).contains(restaurant);
+  }
+
+  @Test
+  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant() {
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+
+    Restaurant foundRestaurant = repository.getRestaurantById(RESTAURANT_ID);
+
+    assertThat(foundRestaurant).isEqualTo(restaurant);
   }
 }
