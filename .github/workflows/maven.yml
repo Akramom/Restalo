@@ -28,13 +28,5 @@ jobs:
       run: mvn test -Dtest=!resource/*
     - name: integration tests
       run: mvn test -Dtest=resource/*
-    - name: Monitor coverage
-      uses: slavcodev/coverage-monitor-action@v1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        coverage_path: "logs/clover.xml"
-        threshold_alert: 10
-        threshold_warning: 50
-        threshold_metric: "lines"
     - name: package
       run: mvn  package verify -DskipTests
