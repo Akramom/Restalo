@@ -16,18 +16,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-class ValidatorTest {
+class RestaurantValidatorTest {
 
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
   @Mock private Restaurant restaurant;
-  private Validator validator;
+  private RestaurantValidator validator;
   private Hours hours;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.initMocks(this);
-    validator = new Validator();
+    validator = new RestaurantValidator();
     hours = new Hours(OPEN, CLOSE);
   }
 

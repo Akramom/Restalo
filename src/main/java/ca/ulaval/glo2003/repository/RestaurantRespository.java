@@ -41,22 +41,21 @@ public class RestaurantRespository {
   }
 
   // Methode dans le repository pour retrouver un restaurant par son id
-  public Restaurant getRestaurant(String ownerId, String RestaurantId) throws NotFoundException {
-    Restaurant restaurant =
+  public Restaurant getRestaurant(String ownerId, String restaurantId) throws NotFoundException {
+    Restaurant unRestaurant =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
             .get(0)
             .getRestaurants()
             .stream()
-            .filter(r -> r.getId().equals(RestaurantId))
+            .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
             .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
-    return restaurant;
+    return unRestaurant;
   }
 
   public List<Restaurant> getAllRestaurants(String ownerId) {
-
     List<Restaurant> ownerRestaurants =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
@@ -66,8 +65,13 @@ public class RestaurantRespository {
     return ownerRestaurants;
   }
 
-  //  public void addReservation(Reservation reservation){
-  //
-  //    this.reservations.add(reservation);
-  //  }
+  public Restaurant getRestaurantById(String restaurantId) {
+    for (Restaurant restaurant : restaurants) {
+      String id = restaurant.getId();
+      if (id.equals(restaurantId)) {
+        return restaurant;
+      }
+    }
+    return null;
+  }
 }

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.entity.Hours;
+import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.errorMappers.InvalidParameterExceptionMapper;
 import ca.ulaval.glo2003.errorMappers.MissingParameterExceptionMapper;
@@ -62,7 +63,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     hours = new Hours(OPEN, CLOSE);
 
-    restaurant = new Restaurant(UN_NOM, CAPACITY, hours, null);
+    restaurant = new Restaurant(UN_NOM, CAPACITY, hours, new ReservationDuration(70));
   }
 
   @Test
@@ -155,7 +156,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   void
       givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantReturnBodyWithNotFoundError() {
 
-    restaurantService.addOwner(OWNER_ID);
+    restaurantService.addNewOwner(OWNER_ID);
 
     response = target("/restaurants/" + RESTAURANT_ID).request().header("Owner", OWNER_ID).get();
     Error body = response.readEntity(Error.class);
@@ -170,7 +171,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenOwnerIdAndRestaurantId_whenRestaurantInRepository_thenGetRestaurantReturnBodyRestaurant()
           throws NotFoundException {
 
-    restaurantService.addOwner(OWNER_ID);
+    restaurantService.addNewOwner(OWNER_ID);
     restaurant = restaurantService.addRestaurant(OWNER_ID, restaurant);
 
     response =
@@ -200,7 +201,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenRestaurantAndOwnerId_whenRestaurantsNotExistInRepository_thenGetRestaurantsReturnBodyWithEmptyListOfRestaurants()
           throws Exception {
 
-    restaurantService.addOwner(OWNER_ID);
+    restaurantService.addNewOwner(OWNER_ID);
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();
     List<Restaurant> body = response.readEntity(List.class);
@@ -214,7 +215,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenRestaurantAndOwnerId_whenRestaurantsExistInRepository_thenGetRestaurantsReturnBodyListOfRestaurants()
           throws Exception {
 
-    restaurantService.addOwner(OWNER_ID);
+    restaurantService.addNewOwner(OWNER_ID);
     restaurantService.addRestaurant(OWNER_ID, restaurant);
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();

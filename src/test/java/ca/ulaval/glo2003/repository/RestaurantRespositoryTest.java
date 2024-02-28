@@ -24,7 +24,7 @@ class RestaurantRespositoryTest {
 
   public static final String UN_NOM = "un nom";
   private Hours hours;
-  private final ReservationDuration reservation = new ReservationDuration(60);
+  private ReservationDuration reservationDuration;
 
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
@@ -32,7 +32,8 @@ class RestaurantRespositoryTest {
   @BeforeEach
   void setUp() {
     hours = new Hours(OPEN, CLOSE);
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservation);
+    reservationDuration = new ReservationDuration(70);
+    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     repository = new RestaurantRespository();
   }
 
@@ -56,9 +57,9 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant aRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
 
-    assertThat(unRestaurant).isEqualTo(restaurant);
+    assertThat(aRestaurant).isEqualTo(restaurant);
   }
 
   @Test
@@ -86,5 +87,15 @@ class RestaurantRespositoryTest {
     assertThat(restaurantList).isNotEmpty();
     assertThat(restaurantList.size()).isEqualTo(2);
     assertThat(restaurantList).contains(restaurant);
+  }
+
+  @Test
+  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant() {
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+
+    Restaurant foundRestaurant = repository.getRestaurantById(RESTAURANT_ID);
+
+    assertThat(foundRestaurant).isEqualTo(restaurant);
   }
 }

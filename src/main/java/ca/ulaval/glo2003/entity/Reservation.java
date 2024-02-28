@@ -3,90 +3,90 @@ package ca.ulaval.glo2003.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class Reservation {
-
-  private static final Pattern EMAIL_PATTERN =
-      Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
-  private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?\\d{1,14}$");
   public LocalDate date;
   public LocalTime startTime;
   public LocalTime endTime;
+  public int durationInMin;
   public int groupSize;
-  public String name;
-  public String email;
-  public String phoneNumber;
-  public Hours hours;
-  private UUID id;
+  public Customer customer;
+  private String id;
 
   public Reservation(
-      LocalDate date,
-      Hours hours,
-      LocalTime startTime,
-      LocalTime endTime,
-      int groupSize,
-      String name,
-      String email,
-      String phoneNumber) {
+      LocalDate date, LocalTime startTime, int durationInMin, int groupSize, Customer customer) {
     this.date = date;
-    this.hours = hours;
-    this.startTime = adjustStartTime(startTime);
-    this.endTime = calculateEndTime();
+    this.startTime = addToNext15MinSlot(startTime);
+    setDurationInMin(durationInMin);
     this.groupSize = groupSize;
-    this.name = name;
-    this.email = email;
-    this.phoneNumber = phoneNumber;
-    this.id = UUID.randomUUID();
-
-    validateGroupSize(groupSize);
-    validateName(name);
-    validateEmail(email);
-    validatePhoneNumber(phoneNumber);
-    validateReservationDuration();
+    this.customer = customer;
+    this.id = UUID.randomUUID().toString();
   }
 
-  private LocalTime adjustStartTime(LocalTime startTime) {
-    int minute = startTime.getMinute();
-    if (minute % 15 != 0) {
-      int adjustment = (15 - (minute % 15));
-      return startTime.plusMinutes(adjustment);
+  public LocalTime addToNext15MinSlot(LocalTime time) {
+    int minutes = time.getMinute();
+    int minutesOverThePrevious15MinSlot = minutes % 15;
+    if (minutesOverThePrevious15MinSlot == 0) {
+      return time;
     }
+    return time.plusMinutes(15 - minutesOverThePrevious15MinSlot);
+  }
+
+  public Reservation() {
+    setNewID();
+  }
+
+  public String setNewID() {
+    return this.id = UUID.randomUUID().toString();
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public LocalTime getStartTime() {
     return startTime;
   }
 
-  private LocalTime calculateEndTime() {
-    return this.startTime.plusMinutes(hours.getReservationDuration());
+  public int getGroupSize() {
+    return groupSize;
   }
 
-  private void validateName(String name) {
-    if (name == null || name.trim().isEmpty()) {
-      throw new IllegalArgumentException("Name can't be empty");
-    }
+  public Customer getCustomer() {
+    return customer;
   }
 
-  private void validateEmail(String email) {
-    if (!EMAIL_PATTERN.matcher(email).matches()) {
-      throw new IllegalArgumentException("Invalid Email.");
-    }
+  public LocalTime getEndTime() {
+    return endTime;
   }
 
-  private void validateGroupSize(int groupSize) {
-    if (groupSize < 1) {
-      throw new IllegalArgumentException("Group size might at least include 1 person");
-    }
+  public void setDate(LocalDate date) {
+    this.date = date;
   }
 
-  private void validatePhoneNumber(String phoneNumber) {
-    if (!PHONE_PATTERN.matcher(phoneNumber).matches()) {
-      throw new IllegalArgumentException("Invalid Phone number");
-    }
+  public void setStartTime(LocalTime startTime) {
+    this.startTime = addToNext15MinSlot(startTime);
   }
 
-  private void validateReservationDuration() {
-    if (this.endTime.isAfter(hours.getClose())) {
-      throw new IllegalArgumentException("Reservation end time can't exceeds closing time.");
-    }
+  public void setDurationInMin(int durationInMin) {
+    this.durationInMin = durationInMin;
+    setEndTime();
+  }
+
+  private void setEndTime() {
+    this.endTime = this.startTime.plusMinutes(this.durationInMin);
+  }
+
+  public void setGroupSize(int groupSize) {
+    this.groupSize = groupSize;
+  }
+
+  public void setCustomer(Customer customer) {
+    this.customer = customer;
   }
 
   @Override
@@ -100,11 +100,11 @@ public class Reservation {
         + groupSize
         + ", customer : {"
         + "name: "
-        + name
+        + customer.getName()
         + ", email: "
-        + email
+        + customer.getEmail()
         + ", phoneNumber :"
-        + phoneNumber
+        + customer.getPhoneNumber()
         + '}'
         + '}';
   }
