@@ -4,70 +4,97 @@ import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
 import ca.ulaval.glo2003.repository.*;
-import ca.ulaval.glo2003.util.Validator;
+import ca.ulaval.glo2003.util.ReservationValidator;
+import ca.ulaval.glo2003.util.RestaurantValidator;
 import java.util.List;
 
 public class RestaurantService {
 
   private final RestaurantRespository restaurantRepository;
-  private final Validator validator;
+  private final RestaurantValidator restaurantValidator;
+  private final ReservationValidator reservationValidator;
 
   public RestaurantService() {
     this.restaurantRepository = new RestaurantRespository();
-    this.validator = new Validator();
+    this.restaurantValidator = new RestaurantValidator();
+    this.reservationValidator = new ReservationValidator();
   }
 
-  public void addRestaurant(String noOwner, Restaurant restaurant) {
-    if (!isExistOwnerId(noOwner)) {
-      restaurantRepository.addOwner(noOwner);
-    }
-    restaurantRepository.addRestaurant(noOwner, restaurant);
-  }
-
-  public Restaurant getRestaurantByIdOfOwner(String ownerId, String restaurantId) {
-    return restaurantRepository.getRestaurant(ownerId, restaurantId);
+  public Restaurant getRestaurantByOwnerAndRestaurantId(String ownerId, String restaurantId) {
+    return restaurantRepository.getRestaurantByOwnerAndRestaurantId(ownerId, restaurantId);
   }
 
   public List<Restaurant> getAllRestaurantsOfOwner(String ownerId) {
     return restaurantRepository.getAllRestaurants(ownerId);
   }
 
-  public Owner addOwner(String ownerId) {
-    if (isExistOwnerId(ownerId)) return null;
+  public Owner addNewOwner(String ownerId) {
+    if (isExistingOwnerId(ownerId)) return null;
     return restaurantRepository.addOwner(ownerId);
   }
 
-  public Boolean isExistOwnerId(String Ownerid) {
+  public void addRestaurant(String ownerId, Restaurant restaurant) {
+    if (!isExistingOwnerId(ownerId)) {
+      restaurantRepository.addOwner(ownerId);
+    }
+    restaurantRepository.addRestaurant(ownerId, restaurant);
+  }
+
+  public Boolean isExistingOwnerId(String OwnerId) {
     for (Owner owner : restaurantRepository.getOwner()) {
       String ownerId = owner.getOwnerId();
-      if (Ownerid.equals(ownerId)) {
+      if (OwnerId.equals(ownerId)) {
         return true;
       }
     }
     return false;
   }
 
-  public void isValidOwnerId(String ownerId) throws Exception {
-    if (this.validator.isStringEmpty(ownerId)) {
+  public void verifyOwnerId(String ownerId)
+      throws MissingParameterException, InvalidParameterException {
+    if (this.restaurantValidator.isStringEmpty(ownerId)) {
       throw new MissingParameterException("Missing owner ID.");
     }
-  }
-
-  public void verifyOwnerId(String ownerId) throws Exception {
-
-    isValidOwnerId(ownerId);
-
-    if (!isExistOwnerId(ownerId)) {
+    if (!isExistingOwnerId(ownerId)) {
       throw new InvalidParameterException("Invalid owner ID.");
     }
   }
 
   public void verifyRestaurantParameter(Restaurant restaurant) throws Exception {
 
-    if (this.validator.isRestaurantParameterEmpty(restaurant))
+    if (this.restaurantValidator.isRestaurantParameterEmpty(restaurant))
       throw new MissingParameterException("Missing restaurant parameter.");
 
-    if (!this.validator.isValidRestaurant(restaurant))
+    if (!this.restaurantValidator.isValidRestaurant(restaurant))
       throw new InvalidParameterException("Invalid restaurant parameter.");
+  }
+
+  public Restaurant verifyRestaurantId(String restaurantId)
+      throws MissingParameterException, InvalidParameterException {
+    if (this.reservationValidator.isStringEmpty(restaurantId)) {
+      throw new MissingParameterException("Missing restaurant ID.");
+    }
+    if (invalidRestaurantId(restaurantId)) {
+      throw new InvalidParameterException("Invalid restaurant ID.");
+    }
+    return restaurantRepository.getRestaurantById(restaurantId);
+  }
+
+  public Boolean invalidRestaurantId(String restaurantId) {
+    return restaurantRepository.getRestaurantById(restaurantId) == null;
+  }
+
+  public void verifyEmptyReservationParameter(Reservation reservation)
+      throws MissingParameterException {
+    reservationValidator.isEmptyReservationParameter(reservation);
+  }
+
+  public void verifyValidReservationParameter(Restaurant restaurant, Reservation reservation)
+      throws InvalidParameterException {
+    reservationValidator.validateReservationToRestaurant(reservation, restaurant);
+  }
+
+  public void addReservationToRestaurant(Reservation reservation, Restaurant restaurant) {
+    restaurant.addReservation(reservation);
   }
 }
