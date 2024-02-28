@@ -20,7 +20,10 @@ public class Hours {
     return reservationDuration;
   }
 
-  public Hours(LocalTime now, LocalTime localTime) {}
+  public Hours(LocalTime open, LocalTime close) {
+    this.open = open;
+    this.close = close;
+  }
 
   public LocalTime getOpen() {
     return open;
