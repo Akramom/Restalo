@@ -27,11 +27,12 @@ public class RestaurantResource {
     restaurantService.isValidOwnerId(ownerId);
     restaurantService.verifyRestaurantParameter(restaurantDto);
 
-    Restaurant restaurant = new Restaurant(
-    restaurantDto.getName(),
-    restaurantDto.getCapacity(),
-    restaurantDto.getHours(),
-    restaurantDto.getReservations());
+    Restaurant restaurant =
+        new Restaurant(
+            restaurantDto.getName(),
+            restaurantDto.getCapacity(),
+            restaurantDto.getHours(),
+            restaurantDto.getReservations());
 
     return Response.created(URI.create("http://localhost:8080/restaurants/" + restaurant.getId()))
         .build();
