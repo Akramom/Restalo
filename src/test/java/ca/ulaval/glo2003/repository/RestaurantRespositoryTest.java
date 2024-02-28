@@ -1,10 +1,12 @@
 package ca.ulaval.glo2003.repository;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo2003.entity.Hours;
 import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
+import ca.ulaval.glo2003.exception.NotFoundException;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,9 @@ class RestaurantRespositoryTest {
   private Restaurant restaurant;
   private final String RESTAURANT_ID = "10000";
   private final String OWNER_ID = "00001";
+
+  public static final String NOT_FOUND_MESSAGE = "No restaurant found for the owner.";
+
   public static final String UN_NOM = "un nom";
   private Hours hours;
   private final ReservationDuration reservation = new ReservationDuration(60);
@@ -32,7 +37,8 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository() {
+  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
+      throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -44,7 +50,8 @@ class RestaurantRespositoryTest {
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant() {
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+          throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -55,12 +62,16 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantNotInRepository_ThenReturnNull() {
+  void
+      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+          throws NotFoundException {
     repository.addOwner(OWNER_ID);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    NotFoundException notFoundException =
+        assertThrows(
+            NotFoundException.class, () -> repository.getRestaurant(OWNER_ID, RESTAURANT_ID));
 
-    assertThat(unRestaurant).isEqualTo(null);
+    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
   }
 
   @Test

@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
+import ca.ulaval.glo2003.exception.NotFoundException;
+import ca.ulaval.glo2003.repository.RestaurantRespository;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +18,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class RestaurantServiceTest {
+  public static final String NOT_FOUND_MESSAGE = "No restaurant found for the owner.";
 
   public final String UN_NOM = "un nom";
   private final String RESTAURANT_ID = "10000";
@@ -29,16 +32,19 @@ class RestaurantServiceTest {
 
   private RestaurantService service;
   private Restaurant restaurant;
+  private RestaurantRespository restaurantRespository;
 
   @BeforeEach
   void setUp() {
-    service = new RestaurantService();
+    restaurantRespository = new RestaurantRespository();
+    service = new RestaurantService(restaurantRespository);
     hours = new Hours(OPEN, CLOSE);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservation);
   }
 
   @Test
-  void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository() {
+  void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository()
+      throws NotFoundException {
 
     service.addRestaurant(OWNER_ID, restaurant);
 
@@ -49,12 +55,15 @@ class RestaurantServiceTest {
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerReturnNull() {
+      givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerShouldThrowNotFoundError()
+          throws NotFoundException {
     service.addOwner(OWNER_ID);
 
-    Restaurant unRestaurant = service.getRestaurantByIdOfOwner(OWNER_ID, "autre id");
+    NotFoundException notFoundException =
+        assertThrows(
+            NotFoundException.class, () -> service.getRestaurantByIdOfOwner(OWNER_ID, "autre id"));
 
-    assertThat(unRestaurant).isEqualTo(null);
+    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
   }
 
   @Test
