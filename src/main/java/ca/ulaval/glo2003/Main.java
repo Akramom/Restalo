@@ -1,11 +1,10 @@
 package ca.ulaval.glo2003;
 
-import ca.ulaval.glo2003.errorMappers.InvalidParameterExceptionMapper;
-import ca.ulaval.glo2003.errorMappers.MissingParameterExceptionMapper;
-import ca.ulaval.glo2003.errorMappers.ProcessingExceptionMapper;
-import ca.ulaval.glo2003.errorMappers.RuntimeExceptionMapper;
+import ca.ulaval.glo2003.errorMappers.*;
+import ca.ulaval.glo2003.repository.RestaurantRespository;
 import ca.ulaval.glo2003.resource.HealthResource;
 import ca.ulaval.glo2003.resource.RestaurantResource;
+import ca.ulaval.glo2003.service.RestaurantService;
 import java.net.URI;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -18,12 +17,15 @@ public class Main {
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();
+    RestaurantRespository restaurantRespository = new RestaurantRespository();
+    RestaurantService restaurantService = new RestaurantService(restaurantRespository);
     rc.register(healthCheckResource)
-        .register(new RestaurantResource())
+        .register(new RestaurantResource(restaurantService))
         .register(new RuntimeExceptionMapper())
         .register(new ProcessingExceptionMapper())
         .register(new InvalidParameterExceptionMapper())
-        .register(new MissingParameterExceptionMapper());
+        .register(new MissingParameterExceptionMapper())
+        .register(new NotFoundExceptionMapper());
     return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
   }
 

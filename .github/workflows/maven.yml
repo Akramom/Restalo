@@ -24,9 +24,9 @@ jobs:
       run: mvn clean
     - name: compile
       run: mvn validate compile
-    - name: Test
-      run: mvn test
+    - name: unit tests
+      run: mvn test -Dtest=!resource/*
+    - name: integration tests
+      run: mvn test -Dtest=resource/*
     - name: package
-      run: mvn  package verify
-
- 
+      run: mvn  package verify -DskipTests

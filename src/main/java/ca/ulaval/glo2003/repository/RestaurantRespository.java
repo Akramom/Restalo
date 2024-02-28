@@ -2,6 +2,7 @@ package ca.ulaval.glo2003.repository;
 
 import ca.ulaval.glo2003.entity.Owner;
 import ca.ulaval.glo2003.entity.Restaurant;
+import ca.ulaval.glo2003.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,8 +40,9 @@ public class RestaurantRespository {
     return owner;
   }
 
-  public Restaurant getRestaurantByOwnerAndRestaurantId(String ownerId, String restaurantId) {
-    Restaurant wantedRestaurant =
+  // Methode dans le repository pour retrouver un restaurant par son id
+  public Restaurant getRestaurant(String ownerId, String restaurantId) throws NotFoundException {
+    Restaurant unRestaurant =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
@@ -49,8 +51,8 @@ public class RestaurantRespository {
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
-            .orElse(null);
-    return wantedRestaurant;
+            .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
+    return unRestaurant;
   }
 
   public List<Restaurant> getAllRestaurants(String ownerId) {
@@ -72,9 +74,4 @@ public class RestaurantRespository {
     }
     return null;
   }
-
-  //  public void addReservation(Reservation reservation){
-  //
-  //    this.reservations.add(reservation);
-  //  }
 }

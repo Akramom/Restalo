@@ -10,12 +10,12 @@ class RestaurantTest {
 
   private Restaurant restaurant;
   private Hours hours;
-  private ReservationDuration reservations;
-  private int reservationDuration = 70;
+  private ReservationDuration reservationDuration;
 
   @BeforeEach
   void setUp() {
     hours = new Hours(LocalTime.NOON, LocalTime.MIDNIGHT);
+    reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant("Poulet_Rouge", 100, hours, reservationDuration);
   }
 
@@ -41,7 +41,7 @@ class RestaurantTest {
 
   @Test
   void testGetReservations() {
-    assertEquals(reservationDuration, restaurant.getReservationDuration());
+    assertEquals(reservationDuration, restaurant.getReservation());
   }
 
   @Test
@@ -60,7 +60,7 @@ class RestaurantTest {
     assertNull(defaultRestaurant.getName());
     assertEquals(0, defaultRestaurant.getCapacity());
     assertNull(defaultRestaurant.getHours());
-    assertEquals(0, defaultRestaurant.getReservationDuration());
+    assertNull(defaultRestaurant.getReservation());
     assertNull(defaultRestaurant.getId());
   }
 
@@ -85,8 +85,7 @@ class RestaurantTest {
 
   @Test
   void testSetReservationDuration() {
-    int reservationDuration = 30;
     restaurant.setReservationDuration(reservationDuration);
-    assertEquals(reservationDuration, restaurant.getReservationDuration());
+    assertEquals(reservationDuration, restaurant.getReservation());
   }
 }

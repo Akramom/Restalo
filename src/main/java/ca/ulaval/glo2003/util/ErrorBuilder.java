@@ -6,6 +6,10 @@ import ca.ulaval.glo2003.entity.ErrorType;
 public class ErrorBuilder {
   public ErrorBuilder() {}
 
+  public Error notFoundError(String description) {
+    return new Error(ErrorType.NOT_FOUND, description);
+  }
+
   public Error invalidError(String description) {
     return new Error(ErrorType.INVALID_PARAMETER, description);
   }

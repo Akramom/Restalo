@@ -1,9 +1,12 @@
 package ca.ulaval.glo2003.repository;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo2003.entity.Hours;
+import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
+import ca.ulaval.glo2003.exception.NotFoundException;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +19,12 @@ class RestaurantRespositoryTest {
   private Restaurant restaurant;
   private final String RESTAURANT_ID = "10000";
   private final String OWNER_ID = "00001";
+
+  public static final String NOT_FOUND_MESSAGE = "No restaurant found for the owner.";
+
   public static final String UN_NOM = "un nom";
   private Hours hours;
-  private final int reservationDuration = 70;
+  private ReservationDuration reservationDuration;
 
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
@@ -26,43 +32,47 @@ class RestaurantRespositoryTest {
   @BeforeEach
   void setUp() {
     hours = new Hours(OPEN, CLOSE);
+    reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     repository = new RestaurantRespository();
   }
 
   @Test
-  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddedInRepository() {
+  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
+      throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant =
-        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
+    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
   }
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant() {
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+          throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant aRestaurant =
-        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
+    Restaurant aRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
 
     assertThat(aRestaurant).isEqualTo(restaurant);
   }
 
   @Test
-  void givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantNotInRepository_ThenReturnNull() {
+  void
+      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+          throws NotFoundException {
     repository.addOwner(OWNER_ID);
 
-    Restaurant aRestaurant =
-        repository.getRestaurantByOwnerAndRestaurantId(OWNER_ID, RESTAURANT_ID);
+    NotFoundException notFoundException =
+        assertThrows(
+            NotFoundException.class, () -> repository.getRestaurant(OWNER_ID, RESTAURANT_ID));
 
-    assertThat(aRestaurant).isEqualTo(null);
+    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
   }
 
   @Test
