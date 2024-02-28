@@ -18,7 +18,8 @@ public class Restaurant {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    this.reservationDuration = reservationDuration;
+    if (reservationDuration != null) this.reservationDuration = reservationDuration;
+    else this.reservationDuration = new ReservationDuration(60);
   }
 
   public Restaurant(
@@ -27,7 +28,8 @@ public class Restaurant {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    this.reservationDuration = reservationDuration;
+    if (reservationDuration != null) this.reservationDuration = reservationDuration;
+    else this.reservationDuration = new ReservationDuration(60);
   }
 
   public void generateId() {
