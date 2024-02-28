@@ -29,6 +29,6 @@ jobs:
     - name: integration tests
       run: mvn test -Dtest=resource/*
     - name: package
-      run: mvn  package verify --DskipTests
+      run: mvn  package verify -DskipTests
 
  
