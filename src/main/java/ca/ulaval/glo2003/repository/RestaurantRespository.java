@@ -1,5 +1,8 @@
 package ca.ulaval.glo2003.repository;
 
+import static ca.ulaval.glo2003.util.Constante.RESERVATION_NOT_FOUND;
+import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
+
 import ca.ulaval.glo2003.entity.Owner;
 import ca.ulaval.glo2003.entity.Reservation;
 import ca.ulaval.glo2003.entity.Restaurant;
@@ -12,12 +15,10 @@ public class RestaurantRespository {
 
   private List<Owner> owners;
   private List<Restaurant> restaurants;
-  private List<Reservation> reservations;
 
   public RestaurantRespository() {
     owners = new ArrayList<>();
     restaurants = new ArrayList<>();
-    reservations = new ArrayList<>();
   }
 
   public List<Owner> getOwner() {
@@ -55,7 +56,7 @@ public class RestaurantRespository {
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
-            .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
+            .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
     return unRestaurant;
   }
 
@@ -67,7 +68,7 @@ public class RestaurantRespository {
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
-            .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
+            .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
     return unRestaurant;
   }
 
@@ -89,42 +90,36 @@ public class RestaurantRespository {
         .stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
-        .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."))
+        .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
         .addReservation(reservation);
 
-    return getReservation(reservation.getId());
+    return getReservationByNumber(reservation.getNumber());
   }
 
-  public Reservation getReservation(String reservationId) throws NotFoundException {
+  public Reservation getReservationByNumber(String reservationNumer) throws NotFoundException {
     return owners.stream()
         .flatMap(owner -> owner.getRestaurants().stream())
         .collect(Collectors.toList())
         .stream()
         .flatMap(restaurant -> restaurant.getReservationList().stream())
-        .filter(reservation -> reservation.getId().equals(reservationId))
+        .filter(reservation -> reservation.getNumber().equals(reservationNumer))
         .findFirst()
-        .orElseThrow(() -> new NotFoundException("reservation not found."));
-  }
-  public Reservation getReservationById(String reservationId) throws NotFoundException {
-    for (Reservation reservation : reservations) {
-      if (reservation.getId().equals(reservationId)) {
-        return reservation;
-      }
-    }
-    throw new NotFoundException("Reservation not found");
+        .orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
   }
 
-  public List<Reservation> getReservations() {
-    return reservations;
-  }
+  public Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException {
 
-  public Reservation getReservation(String restaurantId, String reservationId) throws NotFoundException {
-    Restaurant restaurant = getRestaurantById(restaurantId);
-    return getReservations().stream()
-            .filter(reservation -> reservation.getId().equals(reservationId))
+    Restaurant unRestaurant =
+        owners.stream()
+            .flatMap(owner -> owner.getRestaurants().stream())
+            .collect(Collectors.toList())
+            .stream()
+            .filter(
+                restaurant ->
+                    restaurant.getReservationList().stream()
+                        .anyMatch(reservation -> reservation.getNumber().equals(number)))
             .findFirst()
-            .orElseThrow(() -> new NotFoundException("Reservation not found for the restaurant."));
+            .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
+    return unRestaurant;
   }
-
-
 }

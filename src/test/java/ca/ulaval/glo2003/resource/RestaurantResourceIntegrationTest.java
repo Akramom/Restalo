@@ -1,6 +1,7 @@
 package ca.ulaval.glo2003.resource;
 
 import static ca.ulaval.glo2003.entity.ErrorType.*;
+import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -163,7 +164,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
     System.out.println(body);
     assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(NOT_FOUND);
-    assertThat(body.getDescription()).isEqualTo(NOT_FOUND_MESSAGE);
+    assertThat(body.getDescription()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
   @Test

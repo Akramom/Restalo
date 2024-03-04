@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003.resource;
 
+import ca.ulaval.glo2003.Response.Restaurant.RestaurantOwnerResponse;
+import ca.ulaval.glo2003.Response.Restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.entity.Reservation;
 import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
@@ -28,7 +30,6 @@ public class RestaurantResource {
   public Response addRestaurant(@HeaderParam("Owner") String ownerId, Restaurant restaurantDto)
       throws Exception {
     restaurantService.verifyOwnerId(ownerId);
-
     restaurantService.verifyRestaurantParameter(restaurantDto);
     Restaurant restaurant =
         new Restaurant(
@@ -49,7 +50,7 @@ public class RestaurantResource {
 
     restaurantService.verifyOwnerId(ownerId);
 
-    List<Restaurant> restaurants = restaurantService.getAllRestaurantsOfOwner(ownerId);
+    List<RestaurantOwnerResponse> restaurants = restaurantService.getAllRestaurantsOfOwner(ownerId);
 
     return Response.ok(restaurants).build();
   }
@@ -62,9 +63,10 @@ public class RestaurantResource {
 
     restaurantService.verifyOwnerId(ownerId);
 
-    Restaurant restaurant = restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
+    RestaurantResponse restaurantResponse =
+        restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
 
-    return Response.ok(restaurant).build();
+    return Response.ok(restaurantResponse).build();
   }
 
   @POST
@@ -76,46 +78,13 @@ public class RestaurantResource {
 
     restaurantService.verifyExistRestaurant(restaurantId);
     restaurantService.verifyEmptyReservationParameter(reservation);
-    int reservationDuration = restaurantService.getReservationDuration(restaurantId);
+    int reservationDuration = restaurantService.getRestaurantReservationDuration(restaurantId);
     reservation.ajustStartTimeToNext15Min();
     reservation.setEndTime(reservationDuration);
     restaurantService.verifyValidReservationParameter(restaurantId, reservation);
     Reservation reservationAdd = restaurantService.addReservation(reservation, restaurantId);
     return Response.created(
-            URI.create("http://localhost:8080/reservations/" + reservationAdd.getId()))
+            URI.create("http://localhost:8080/reservations/" + reservationAdd.getNumber()))
         .build();
   }
-
-  @GET
-  @Path("/reservations/{reservationId}")
-  @Produces(MediaType.APPLICATION_JSON)
-  public Response getReservation(@PathParam("reservationId") String reservationId) throws Exception {
-
-    Reservation reservation = restaurantService.getReservationById(reservationId);
-    return Response.ok(reservation).build();
-  }
-
-
-//  @Path("/reservations")
-//  public class ReservationResource {
-//
-//    private ReservationService reservationService;
-//
-//    public ReservationResource() {
-//      reservationService = new ReservationService();
-//    }
-//
-//    @GET
-//    @Path("/{number}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getReservation(@PathParam("number") String reservationNumber) {
-//      Reservation reservation = reservationService.getReservation(reservationNumber);
-//
-//      if (reservation == null) {
-//        return Response.status(Response.Status.NOT_FOUND).entity("Reservation not found").build();
-//      }
-//
-//      return Response.ok(reservation).build();
-//    }
-//  }
 }

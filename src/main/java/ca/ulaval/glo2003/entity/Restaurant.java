@@ -98,7 +98,7 @@ public class Restaurant {
         + '\''
         + ", capacity="
         + capacity
-        + ", id='"
+        + ", number='"
         + id
         + '\''
         + ", reservationDuration="

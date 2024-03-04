@@ -9,7 +9,7 @@ public class ReservationAssembler {
 
   public ReservationDto toDto(Reservation reservation) {
     return new ReservationDto(
-        reservation.getId(),
+        reservation.getNumber(),
         reservation.getDate(),
         reservation.getStartTime(),
         reservation.getEndTime(),
@@ -20,7 +20,7 @@ public class ReservationAssembler {
 
   public Reservation fromDto(ReservationDto reservationDto) {
     return new Reservation(
-        reservationDto.id(),
+        reservationDto.number(),
         reservationDto.date(),
         reservationDto.startTime(),
         reservationDto.durationInMin(),
