@@ -85,7 +85,7 @@ class RestaurantTest {
 
   @Test
   void testSetReservationDuration() {
-    restaurant.setReservationDuration(reservationDuration);
+    restaurant.setReservations(reservationDuration);
     assertEquals(reservationDuration, restaurant.getReservation());
   }
 }

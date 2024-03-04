@@ -44,7 +44,7 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant unRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant unRestaurant = repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID);
 
     assertThat(unRestaurant).isEqualTo(restaurant);
   }
@@ -57,7 +57,7 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    Restaurant aRestaurant = repository.getRestaurant(OWNER_ID, RESTAURANT_ID);
+    Restaurant aRestaurant = repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID);
 
     assertThat(aRestaurant).isEqualTo(restaurant);
   }
@@ -70,7 +70,8 @@ class RestaurantRespositoryTest {
 
     NotFoundException notFoundException =
         assertThrows(
-            NotFoundException.class, () -> repository.getRestaurant(OWNER_ID, RESTAURANT_ID));
+            NotFoundException.class,
+            () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID));
 
     assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
   }
@@ -90,7 +91,8 @@ class RestaurantRespositoryTest {
   }
 
   @Test
-  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant() {
+  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
+      throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
