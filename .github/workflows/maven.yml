@@ -19,7 +19,7 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
-       cache-dependency: 'sub-project/pom.xml'
+        cache-dependency: 'sub-project/pom.xml'
 
     - name: clean
       run: mvn clean
