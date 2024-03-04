@@ -2,7 +2,6 @@ package ca.ulaval.glo2003.util;
 
 import ca.ulaval.glo2003.entity.Customer;
 import ca.ulaval.glo2003.entity.Reservation;
-import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
 import java.time.LocalDate;
@@ -47,16 +46,16 @@ public class ReservationValidator {
     return value == null || value.trim().isEmpty();
   }
 
-  public void validateReservationToRestaurant(Reservation reservation, Restaurant restaurant)
-      throws InvalidParameterException {
-    validateReservationTimeForRestaurant(reservation, restaurant);
+  public void validateReservationToRestaurant(
+      Reservation reservation, LocalTime restaurantClosingTime) throws InvalidParameterException {
+    validateReservationTimeForRestaurant(reservation, restaurantClosingTime);
     validateGroupSize(reservation.getGroupSize());
     validateCustomer(reservation.getCustomer());
   }
 
-  public void validateReservationTimeForRestaurant(Reservation reservation, Restaurant restaurant)
-      throws InvalidParameterException {
-    LocalTime closingTime = restaurant.getHours().getClose();
+  public void validateReservationTimeForRestaurant(
+      Reservation reservation, LocalTime restaurantClosingTime) throws InvalidParameterException {
+    LocalTime closingTime = restaurantClosingTime;
 
     LocalTime startTime = reservation.getStartTime();
     LocalTime endTime = reservation.getEndTime();

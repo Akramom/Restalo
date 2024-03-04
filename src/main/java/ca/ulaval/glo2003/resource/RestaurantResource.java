@@ -1,12 +1,10 @@
 package ca.ulaval.glo2003.resource;
 
-import static ca.ulaval.glo2003.entity.ErrorType.INVALID_PARAMETER;
-
-import ca.ulaval.glo2003.entity.Error;
 import ca.ulaval.glo2003.entity.Reservation;
 import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
+import ca.ulaval.glo2003.exception.NotFoundException;
 import ca.ulaval.glo2003.service.RestaurantService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -74,20 +72,17 @@ public class RestaurantResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response createReservation(@PathParam("id") String restaurantId, Reservation reservation)
-      throws MissingParameterException, InvalidParameterException {
-    Restaurant restaurant;
-    try {
-      restaurant = restaurantService.verifyRestaurantId(restaurantId);
-    } catch (InvalidParameterException inexistentRestaurant) {
-      return Response.status(404)
-          .entity(new Error(INVALID_PARAMETER, inexistentRestaurant.getMessage()))
-          .build();
-    }
+      throws MissingParameterException, InvalidParameterException, NotFoundException {
+
+    restaurantService.verifyExistRestaurant(restaurantId);
     restaurantService.verifyEmptyReservationParameter(reservation);
-    reservation.setDurationInMin(restaurant.getReservation().duration());
-    restaurantService.verifyValidReservationParameter(restaurant, reservation);
-    restaurantService.addReservationToRestaurant(reservation, restaurant);
-    return Response.created(URI.create("http://localhost:8080/restaurants/" + reservation.getId()))
+    int reservationDuration = restaurantService.getReservationDuration(restaurantId);
+    reservation.ajustStartTimeToNext15Min();
+    reservation.setEndTime(reservationDuration);
+    restaurantService.verifyValidReservationParameter(restaurantId, reservation);
+    Reservation reservationAdd = restaurantService.addReservation(reservation, restaurantId);
+    return Response.created(
+            URI.create("http://localhost:8080/reservations/" + reservationAdd.getId()))
         .build();
   }
 

@@ -6,6 +6,7 @@ import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RestaurantRespository {
 
@@ -43,14 +44,26 @@ public class RestaurantRespository {
     return owner;
   }
 
-  // Methode dans le repository pour retrouver un restaurant par son id
-  public Restaurant getRestaurant(String ownerId, String restaurantId) throws NotFoundException {
+  public Restaurant getOwnerRestaurantById(String ownerId, String restaurantId)
+      throws NotFoundException {
     Restaurant unRestaurant =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
             .get(0)
             .getRestaurants()
+            .stream()
+            .filter(restaurant -> restaurant.getId().equals(restaurantId))
+            .findFirst()
+            .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
+    return unRestaurant;
+  }
+
+  public Restaurant getRestaurantById(String restaurantId) throws NotFoundException {
+    Restaurant unRestaurant =
+        owners.stream()
+            .flatMap(owner -> owner.getRestaurants().stream())
+            .collect(Collectors.toList())
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
@@ -68,14 +81,29 @@ public class RestaurantRespository {
     return ownerRestaurants;
   }
 
-  public Restaurant getRestaurantById(String restaurantId) {
-    for (Restaurant restaurant : restaurants) {
-      String id = restaurant.getId();
-      if (id.equals(restaurantId)) {
-        return restaurant;
-      }
-    }
-    return null;
+  public Reservation addReservation(Reservation reservation, String restaurantId)
+      throws NotFoundException {
+    owners.stream()
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .collect(Collectors.toList())
+        .stream()
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."))
+        .addReservation(reservation);
+
+    return getReservation(reservation.getId());
+  }
+
+  public Reservation getReservation(String reservationId) throws NotFoundException {
+    return owners.stream()
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .collect(Collectors.toList())
+        .stream()
+        .flatMap(restaurant -> restaurant.getReservationList().stream())
+        .filter(reservation -> reservation.getId().equals(reservationId))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException("reservation not found."));
   }
   public Reservation getReservationById(String reservationId) throws NotFoundException {
     for (Reservation reservation : reservations) {
