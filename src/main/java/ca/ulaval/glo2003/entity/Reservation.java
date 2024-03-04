@@ -1,26 +1,40 @@
 package ca.ulaval.glo2003.entity;
 
+import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.UUID;
 
 public class Reservation {
-  public LocalDate date;
-  public LocalTime startTime;
-  public LocalTime endTime;
-  public int durationInMin;
-  public int groupSize;
-  public Customer customer;
+  private LocalDate date;
+  private LocalTime startTime;
+  private LocalTime endTime;
+  private int groupSize;
+  private Customer customer;
   private String id;
 
   public Reservation(
       LocalDate date, LocalTime startTime, int durationInMin, int groupSize, Customer customer) {
     this.date = date;
     this.startTime = addToNext15MinSlot(startTime);
-    setDurationInMin(durationInMin);
+    this.setEndTime(durationInMin);
     this.groupSize = groupSize;
     this.customer = customer;
-    this.id = UUID.randomUUID().toString();
+    this.id = Util.generateId();
+  }
+
+  public Reservation(
+      String id,
+      LocalDate date,
+      LocalTime startTime,
+      int durationInMin,
+      int groupSize,
+      Customer customer) {
+    this.date = date;
+    this.startTime = addToNext15MinSlot(startTime);
+    this.setEndTime(durationInMin);
+    this.groupSize = groupSize;
+    this.customer = customer;
+    this.id = id;
   }
 
   public LocalTime addToNext15MinSlot(LocalTime time) {
@@ -32,12 +46,16 @@ public class Reservation {
     return time.plusMinutes(15 - minutesOverThePrevious15MinSlot);
   }
 
+  public void ajustStartTimeToNext15Min() {
+    this.startTime = addToNext15MinSlot(startTime);
+  }
+
   public Reservation() {
     setNewID();
   }
 
   public String setNewID() {
-    return this.id = UUID.randomUUID().toString();
+    return this.id = Util.generateId();
   }
 
   public LocalDate getDate() {
@@ -69,16 +87,11 @@ public class Reservation {
   }
 
   public void setStartTime(LocalTime startTime) {
-    this.startTime = addToNext15MinSlot(startTime);
+    this.startTime = startTime;
   }
 
-  public void setDurationInMin(int durationInMin) {
-    this.durationInMin = durationInMin;
-    setEndTime();
-  }
-
-  private void setEndTime() {
-    this.endTime = this.startTime.plusMinutes(this.durationInMin);
+  public void setEndTime(LocalTime endTime) {
+    this.endTime = endTime;
   }
 
   public void setGroupSize(int groupSize) {
@@ -89,6 +102,15 @@ public class Reservation {
     this.customer = customer;
   }
 
+  public void setId(String id) {
+    if (id != null) setNewID();
+    else this.id = id;
+  }
+
+  public void setEndTime(int durationInMin) {
+    this.endTime = this.startTime.plusMinutes(durationInMin);
+  }
+
   @Override
   public String toString() {
     return "{ "
@@ -96,6 +118,8 @@ public class Reservation {
         + date
         + ", startTime :"
         + startTime
+        + ", endTime :"
+        + endTime
         + ", groupSize :"
         + groupSize
         + ", customer : {"

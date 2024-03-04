@@ -33,14 +33,14 @@ public class RestaurantService {
   public Restaurant getRestaurantByIdOfOwner(String ownerId, String restaurantId)
       throws NotFoundException {
 
-    Restaurant restaurant = restaurantRepository.getRestaurant(ownerId, restaurantId);
+    Restaurant restaurant = restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
 
     return restaurant;
   }
 
   public Restaurant getRestaurantByOwnerAndRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
-    return restaurantRepository.getRestaurant(ownerId, restaurantId);
+    return restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
   }
 
   public List<Restaurant> getAllRestaurantsOfOwner(String ownerId) {
@@ -84,19 +84,12 @@ public class RestaurantService {
     return true;
   }
 
-  public Restaurant verifyRestaurantId(String restaurantId)
-      throws MissingParameterException, InvalidParameterException {
-    if (this.reservationValidator.isStringEmpty(restaurantId)) {
+  public Restaurant verifyExistRestaurant(String restaurantId)
+      throws MissingParameterException, NotFoundException {
+    if (this.restaurantValidator.isStringEmpty(restaurantId)) {
       throw new MissingParameterException("Missing restaurant ID.");
     }
-    if (invalidRestaurantId(restaurantId)) {
-      throw new InvalidParameterException("Invalid restaurant ID.");
-    }
     return restaurantRepository.getRestaurantById(restaurantId);
-  }
-
-  public Boolean invalidRestaurantId(String restaurantId) {
-    return restaurantRepository.getRestaurantById(restaurantId) == null;
   }
 
   public void verifyEmptyReservationParameter(Reservation reservation)
@@ -104,12 +97,20 @@ public class RestaurantService {
     reservationValidator.isEmptyReservationParameter(reservation);
   }
 
-  public void verifyValidReservationParameter(Restaurant restaurant, Reservation reservation)
-      throws InvalidParameterException {
-    reservationValidator.validateReservationToRestaurant(reservation, restaurant);
+  public void verifyValidReservationParameter(String restaurantId, Reservation reservation)
+      throws InvalidParameterException, NotFoundException {
+    Restaurant restaurant = restaurantRepository.getRestaurantById(restaurantId);
+    reservationValidator.validateReservationToRestaurant(
+        reservation, restaurant.getHours().getClose());
   }
 
-  public void addReservationToRestaurant(Reservation reservation, Restaurant restaurant) {
-    restaurant.addReservation(reservation);
+  public Reservation addReservation(Reservation reservation, String restaurantId)
+      throws NotFoundException {
+    return restaurantRepository.addReservation(reservation, restaurantId);
+  }
+
+  public int getReservationDuration(String restaurantId) throws NotFoundException {
+
+    return restaurantRepository.getRestaurantById(restaurantId).getReservation().duration();
   }
 }

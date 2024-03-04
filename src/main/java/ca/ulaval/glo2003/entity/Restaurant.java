@@ -1,5 +1,8 @@
 package ca.ulaval.glo2003.entity;
 
+import ca.ulaval.glo2003.util.Util;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Restaurant {
@@ -7,17 +10,17 @@ public class Restaurant {
   private String name;
   private int capacity;
   private String id;
-
   private ReservationDuration reservationDuration;
-
   private Hours hours;
+  private List<Reservation> reservationList;
 
   public Restaurant(
       String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
-    this.id = UUID.randomUUID().toString().substring(0, 8);
+    this.id = Util.generateId();
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
+    this.reservationList = new ArrayList<>();
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
   }
@@ -28,6 +31,7 @@ public class Restaurant {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
+    this.reservationList = new ArrayList<>();
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
   }
@@ -70,7 +74,7 @@ public class Restaurant {
     this.id = id;
   }
 
-  public void setReservationDuration(ReservationDuration reservationDuration) {
+  public void setReservations(ReservationDuration reservationDuration) {
     this.reservationDuration = reservationDuration;
   }
 
@@ -78,7 +82,13 @@ public class Restaurant {
     this.hours = hours;
   }
 
-  public void addReservation(Reservation reservation) {}
+  public void addReservation(Reservation reservation) {
+    reservationList.add(reservation);
+  }
+
+  public List<Reservation> getReservationList() {
+    return reservationList;
+  }
 
   @Override
   public String toString() {
@@ -88,11 +98,15 @@ public class Restaurant {
         + '\''
         + ", capacity="
         + capacity
-        + ", id="
+        + ", id='"
         + id
+        + '\''
+        + ", reservationDuration="
+        + reservationDuration
         + ", hours="
         + hours
-        + '}'
-        + "duration:";
+        + ", reservations="
+        + reservationList
+        + '}';
   }
 }
