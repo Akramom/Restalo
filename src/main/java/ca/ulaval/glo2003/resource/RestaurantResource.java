@@ -90,4 +90,37 @@ public class RestaurantResource {
     return Response.created(URI.create("http://localhost:8080/restaurants/" + reservation.getId()))
         .build();
   }
+
+  @GET
+  @Path("/reservations/{reservationId}")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getReservation(@PathParam("reservationId") String reservationId) throws Exception {
+
+    Reservation reservation = restaurantService.getReservationById(reservationId);
+    return Response.ok(reservation).build();
+  }
+
+
+//  @Path("/reservations")
+//  public class ReservationResource {
+//
+//    private ReservationService reservationService;
+//
+//    public ReservationResource() {
+//      reservationService = new ReservationService();
+//    }
+//
+//    @GET
+//    @Path("/{number}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getReservation(@PathParam("number") String reservationNumber) {
+//      Reservation reservation = reservationService.getReservation(reservationNumber);
+//
+//      if (reservation == null) {
+//        return Response.status(Response.Status.NOT_FOUND).entity("Reservation not found").build();
+//      }
+//
+//      return Response.ok(reservation).build();
+//    }
+//  }
 }

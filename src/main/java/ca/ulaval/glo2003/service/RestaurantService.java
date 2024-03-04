@@ -112,4 +112,8 @@ public class RestaurantService {
   public void addReservationToRestaurant(Reservation reservation, Restaurant restaurant) {
     restaurant.addReservation(reservation);
   }
+
+  public Reservation getReservationById(String reservationId) throws NotFoundException {
+    return restaurantRepository.getReservationById(reservationId);
+  }
 }
