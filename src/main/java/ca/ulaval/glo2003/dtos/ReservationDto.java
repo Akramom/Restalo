@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record ReservationDto(
-    String id,
+    String number,
     LocalDate date,
     LocalTime startTime,
     LocalTime endTime,

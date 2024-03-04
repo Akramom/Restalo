@@ -1,8 +1,10 @@
 package ca.ulaval.glo2003.service;
 
+import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.ulaval.glo2003.Response.Restaurant.RestaurantOwnerResponse;
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
@@ -62,9 +64,10 @@ class RestaurantServiceTest {
 
     NotFoundException notFoundException =
         assertThrows(
-            NotFoundException.class, () -> service.getRestaurantByIdOfOwner(OWNER_ID, "autre id"));
+            NotFoundException.class,
+            () -> service.getRestaurantByIdOfOwner(OWNER_ID, "autre number"));
 
-    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
+    assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
   @Test
@@ -72,11 +75,12 @@ class RestaurantServiceTest {
     service.addRestaurant(OWNER_ID, restaurant);
     service.addRestaurant(OWNER_ID, restaurant);
 
-    List<Restaurant> restaurantList = service.getAllRestaurantsOfOwner(OWNER_ID);
+    List<RestaurantOwnerResponse> restaurantList = service.getAllRestaurantsOfOwner(OWNER_ID);
 
     assertThat(restaurantList).isNotEmpty();
     assertThat(restaurantList.size()).isEqualTo(2);
-    assertThat(restaurantList).contains(restaurant);
+    assertThat(restaurantList.get(0).getId()).isEqualTo(restaurant.getId());
+    assertThat(restaurantList.get(0).getName()).isEqualTo(restaurant.getName());
   }
 
   @Test

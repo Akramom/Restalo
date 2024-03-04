@@ -1,5 +1,6 @@
 package ca.ulaval.glo2003.repository;
 
+import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -73,7 +74,7 @@ class RestaurantRespositoryTest {
             NotFoundException.class,
             () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID));
 
-    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
+    assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
   @Test
