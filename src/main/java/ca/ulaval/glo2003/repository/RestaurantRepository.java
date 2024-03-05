@@ -3,10 +3,12 @@ package ca.ulaval.glo2003.repository;
 import static ca.ulaval.glo2003.util.Constante.RESERVATION_NOT_FOUND;
 import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 
-import ca.ulaval.glo2003.entity.Owner;
-import ca.ulaval.glo2003.entity.Reservation;
-import ca.ulaval.glo2003.entity.Restaurant;
-import ca.ulaval.glo2003.exception.NotFoundException;
+import ca.ulaval.glo2003.domain.entity.Owner;
+import ca.ulaval.glo2003.domain.entity.Reservation;
+import ca.ulaval.glo2003.domain.entity.Restaurant;
+import ca.ulaval.glo2003.domain.entity.Search;
+import ca.ulaval.glo2003.domain.exception.NotFoundException;
+import ca.ulaval.glo2003.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,11 +16,9 @@ import java.util.stream.Collectors;
 public class RestaurantRepository {
 
   private List<Owner> owners;
-  private List<Restaurant> restaurants;
 
   public RestaurantRepository() {
     owners = new ArrayList<>();
-    restaurants = new ArrayList<>();
   }
 
   public List<Owner> getOwner() {
@@ -27,20 +27,21 @@ public class RestaurantRepository {
 
   public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
 
+    if (restaurant.getId() == null) {
+      restaurant.setId(Util.generateId());
+    }
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
-        .get(0)
+        .getFirst()
         .getRestaurants()
         .add(restaurant);
-    restaurants.add(restaurant);
 
     return restaurant;
   }
 
   public Owner addOwner(String ownerId) {
-    Owner owner = new Owner("Doe", "John", "418-222-2222");
-    owner.setOwnerId(ownerId);
+    Owner owner = new Owner(ownerId, "Doe", "John", "418-222-2222");
     owners.add(owner);
     return owner;
   }
@@ -51,7 +52,7 @@ public class RestaurantRepository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants()
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
@@ -62,10 +63,7 @@ public class RestaurantRepository {
 
   public Restaurant getRestaurantById(String restaurantId) throws NotFoundException {
     Restaurant unRestaurant =
-        owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .collect(Collectors.toList())
-            .stream()
+        owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
             .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
@@ -77,13 +75,15 @@ public class RestaurantRepository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants();
     return ownerRestaurants;
   }
 
   public Reservation addReservation(Reservation reservation, String restaurantId)
       throws NotFoundException {
+
+    if (reservation.getNumber() == null) reservation.setNumber(Util.generateId());
     owners.stream()
         .flatMap(owner -> owner.getRestaurants().stream())
         .collect(Collectors.toList())
@@ -121,5 +121,26 @@ public class RestaurantRepository {
             .findFirst()
             .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
     return unRestaurant;
+  }
+
+  public List<Restaurant> search(Search search) {
+    List<Restaurant> allRestaurant =
+        owners.stream()
+            .flatMap(owner -> owner.getRestaurants().stream())
+            .collect(Collectors.toList());
+
+    if (Util.isSearchDtoNull(search)) {
+      return allRestaurant;
+    }
+
+    if (Util.isSearchDtoOpenedNull(search)) {
+      return Util.searchByName(allRestaurant, search.getName());
+    }
+
+    if (Util.isSearchDtoNameNull(search)) {
+      return Util.searchByOpenedHour(allRestaurant, search.getOpened());
+    }
+
+    return Util.search(allRestaurant, search);
   }
 }

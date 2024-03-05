@@ -1,20 +1,24 @@
 package ca.ulaval.glo2003.resource;
 
-import static ca.ulaval.glo2003.entity.ErrorType.*;
+import static ca.ulaval.glo2003.domain.error.ErrorType.*;
 import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.ulaval.glo2003.entity.Error;
-import ca.ulaval.glo2003.entity.Hours;
-import ca.ulaval.glo2003.entity.ReservationDuration;
-import ca.ulaval.glo2003.entity.Restaurant;
-import ca.ulaval.glo2003.errorMappers.InvalidParameterExceptionMapper;
-import ca.ulaval.glo2003.errorMappers.MissingParameterExceptionMapper;
-import ca.ulaval.glo2003.errorMappers.NotFoundExceptionMapper;
-import ca.ulaval.glo2003.exception.NotFoundException;
+import ca.ulaval.glo2003.api.resource.RestaurantResource;
+import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
+import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
+import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.application.service.RestaurantService;
+import ca.ulaval.glo2003.domain.entity.Hours;
+import ca.ulaval.glo2003.domain.entity.ReservationDuration;
+import ca.ulaval.glo2003.domain.entity.Restaurant;
+import ca.ulaval.glo2003.domain.error.Error;
+import ca.ulaval.glo2003.domain.exception.NotFoundException;
+import ca.ulaval.glo2003.domain.exception.exceptionMapper.InvalidParameterExceptionMapper;
+import ca.ulaval.glo2003.domain.exception.exceptionMapper.MissingParameterExceptionMapper;
+import ca.ulaval.glo2003.domain.exception.exceptionMapper.NotFoundExceptionMapper;
 import ca.ulaval.glo2003.repository.RestaurantRepository;
-import ca.ulaval.glo2003.service.RestaurantService;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Response;
@@ -42,7 +46,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   private Hours hours;
   private RestaurantService restaurantService;
 
-  private RestaurantRepository restaurantRespository;
+  private RestaurantRespository restaurantRespository;
   ;
   private Restaurant restaurant;
   private Response response;
@@ -51,6 +55,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   protected Application configure() {
     restaurantRespository = new RestaurantRepository();
     restaurantService = new RestaurantService(restaurantRespository);
+    restaurantAssembler = new RestaurantAssembler();
     return new ResourceConfig()
         .register(new RestaurantResource(restaurantService))
         .register(MissingParameterExceptionMapper.class)
@@ -65,6 +70,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
     hours = new Hours(OPEN, CLOSE);
 
     restaurant = new Restaurant(UN_NOM, CAPACITY, hours, new ReservationDuration(70));
+    restaurantDto = restaurantAssembler.toDto(restaurant);
   }
 
   @Test
@@ -173,10 +179,14 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
           throws NotFoundException {
 
     restaurantService.addNewOwner(OWNER_ID);
-    restaurant = restaurantService.addRestaurant(OWNER_ID, restaurant);
+    RestaurantResponse restaurantResponse =
+        restaurantService.addRestaurant(OWNER_ID, restaurantDto);
 
     response =
-        target("/restaurants/" + restaurant.getId()).request().header("Owner", OWNER_ID).get();
+        target("/restaurants/" + restaurantResponse.getId())
+            .request()
+            .header("Owner", OWNER_ID)
+            .get();
     Restaurant body = response.readEntity(Restaurant.class);
     System.out.println(body);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
@@ -217,7 +227,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
           throws Exception {
 
     restaurantService.addNewOwner(OWNER_ID);
-    restaurantService.addRestaurant(OWNER_ID, restaurant);
+    restaurantService.addRestaurant(OWNER_ID, restaurantDto);
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();
     List<Restaurant> body = response.readEntity(List.class);
