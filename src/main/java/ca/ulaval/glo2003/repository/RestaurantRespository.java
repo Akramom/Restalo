@@ -6,7 +6,6 @@ import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class RestaurantRespository {
 
@@ -31,7 +30,6 @@ public class RestaurantRespository {
         .getRestaurants()
         .add(restaurant);
     restaurants.add(restaurant);
-
   }
 
   public Owner addOwner(String ownerId) {
@@ -58,10 +56,7 @@ public class RestaurantRespository {
 
   public Restaurant getRestaurantById(String restaurantId) throws NotFoundException {
     Restaurant unRestaurant =
-        owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .toList()
-            .stream()
+        owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
             .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."));
@@ -80,10 +75,7 @@ public class RestaurantRespository {
 
   public Reservation addReservation(Reservation reservation, String restaurantId)
       throws NotFoundException {
-    owners.stream()
-        .flatMap(owner -> owner.getRestaurants().stream())
-        .toList()
-        .stream()
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
         .orElseThrow(() -> new NotFoundException("No restaurant found for the owner."))
@@ -93,10 +85,7 @@ public class RestaurantRespository {
   }
 
   public Reservation getReservation(String reservationId) throws NotFoundException {
-    return owners.stream()
-        .flatMap(owner -> owner.getRestaurants().stream())
-        .toList()
-        .stream()
+    return owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .flatMap(restaurant -> restaurant.getReservationList().stream())
         .filter(reservation -> reservation.getId().equals(reservationId))
         .findFirst()
