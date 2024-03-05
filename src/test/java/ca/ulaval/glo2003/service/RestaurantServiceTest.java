@@ -35,12 +35,12 @@ class RestaurantServiceTest {
 
   private RestaurantService service;
   private Restaurant restaurant;
-  private RestaurantRepository restaurantRespository;
+  private RestaurantRepository restaurantRepository;
 
   @BeforeEach
   void setUp() {
-    restaurantRespository = new RestaurantRepository();
-    service = new RestaurantService(restaurantRespository);
+    restaurantRepository = new RestaurantRepository();
+    service = new RestaurantService(restaurantRepository);
     hours = new Hours(OPEN, CLOSE);
     reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
@@ -186,13 +186,12 @@ class RestaurantServiceTest {
     String reservationNumber = "res123";
     Reservation expectedReservation = new Reservation();
     expectedReservation.setNumber(reservationNumber);
-    restaurantRespository.addOwner(OWNER_ID);
-    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
-    restaurant.addReservation(expectedReservation);
+    restaurantRepository.addOwner(OWNER_ID);
+    restaurantRepository.addRestaurant(OWNER_ID, restaurant);
+    restaurantRepository.addReservation(expectedReservation, restaurant.getId());
 
     ReservationResponse actualResponse = service.getReservationByNumber(reservationNumber);
 
-    assertThat(actualResponse).isNotNull();
     assertThat(actualResponse.getNumber()).isEqualTo(reservationNumber);
   }
 
@@ -200,9 +199,11 @@ class RestaurantServiceTest {
   void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
 
     String nonExistingReservationNumber = "nonExisting";
-    restaurantRespository.addOwner(OWNER_ID);
-    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
+    restaurantRepository.addOwner(OWNER_ID);
+    restaurantRepository.addRestaurant(OWNER_ID, restaurant);
 
-    assertThrows(NotFoundException.class, () -> service.getReservationByNumber(nonExistingReservationNumber));
+    assertThrows(
+        NotFoundException.class,
+        () -> service.getReservationByNumber(nonExistingReservationNumber));
   }
 }

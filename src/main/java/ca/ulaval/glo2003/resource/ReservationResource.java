@@ -7,11 +7,11 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 @Path("/reservations")
-public class ReservationRessource {
+public class ReservationResource {
 
   private RestaurantService restaurantService;
 
-  public ReservationRessource(RestaurantService restaurantService) {
+  public ReservationResource(RestaurantService restaurantService) {
     this.restaurantService = restaurantService;
   }
 

@@ -103,7 +103,7 @@ public class Reservation {
   }
 
   public void setNumber(String number) {
-    if (number != null) setNewID();
+    if (number == null) setNewID();
     else this.number = number;
   }
 

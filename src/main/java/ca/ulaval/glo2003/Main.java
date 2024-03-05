@@ -3,7 +3,7 @@ package ca.ulaval.glo2003;
 import ca.ulaval.glo2003.errorMappers.*;
 import ca.ulaval.glo2003.repository.RestaurantRepository;
 import ca.ulaval.glo2003.resource.HealthResource;
-import ca.ulaval.glo2003.resource.ReservationRessource;
+import ca.ulaval.glo2003.resource.ReservationResource;
 import ca.ulaval.glo2003.resource.RestaurantResource;
 import ca.ulaval.glo2003.service.RestaurantService;
 import java.net.URI;
@@ -22,7 +22,7 @@ public class Main {
     RestaurantService restaurantService = new RestaurantService(restaurantRespository);
     rc.register(healthCheckResource)
         .register(new RestaurantResource(restaurantService))
-        .register(new ReservationRessource(restaurantService))
+        .register(new ReservationResource(restaurantService))
         .register(new RuntimeExceptionMapper())
         .register(new ProcessingExceptionMapper())
         .register(new InvalidParameterExceptionMapper())
