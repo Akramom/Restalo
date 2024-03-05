@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.NotFoundException;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -42,8 +41,9 @@ class RestaurantRespositoryTest {
     reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     repository = new RestaurantRespository();
-    reservation = new Reservation(RESERVATION_ID, LocalDate.now(), LocalTime.of(12,0), 60, 2, new Customer());
-
+    reservation =
+        new Reservation(
+            RESERVATION_ID, LocalDate.now(), LocalTime.of(12, 0), 60, 2, new Customer());
   }
 
   @Test
@@ -112,7 +112,7 @@ class RestaurantRespositoryTest {
 
   @Test
   void givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
-          throws NotFoundException {
+      throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -128,11 +128,11 @@ class RestaurantRespositoryTest {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    NotFoundException notFoundException = assertThrows(
+    NotFoundException notFoundException =
+        assertThrows(
             NotFoundException.class,
             () -> repository.addReservation(reservation, invalidRestaurantId));
 
     assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
   }
-
 }
