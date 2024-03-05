@@ -9,6 +9,7 @@ import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RestaurantRespository {
 
@@ -86,7 +87,6 @@ public class RestaurantRespository {
 
     return getReservationByNumber(reservation.getNumber());
   }
-
 
   public Reservation getReservationByNumber(String reservationNumer) throws NotFoundException {
     return owners.stream()
