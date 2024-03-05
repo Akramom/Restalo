@@ -15,7 +15,6 @@ public class Owner {
   public Owner(String lastname, String firstname, String phoneNumer) {
 
     this.ownerId = UUID.randomUUID().toString().substring(0, 8);
-    ;
     this.lastname = lastname;
     this.firstname = firstname;
     this.phoneNumer = phoneNumer;
@@ -28,6 +27,14 @@ public class Owner {
     this.lastname = lastname;
     this.firstname = firstname;
     this.phoneNumer = phoneNumer;
+    this.restaurants = new ArrayList<>();
+  }
+
+  public Owner(String ownerId) {
+    this.ownerId = ownerId;
+    this.lastname = "Doe";
+    this.firstname = "John";
+    this.phoneNumer = "418-222-2222";
     this.restaurants = new ArrayList<>();
   }
 

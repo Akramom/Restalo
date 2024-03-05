@@ -33,13 +33,13 @@ class RestaurantValidatorTest {
 
   @ParameterizedTest
   @ValueSource(ints = {1, 6, 8})
-  void givenCapacityBiggerThanZezo_validCapacityShoulReturnTrue(int capacity) {
+  void givenCapacityGreaterThanZero_validCapacityShouldReturnTrue(int capacity) {
     assertTrue(validator.isValidCapacity(capacity));
   }
 
   @ParameterizedTest
   @ValueSource(ints = {0, -1, -2})
-  void givenCapacityLowerThanOne_validCapacityShoulReturnfalse(int capacity) {
+  void givenCapacityLesserThanOne_validCapacityShouldReturnfalse(int capacity) {
     assertFalse(validator.isValidCapacity(capacity));
   }
 
@@ -51,10 +51,10 @@ class RestaurantValidatorTest {
 
   @Test
   void
-      givenAnHours_WhenOpenIslessThanCloseOfAtLeastOneHour_ThenValidOpeningHoursShouldReturnFalse() {
-
+      givenAnHours_WhenOpenIsLessThanCloseOfAtLeastOneHour_ThenValidOpeningHoursShouldReturnFalse() {
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
+
     assertFalse(validator.isValidOpeningHours(hours));
   }
 
@@ -72,14 +72,12 @@ class RestaurantValidatorTest {
     hours.setOpen(CLOSE);
 
     when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getCapacity()).thenReturn(2);
 
     assertFalse(validator.isValidRestaurant(restaurant));
   }
 
   @Test
   void givenARestaurant_WhenCapacityIsNotValid_thenValidRestaurantShouldReturnFalse() {
-
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(0);
 
@@ -87,8 +85,7 @@ class RestaurantValidatorTest {
   }
 
   @Test
-  void givenARestaurant_WhenCapacityAnHoursIsValid_thenValidRestaurantShouldReturnTrue() {
-
+  void givenARestaurant_WhenCapacityAndHoursAreValid_thenValidRestaurantShouldReturnTrue() {
     when(restaurant.getHours()).thenReturn(hours);
     when(restaurant.getCapacity()).thenReturn(2);
 

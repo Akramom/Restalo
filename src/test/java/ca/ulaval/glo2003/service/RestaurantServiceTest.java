@@ -84,12 +84,22 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOwnerId_whenOwnerExists_ThenAddOwnerReturnNull() {
+  void givenOwnerId_whenOwnerAlreadyExists_ThenAddOwnerReturnNull() {
     service.addNewOwner(OWNER_ID);
 
     Owner owner = service.addNewOwner(OWNER_ID);
 
     assertThat(owner).isNull();
+  }
+
+  @Test
+  void givenOwnerId_whenOwnerDoesNotExists_ThenAddOwnerReturnsNewOwnerInstance() {
+    Owner expectedOwner = new Owner(OWNER_ID);
+
+    Owner owner = service.addNewOwner(OWNER_ID);
+
+    assertThat(owner.getOwnerId()).isEqualTo(expectedOwner.getOwnerId());
+    assertThat(owner.getRestaurants()).isEqualTo(expectedOwner.getRestaurants());
   }
 
   @Test
