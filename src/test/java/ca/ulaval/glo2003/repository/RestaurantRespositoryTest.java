@@ -134,6 +134,6 @@ class RestaurantRespositoryTest {
             NotFoundException.class,
             () -> repository.addReservation(reservation, invalidRestaurantId));
 
-    assertThat(notFoundException.getMessage()).isEqualTo(NOT_FOUND_MESSAGE);
+    assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 }
