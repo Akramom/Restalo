@@ -64,7 +64,7 @@ public class ReservationValidator {
     validateEndingTime(endTime.compareTo(closingTime));
   }
 
-  private void validateStartingTime(int startCompareToCloseTime) throws InvalidParameterException {
+  public void validateStartingTime(int startCompareToCloseTime) throws InvalidParameterException {
     if (startCompareToCloseTime >= 0) {
       throw new InvalidParameterException(
           "The start of the reservation can not be during or after the restaurant's closing time");
