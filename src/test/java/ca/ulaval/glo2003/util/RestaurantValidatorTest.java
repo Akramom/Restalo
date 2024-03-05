@@ -3,8 +3,11 @@ package ca.ulaval.glo2003.util;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo2003.entity.Hours;
-import ca.ulaval.glo2003.entity.Restaurant;
+import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
+import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.application.validator.RestaurantValidator;
+import ca.ulaval.glo2003.domain.entity.Hours;
+import ca.ulaval.glo2003.domain.entity.Restaurant;
 import java.time.LocalTime;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.*;
@@ -22,6 +25,8 @@ class RestaurantValidatorTest {
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
   @Mock private Restaurant restaurant;
   private RestaurantValidator validator;
+  private RestaurantAssembler restaurantAssembler;
+  @Mock private RestaurantDto restaurantDto;
   private Hours hours;
 
   @BeforeEach
@@ -29,6 +34,7 @@ class RestaurantValidatorTest {
     MockitoAnnotations.initMocks(this);
     validator = new RestaurantValidator();
     hours = new Hours(OPEN, CLOSE);
+    restaurantAssembler = new RestaurantAssembler();
   }
 
   @ParameterizedTest
@@ -71,25 +77,28 @@ class RestaurantValidatorTest {
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
 
-    when(restaurant.getHours()).thenReturn(hours);
+    when(restaurantDto.hours()).thenReturn(hours);
+    when(restaurantDto.capacity()).thenReturn(2);
 
-    assertFalse(validator.isValidRestaurant(restaurant));
+    assertFalse(validator.isValidRestaurant(restaurantDto));
   }
 
   @Test
   void givenARestaurant_WhenCapacityIsNotValid_thenValidRestaurantShouldReturnFalse() {
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getCapacity()).thenReturn(0);
 
-    assertFalse(validator.isValidRestaurant(restaurant));
+    when(restaurantDto.hours()).thenReturn(hours);
+    when(restaurantDto.capacity()).thenReturn(0);
+
+    assertFalse(validator.isValidRestaurant(restaurantDto));
   }
 
   @Test
-  void givenARestaurant_WhenCapacityAndHoursAreValid_thenValidRestaurantShouldReturnTrue() {
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getCapacity()).thenReturn(2);
+  void givenARestaurant_WhenCapacityAnHoursIsValid_thenValidRestaurantShouldReturnTrue() {
 
-    assertTrue(validator.isValidRestaurant(restaurant));
+    when(restaurantDto.hours()).thenReturn(hours);
+    when(restaurantDto.capacity()).thenReturn(2);
+
+    assertTrue(validator.isValidRestaurant(restaurantDto));
   }
 
   @ParameterizedTest
@@ -99,11 +108,11 @@ class RestaurantValidatorTest {
   void givenARestaurant_WhenNameIsNullOrEmpty_thenEmptyRestaurantParameterShouldReturnTrue(
       String name) {
 
-    when(restaurant.getName()).thenReturn(name);
+    when(restaurantDto.name()).thenReturn(name);
 
-    when(restaurant.getHours()).thenReturn(hours);
+    when(restaurantDto.hours()).thenReturn(hours);
 
-    assertTrue(validator.isRestaurantParameterEmpty(restaurant));
+    assertTrue(validator.isRestaurantParameterEmpty(restaurantDto));
   }
 
   @ParameterizedTest
@@ -111,20 +120,20 @@ class RestaurantValidatorTest {
   void givenARestaurant_WhenHoursIsNull_thenIsRestaurantParameterEmptyShouldReturnTrue(
       Hours hours) {
 
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getName()).thenReturn("name");
+    when(restaurantDto.hours()).thenReturn(hours);
+    when(restaurantDto.name()).thenReturn("name");
 
-    assertTrue(validator.isRestaurantParameterEmpty(restaurant));
+    assertTrue(validator.isRestaurantParameterEmpty(restaurantDto));
   }
 
   @Test
   void
       givenARestaurant_WhenNameAndHoursIsNotNullOrEmpty_thenEmptyRestaurantParameterShouldReturnFalse() {
 
-    when(restaurant.getHours()).thenReturn(hours);
-    when(restaurant.getName()).thenReturn("name");
+    when(restaurantDto.hours()).thenReturn(hours);
+    when(restaurantDto.name()).thenReturn("name");
 
-    assertFalse(validator.isRestaurantParameterEmpty(restaurant));
+    assertFalse(validator.isRestaurantParameterEmpty(restaurantDto));
   }
 
   private static Stream<Hours> provideInvalidHours() {
