@@ -3,8 +3,9 @@ package ca.ulaval.glo2003.util;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.ulaval.glo2003.entity.Error;
-import ca.ulaval.glo2003.entity.ErrorType;
+import ca.ulaval.glo2003.domain.error.Error;
+import ca.ulaval.glo2003.domain.error.ErrorBuilder;
+import ca.ulaval.glo2003.domain.error.ErrorType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -4,8 +4,8 @@ import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import ca.ulaval.glo2003.entity.*;
-import ca.ulaval.glo2003.exception.NotFoundException;
+import ca.ulaval.glo2003.domain.entity.*;
+import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class RestaurantRespositoryTest {
 
   public static final int CAPACITY = 100;
-  private RestaurantRespository repository;
+  private RestaurantRepository repository;
   private Restaurant restaurant;
 
   private Owner owner;
@@ -41,10 +41,15 @@ class RestaurantRespositoryTest {
     owner.setOwnerId(OWNER_ID);
     reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
-    repository = new RestaurantRespository();
+    repository = new RestaurantRepository();
     reservation =
         new Reservation(
-            RESERVATION_ID, LocalDate.now(), LocalTime.of(12, 0), 60, 2, new Customer());
+            RESERVATION_ID,
+            LocalDate.now(),
+            LocalTime.of(12, 0),
+            LocalTime.of(18, 0),
+            2,
+            new Customer());
   }
 
   @Test

@@ -1,11 +1,12 @@
 package ca.ulaval.glo2003;
 
-import ca.ulaval.glo2003.errorMappers.*;
-import ca.ulaval.glo2003.repository.RestaurantRespository;
-import ca.ulaval.glo2003.resource.HealthResource;
-import ca.ulaval.glo2003.resource.ReservationRessource;
-import ca.ulaval.glo2003.resource.RestaurantResource;
-import ca.ulaval.glo2003.service.RestaurantService;
+import ca.ulaval.glo2003.api.resource.HealthResource;
+import ca.ulaval.glo2003.api.resource.ReservationResource;
+import ca.ulaval.glo2003.api.resource.RestaurantResource;
+import ca.ulaval.glo2003.api.resource.SearchResource;
+import ca.ulaval.glo2003.application.service.RestaurantService;
+import ca.ulaval.glo2003.domain.exception.exceptionMapper.*;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import java.net.URI;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
@@ -18,11 +19,12 @@ public class Main {
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();
-    RestaurantRespository restaurantRespository = new RestaurantRespository();
+    RestaurantRepository restaurantRespository = new RestaurantRepository();
     RestaurantService restaurantService = new RestaurantService(restaurantRespository);
     rc.register(healthCheckResource)
         .register(new RestaurantResource(restaurantService))
-        .register(new ReservationRessource(restaurantService))
+        .register(new ReservationResource(restaurantService))
+        .register(new SearchResource(restaurantService))
         .register(new RuntimeExceptionMapper())
         .register(new ProcessingExceptionMapper())
         .register(new InvalidParameterExceptionMapper())
