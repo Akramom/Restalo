@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 
 public class RestaurantService {
 
-  private final RestaurantRespository restaurantRepository;
+  private final RestaurantRepository restaurantRepository;
   private final RestaurantValidator restaurantValidator;
   private final ReservationValidator reservationValidator;
 
-  public RestaurantService(RestaurantRespository restaurantRepository) {
+  public RestaurantService(RestaurantRepository restaurantRepository) {
     this.restaurantRepository = restaurantRepository;
     this.restaurantValidator = new RestaurantValidator();
     this.reservationValidator = new ReservationValidator();

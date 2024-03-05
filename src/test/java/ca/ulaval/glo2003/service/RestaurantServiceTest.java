@@ -3,7 +3,6 @@ package ca.ulaval.glo2003.service;
 import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo2003.Response.Reservation.ReservationResponse;
 import ca.ulaval.glo2003.Response.Restaurant.RestaurantOwnerResponse;
@@ -11,7 +10,7 @@ import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
 import ca.ulaval.glo2003.exception.MissingParameterException;
 import ca.ulaval.glo2003.exception.NotFoundException;
-import ca.ulaval.glo2003.repository.RestaurantRespository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,11 +35,11 @@ class RestaurantServiceTest {
 
   private RestaurantService service;
   private Restaurant restaurant;
-  private RestaurantRespository restaurantRespository;
+  private RestaurantRepository restaurantRespository;
 
   @BeforeEach
   void setUp() {
-    restaurantRespository = new RestaurantRespository();
+    restaurantRespository = new RestaurantRepository();
     service = new RestaurantService(restaurantRespository);
     hours = new Hours(OPEN, CLOSE);
     reservationDuration = new ReservationDuration(70);

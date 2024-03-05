@@ -13,7 +13,7 @@ import ca.ulaval.glo2003.errorMappers.InvalidParameterExceptionMapper;
 import ca.ulaval.glo2003.errorMappers.MissingParameterExceptionMapper;
 import ca.ulaval.glo2003.errorMappers.NotFoundExceptionMapper;
 import ca.ulaval.glo2003.exception.NotFoundException;
-import ca.ulaval.glo2003.repository.RestaurantRespository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import ca.ulaval.glo2003.service.RestaurantService;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
@@ -42,14 +42,14 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   private Hours hours;
   private RestaurantService restaurantService;
 
-  private RestaurantRespository restaurantRespository;
+  private RestaurantRepository restaurantRespository;
   ;
   private Restaurant restaurant;
   private Response response;
 
   @Override
   protected Application configure() {
-    restaurantRespository = new RestaurantRespository();
+    restaurantRespository = new RestaurantRepository();
     restaurantService = new RestaurantService(restaurantRespository);
     return new ResourceConfig()
         .register(new RestaurantResource(restaurantService))

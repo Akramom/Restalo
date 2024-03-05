@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RestaurantRespository {
+public class RestaurantRepository {
 
   private List<Owner> owners;
   private List<Restaurant> restaurants;
 
-  public RestaurantRespository() {
+  public RestaurantRepository() {
     owners = new ArrayList<>();
     restaurants = new ArrayList<>();
   }

@@ -14,10 +14,10 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RestaurantRespositoryTest {
+class RestaurantRepositoryTest {
 
   public static final int CAPACITY = 100;
-  private RestaurantRespository repository;
+  private RestaurantRepository repository;
   private Restaurant restaurant;
   private final String RESTAURANT_ID = "10000";
   private final String OWNER_ID = "00001";
@@ -36,7 +36,7 @@ class RestaurantRespositoryTest {
     hours = new Hours(OPEN, CLOSE);
     reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
-    repository = new RestaurantRespository();
+    repository = new RestaurantRepository();
   }
 
   @Test
