@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class RestaurantRespository {
 
-  private List<Owner> owners;
-  private List<Restaurant> restaurants;
+  private final List<Owner> owners;
+  private final List<Restaurant> restaurants;
 
   public RestaurantRespository() {
     owners = new ArrayList<>();
@@ -25,17 +25,15 @@ public class RestaurantRespository {
     return owners;
   }
 
-  public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
+  public void addRestaurant(String ownerId, Restaurant restaurant) {
 
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
-        .get(0)
+        .getFirst()
         .getRestaurants()
         .add(restaurant);
     restaurants.add(restaurant);
-
-    return restaurant;
   }
 
   public Owner addOwner(String ownerId) {
@@ -50,7 +48,7 @@ public class RestaurantRespository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants()
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
@@ -61,10 +59,7 @@ public class RestaurantRespository {
 
   public Restaurant getRestaurantById(String restaurantId) throws NotFoundException {
     Restaurant unRestaurant =
-        owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .collect(Collectors.toList())
-            .stream()
+        owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
             .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
@@ -76,17 +71,14 @@ public class RestaurantRespository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants();
     return ownerRestaurants;
   }
 
   public Reservation addReservation(Reservation reservation, String restaurantId)
       throws NotFoundException {
-    owners.stream()
-        .flatMap(owner -> owner.getRestaurants().stream())
-        .collect(Collectors.toList())
-        .stream()
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
         .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
