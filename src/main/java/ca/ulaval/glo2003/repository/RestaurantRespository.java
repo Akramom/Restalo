@@ -39,8 +39,7 @@ public class RestaurantRespository {
   }
 
   public Owner addOwner(String ownerId) {
-    Owner owner = new Owner("Doe", "John", "418-222-2222");
-    owner.setOwnerId(ownerId);
+    Owner owner = new Owner(ownerId, "Doe", "John", "418-222-2222");
     owners.add(owner);
     return owner;
   }

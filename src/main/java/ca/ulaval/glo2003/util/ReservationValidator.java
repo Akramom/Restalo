@@ -53,7 +53,7 @@ public class ReservationValidator {
     validateCustomer(reservation.getCustomer());
   }
 
-  public void validateReservationTimeForRestaurant(
+  private void validateReservationTimeForRestaurant(
       Reservation reservation, LocalTime restaurantClosingTime) throws InvalidParameterException {
     LocalTime closingTime = restaurantClosingTime;
 
@@ -78,13 +78,13 @@ public class ReservationValidator {
     }
   }
 
-  public void validateGroupSize(int groupSize) throws InvalidParameterException {
+  private void validateGroupSize(int groupSize) throws InvalidParameterException {
     if (groupSize <= 0) {
       throw new InvalidParameterException("Group size can not be equal or lower than 0");
     }
   }
 
-  public void validateCustomer(Customer customer) throws InvalidParameterException {
+  private void validateCustomer(Customer customer) throws InvalidParameterException {
     String phoneNumber = customer.getPhoneNumber();
     String email = customer.getEmail();
 
