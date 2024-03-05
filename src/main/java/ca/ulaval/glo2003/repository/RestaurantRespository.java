@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 public class RestaurantRespository {
 
-  private List<Owner> owners;
-  private List<Restaurant> restaurants;
+  private final List<Owner> owners;
+  private final List<Restaurant> restaurants;
 
   public RestaurantRespository() {
     owners = new ArrayList<>();
@@ -22,17 +22,16 @@ public class RestaurantRespository {
     return owners;
   }
 
-  public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
+  public void addRestaurant(String ownerId, Restaurant restaurant) {
 
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
-        .get(0)
+        .getFirst()
         .getRestaurants()
         .add(restaurant);
     restaurants.add(restaurant);
 
-    return restaurant;
   }
 
   public Owner addOwner(String ownerId) {
@@ -48,7 +47,7 @@ public class RestaurantRespository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants()
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
@@ -61,7 +60,7 @@ public class RestaurantRespository {
     Restaurant unRestaurant =
         owners.stream()
             .flatMap(owner -> owner.getRestaurants().stream())
-            .collect(Collectors.toList())
+            .toList()
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
             .findFirst()
@@ -74,7 +73,7 @@ public class RestaurantRespository {
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
             .toList()
-            .get(0)
+            .getFirst()
             .getRestaurants();
     return ownerRestaurants;
   }
@@ -83,7 +82,7 @@ public class RestaurantRespository {
       throws NotFoundException {
     owners.stream()
         .flatMap(owner -> owner.getRestaurants().stream())
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
@@ -96,7 +95,7 @@ public class RestaurantRespository {
   public Reservation getReservation(String reservationId) throws NotFoundException {
     return owners.stream()
         .flatMap(owner -> owner.getRestaurants().stream())
-        .collect(Collectors.toList())
+        .toList()
         .stream()
         .flatMap(restaurant -> restaurant.getReservationList().stream())
         .filter(reservation -> reservation.getId().equals(reservationId))
