@@ -10,7 +10,7 @@ public class Reservation {
   private LocalTime endTime;
   private int groupSize;
   private Customer customer;
-  private String id;
+  private String number;
 
   public Reservation(
       LocalDate date, LocalTime startTime, int durationInMin, int groupSize, Customer customer) {
@@ -19,11 +19,11 @@ public class Reservation {
     this.setEndTime(durationInMin);
     this.groupSize = groupSize;
     this.customer = customer;
-    this.id = Util.generateId();
+    this.number = Util.generateId();
   }
 
   public Reservation(
-      String id,
+      String number,
       LocalDate date,
       LocalTime startTime,
       int durationInMin,
@@ -34,7 +34,7 @@ public class Reservation {
     this.setEndTime(durationInMin);
     this.groupSize = groupSize;
     this.customer = customer;
-    this.id = id;
+    this.number = number;
   }
 
   public LocalTime addToNext15MinSlot(LocalTime time) {
@@ -55,15 +55,15 @@ public class Reservation {
   }
 
   public String setNewID() {
-    return this.id = Util.generateId();
+    return this.number = Util.generateId();
   }
 
   public LocalDate getDate() {
     return date;
   }
 
-  public String getId() {
-    return id;
+  public String getNumber() {
+    return number;
   }
 
   public LocalTime getStartTime() {
@@ -102,9 +102,9 @@ public class Reservation {
     this.customer = customer;
   }
 
-  public void setId(String id) {
-    if (id != null) setNewID();
-    else this.id = id;
+  public void setNumber(String number) {
+    if (number != null) setNewID();
+    else this.number = number;
   }
 
   public void setEndTime(int durationInMin) {

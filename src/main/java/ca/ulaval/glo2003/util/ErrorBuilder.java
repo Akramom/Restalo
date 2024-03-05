@@ -17,4 +17,8 @@ public class ErrorBuilder {
   public Error missingError(String description) {
     return new Error(ErrorType.MISSING_PARAMETER, description);
   }
+
+  public Object error(String description) {
+    return new Error(ErrorType.ERROR, description);
+  }
 }

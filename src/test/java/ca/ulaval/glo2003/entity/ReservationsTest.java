@@ -26,7 +26,7 @@ class ReservationsTest {
 
   @Test
   void constructorAutomaticallyCreatesValidReservationID() {
-    assertNotNull(reservation.getId());
+    assertNotNull(reservation.getNumber());
   }
 
   @Test
