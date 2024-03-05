@@ -4,15 +4,13 @@ import static ca.ulaval.glo2003.util.Constante.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.ulaval.glo2003.api.response.reservation.ReservationResponse;
 import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
 import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
-import ca.ulaval.glo2003.domain.entity.Hours;
-import ca.ulaval.glo2003.domain.entity.Owner;
-import ca.ulaval.glo2003.domain.entity.ReservationDuration;
-import ca.ulaval.glo2003.domain.entity.Restaurant;
+import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
@@ -218,24 +216,40 @@ class RestaurantServiceTest {
     String reservationNumber = "res123";
     Reservation expectedReservation = new Reservation();
     expectedReservation.setNumber(reservationNumber);
-    restaurantRepository.addOwner(OWNER_ID);
-    restaurantRepository.addRestaurant(OWNER_ID, restaurant);
-    restaurantRepository.addReservation(expectedReservation, restaurant.getId());
+    restaurantRespository.addOwner(OWNER_ID);
+    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
+    restaurantRespository.addReservation(expectedReservation, restaurant.getId());
 
     ReservationResponse actualResponse = service.getReservationByNumber(reservationNumber);
 
     assertThat(actualResponse.getNumber()).isEqualTo(reservationNumber);
   }
 
+
+
+  @Test
+  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+    Reservation expectedReservation = new Reservation();
+    expectedReservation.setNumber("res123");
+    restaurantRespository.addOwner(OWNER_ID);
+    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
+    restaurant.addReservation(expectedReservation);
+
+    Reservation actualReservation = restaurantRespository.getReservationByNumber(expectedReservation.getNumber());
+
+
+    assertThat(actualReservation).isNotNull();
+    assertThat(actualReservation.getNumber()).isEqualTo(expectedReservation.getNumber());
+  }
   @Test
   void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
-
     String nonExistingReservationNumber = "nonExisting";
-    restaurantRepository.addOwner(OWNER_ID);
-    restaurantRepository.addRestaurant(OWNER_ID, restaurant);
+    restaurantRespository.addOwner(OWNER_ID);
+    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
 
+    assertThrows(NotFoundException.class, () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
     assertThrows(
-        NotFoundException.class,
-        () -> service.getReservationByNumber(nonExistingReservationNumber));
+            NotFoundException.class,
+            () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
