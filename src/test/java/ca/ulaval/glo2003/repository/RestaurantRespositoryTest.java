@@ -120,7 +120,7 @@ class RestaurantRespositoryTest {
     Reservation addedReservation = repository.addReservation(reservation, RESTAURANT_ID);
 
     assertThat(addedReservation).isEqualTo(reservation);
-    assertThat(repository.getReservation(RESERVATION_ID)).isEqualTo(reservation);
+    assertThat(repository.getReservationByNumber(RESERVATION_ID)).isEqualTo(reservation);
   }
 
   @Test
