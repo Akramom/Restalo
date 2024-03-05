@@ -183,7 +183,7 @@ class RestaurantServiceTest {
 
   @Test
   void getReservationByNumber_WhenExists_ReturnsExpectedResponse() throws NotFoundException {
-    // Given
+
     String reservationNumber = "res123";
     Reservation expectedReservation = new Reservation();
     expectedReservation.setNumber(reservationNumber);
@@ -191,22 +191,19 @@ class RestaurantServiceTest {
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
     restaurant.addReservation(expectedReservation);
 
-    // When
     ReservationResponse actualResponse = service.getReservationByNumber(reservationNumber);
 
-    // Then
     assertThat(actualResponse).isNotNull();
     assertThat(actualResponse.getNumber()).isEqualTo(reservationNumber);
   }
 
   @Test
   void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
-    // Given
+
     String nonExistingReservationNumber = "nonExisting";
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
 
-    // When / Then
     assertThrows(NotFoundException.class, () -> service.getReservationByNumber(nonExistingReservationNumber));
   }
 }

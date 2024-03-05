@@ -105,29 +105,25 @@ class RestaurantRespositoryTest {
 
   @Test
   void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
-    // Given
     Reservation expectedReservation = new Reservation();
     expectedReservation.setNumber("res123");
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
     restaurant.addReservation(expectedReservation);
 
-    // When
     Reservation actualReservation = repository.getReservationByNumber(expectedReservation.getNumber());
 
-    // Then
     assertThat(actualReservation).isNotNull();
     assertThat(actualReservation.getNumber()).isEqualTo(expectedReservation.getNumber());
   }
 
   @Test
   void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
-    // Given
+
     String nonExistingReservationNumber = "nonExisting";
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
-    // When / Then
     assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
