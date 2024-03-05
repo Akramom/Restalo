@@ -3,7 +3,9 @@ package ca.ulaval.glo2003.service;
 import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
+import ca.ulaval.glo2003.Response.Reservation.ReservationResponse;
 import ca.ulaval.glo2003.Response.Restaurant.RestaurantOwnerResponse;
 import ca.ulaval.glo2003.entity.*;
 import ca.ulaval.glo2003.exception.InvalidParameterException;
@@ -177,5 +179,13 @@ class RestaurantServiceTest {
         assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
 
     assertThat(missingParameterException.getMessage()).isEqualTo("Missing owner ID.");
+  }
+
+  @Test
+  void getReservationByNumber_WhenExists_ReturnsExpectedResponse() throws NotFoundException {
+  }
+
+  @Test
+  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
   }
 }

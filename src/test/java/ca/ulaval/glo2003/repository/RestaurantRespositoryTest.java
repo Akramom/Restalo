@@ -5,6 +5,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import ca.ulaval.glo2003.entity.Hours;
+import ca.ulaval.glo2003.entity.Reservation;
 import ca.ulaval.glo2003.entity.ReservationDuration;
 import ca.ulaval.glo2003.entity.Restaurant;
 import ca.ulaval.glo2003.exception.NotFoundException;
@@ -100,5 +101,17 @@ class RestaurantRespositoryTest {
     Restaurant foundRestaurant = repository.getRestaurantById(RESTAURANT_ID);
 
     assertThat(foundRestaurant).isEqualTo(restaurant);
+  }
+
+  @Test
+  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+  }
+
+  @Test
+  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+
+    String nonExistingReservationNumber = "nonExisting";
+
+    assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
