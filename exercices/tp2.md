@@ -18,4 +18,48 @@ RÉFLEXIONS:
 3- Un des points à améliorer serait de diviser encore plus certains issues. Nous avons également remarqué que nous avions sous-estimé certains issues. Donc pour cela, nous comptons imposer des sous-échéanciers afin de s'assurer que le grand échéancier de dépot soit respectée.
     Finalement, un des derniers à améliorer serait d'unformiser le nom des branches, soit par numéro et description de l'issue. 
 
+## Planification du travail
+
+### Github Project
+<img src="../src/main/resources/image/Project.png"/>
+
+### Milestone
+<img src="../src/main/resources/image/milestone2.png"/>
+
+### Issues
+
+  ### Issue1
+  <img src="../src/main/resources/image/issue1.png"/>
+  <img src="../src/main/resources/image/issue1_2.png"/>
+  
+  ### Issue2
+  <img src="../src/main/resources/image/issue2.png"/>
+  
+  ### Issue3
+  <img src="../src/main/resources/image/issue3.png"/>
+
+### Pull requests
+
+  ### Pull request1
+  <img src="../src/main/resources/image/PR1.png"/>
+  <img src="../src/main/resources/image/PR1-2.png"/>
+  
+  ### Pull requests2
+  <img src="../src/main/resources/image/PR2.png"/>
+  
+  ### Pull request3
+  <img src="../src/main/resources/image/PR3.png"/>
+  <img src="../src/main/resources/image/PR3-2.png"/>
+
+
+### Arbre de commits
+<img src="../src/main/resources/image/CommitBranche.png"/>
+
+
+### Architecture
+<img src="../src/main/resources/image/diagrammeArchitecture.png"/>
+
+-Nous avons 3 classes principales 
+
+
 
