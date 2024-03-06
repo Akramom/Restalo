@@ -19,7 +19,7 @@ public class SearchResource {
   @POST
   @Path("/restaurants")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response searchResatuarnt(SearchDto searchDto) throws Exception {
+  public Response searchRestaurant(SearchDto searchDto) throws Exception {
 
     List<RestaurantPartialResponse> restaurantResponses =
         restaurantService.searchRestaurant(searchDto);
