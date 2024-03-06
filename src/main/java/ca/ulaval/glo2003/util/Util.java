@@ -78,14 +78,33 @@ public class Util {
   }
 
   public static List<Restaurant> search(List<Restaurant> allRestaurant, Search search) {
+    checkAndFixNullFromOrTo(search);
+
     return allRestaurant.stream()
         .filter(restaurant -> Util.containsSubstr_toLowerC(restaurant.getName(), search.getName()))
-        .filter(restaurant -> restaurant.getHours().getClose().isAfter(search.getOpened().from()))
+        .filter(
+            restaurant ->
+                restaurant.getHours().getClose().isAfter(search.getOpened().from())
+                    && restaurant.getHours().getOpen().isBefore(search.getOpened().from()))
         .filter(
             restaurant ->
                 restaurant.getHours().getClose().equals(search.getOpened().to())
                     || restaurant.getHours().getClose().isAfter(search.getOpened().to()))
         .collect(Collectors.toList());
+  }
+
+  private static void checkAndFixNullFromOrTo(Search search) {
+    if (search.getOpened().to() == null) {
+      LocalTime newTo = search.getOpened().from();
+      Opened newOpened = new Opened(search.getOpened().from(), newTo);
+      search.setOpened(newOpened);
+    }
+
+    if (search.getOpened().from() == null) {
+      LocalTime newFrom = search.getOpened().to();
+      Opened newOpened = new Opened(newFrom, search.getOpened().to());
+      search.setOpened(newOpened);
+    }
   }
 
   public static boolean containsSubstr_toLowerC(String originalStr, String subStr) {
