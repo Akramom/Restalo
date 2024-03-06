@@ -147,6 +147,32 @@ class RestaurantRespositoryTest {
   }
 
   @Test
+  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+
+    reservation.setNumber("res123");
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+    restaurant.addReservation(reservation);
+
+    Reservation actualReservation = repository.getReservationByNumber(reservation.getNumber());
+
+    assertThat(actualReservation).isNotNull();
+    assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
+  }
+
+  @Test
+  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+
+    String nonExistingReservationNumber = "nonExisting";
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+
+    assertThrows(
+        NotFoundException.class,
+        () -> repository.getReservationByNumber(nonExistingReservationNumber));
+  }
+
+  @Test
   void givenNoParameterSearchInput_thenReturnsEveryRestaurants() {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedList = new ArrayList<>();

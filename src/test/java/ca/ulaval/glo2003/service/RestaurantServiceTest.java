@@ -9,14 +9,12 @@ import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
-import ca.ulaval.glo2003.domain.entity.Hours;
-import ca.ulaval.glo2003.domain.entity.Owner;
-import ca.ulaval.glo2003.domain.entity.ReservationDuration;
-import ca.ulaval.glo2003.domain.entity.Restaurant;
+import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.RestaurantRepository;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +29,7 @@ class RestaurantServiceTest {
 
   public final String UN_NOM = "un nom";
   private final String RESTAURANT_ID = "10000";
+  private final String RESERVATION_ID = "20000";
   private final String OWNER_ID = "00001";
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
@@ -41,6 +40,7 @@ class RestaurantServiceTest {
 
   private RestaurantService service;
   private Restaurant restaurant;
+  private Reservation reservation;
   private RestaurantRepository restaurantRespository;
   private RestaurantAssembler restaurantAssembler;
   private RestaurantDto restaurantDto;
@@ -54,6 +54,14 @@ class RestaurantServiceTest {
     reservationDuration = new ReservationDuration(70);
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     restaurantDto = restaurantAssembler.toDto(restaurant);
+    reservation =
+        new Reservation(
+            RESERVATION_ID,
+            LocalDate.now(),
+            LocalTime.of(12, 0),
+            LocalTime.of(18, 0),
+            2,
+            new Customer());
   }
 
   @Test
@@ -210,5 +218,34 @@ class RestaurantServiceTest {
         assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
 
     assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_OWNER_ID);
+  }
+
+  @Test
+  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+
+    reservation.setNumber("res123");
+    restaurantRespository.addOwner(OWNER_ID);
+    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
+    restaurant.addReservation(reservation);
+
+    Reservation actualReservation =
+        restaurantRespository.getReservationByNumber(reservation.getNumber());
+
+    assertThat(actualReservation).isNotNull();
+    assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
+  }
+
+  @Test
+  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+    String nonExistingReservationNumber = "nonExisting";
+    restaurantRespository.addOwner(OWNER_ID);
+    restaurantRespository.addRestaurant(OWNER_ID, restaurant);
+
+    assertThrows(
+        NotFoundException.class,
+        () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
+    assertThrows(
+        NotFoundException.class,
+        () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
