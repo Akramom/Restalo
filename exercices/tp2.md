@@ -56,10 +56,43 @@ RÉFLEXIONS:
 <img src="../src/main/resources/image/CommitBranche.png"/>
 
 
-### Architecture
+### Architecture Restaurant
 <img src="../src/main/resources/image/diagrammeArchitecture.png"/>
 
--Nous avons 3 classes principales 
+
+### Architecture Reservation
+<img src="../src/main/resources/image/diagrammeReservation.png"/>
+
+### Architecture Search
+<img src="../src/main/resources/image/diagrammeSearch.png"/>
+
+
+-Nous avons classes principales: RestaurantRepository, RestaurantService, ReservationResource, RestaurantResource, SearchResource, ReservationValidator et RestaurantValidator.
+    La classe RestaurantRepository permet de fournir une interface pour interagir avec les données des restaurants et des propriétaires, y compris l'ajout, la recherche et la récupération d'informations.
+    La classe RestaurantService agit comme une couche intermédiaire entre les contrôleurs de l'API et le dépôt de données.
+    La classe ReservationResource est responsable de traiter les requêtes HTTP liées aux réservations.
+    La classe RestaurantResource est responsable de traiter les requêtes HTTP liées aux restaurants et à leurs réservations.
+    La classe SearchResource permet de fournir un point de terminaison pour effectuer des recherches de restaurants en fonction de critères spécifiques.
+    La classe ReservationValidator est responsable de la validation des données de réservation pour s'assurer qu'elles respectent certaines règles et contraintes avant de les traiter ou de les enregistrer dans l'application.
+    La classe RestaurantValidator a la même fonctionnalité que celle de reservation, mais concernant les données de restaurant.
+
+
+Nous avons séparé comme suit afin de, premièrement, améliorer la cohérence et la maintenabilité du code, en plus de permettre la réutisilabilité des méthodes et d'ainsi éviter la redondance.
+
+Finalement, un des points qui seraient à améliorer, serait de rajouter une autre classe RestaurantService, afin d'éviter qu'une seule classe, soit ReservationService, s'occupe de toutes les dépendances au service. 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
