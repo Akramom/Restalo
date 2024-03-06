@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RestaurantRespositoryTest {
+class RestaurantRepositoryTest {
 
   public static final int CAPACITY = 100;
   private RestaurantRepository repository;
@@ -140,5 +140,31 @@ class RestaurantRespositoryTest {
             () -> repository.addReservation(reservation, invalidRestaurantId));
 
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
+  }
+
+  @Test
+  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+
+    reservation.setNumber("res123");
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+    restaurant.addReservation(reservation);
+
+    Reservation actualReservation = repository.getReservationByNumber(reservation.getNumber());
+
+    assertThat(actualReservation).isNotNull();
+    assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
+  }
+
+  @Test
+  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+
+    String nonExistingReservationNumber = "nonExisting";
+    repository.addOwner(OWNER_ID);
+    repository.addRestaurant(OWNER_ID, restaurant);
+
+    assertThrows(
+        NotFoundException.class,
+        () -> repository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
