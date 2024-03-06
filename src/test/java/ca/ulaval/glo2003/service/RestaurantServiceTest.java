@@ -4,7 +4,6 @@ import static ca.ulaval.glo2003.util.Constante.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import ca.ulaval.glo2003.api.response.reservation.ReservationResponse;
 import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
 import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
@@ -15,10 +14,8 @@ import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.RestaurantRepository;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,41 +55,41 @@ class RestaurantServiceTest {
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     restaurantDto = restaurantAssembler.toDto(restaurant);
     reservation =
-            new Reservation(
-                    RESERVATION_ID,
-                    LocalDate.now(),
-                    LocalTime.of(12, 0),
-                    LocalTime.of(18, 0),
-                    2,
-                    new Customer());
+        new Reservation(
+            RESERVATION_ID,
+            LocalDate.now(),
+            LocalTime.of(12, 0),
+            LocalTime.of(18, 0),
+            2,
+            new Customer());
   }
 
   @Test
   void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository()
-          throws NotFoundException {
+      throws NotFoundException {
 
     RestaurantPartialResponse restaurantResponse = service.addRestaurant(OWNER_ID, restaurantDto);
 
     assertAll(
-            () -> {
-              assertThat(restaurantResponse.getId()).isEqualTo(restaurant.getId());
-              assertThat(restaurantResponse.getName()).isEqualTo(restaurant.getName());
-              assertThat(restaurantResponse.getCapacity()).isEqualTo(restaurant.getCapacity());
-              assertThat(restaurantResponse.getHours()).isEqualTo(restaurant.getHours());
-              assertThat(restaurantResponse.getName()).isEqualTo(restaurant.getName());
-            });
+        () -> {
+          assertThat(restaurantResponse.getId()).isEqualTo(restaurant.getId());
+          assertThat(restaurantResponse.getName()).isEqualTo(restaurant.getName());
+          assertThat(restaurantResponse.getCapacity()).isEqualTo(restaurant.getCapacity());
+          assertThat(restaurantResponse.getHours()).isEqualTo(restaurant.getHours());
+          assertThat(restaurantResponse.getName()).isEqualTo(restaurant.getName());
+        });
   }
 
   @Test
   void
-  givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerShouldThrowNotFoundError()
+      givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerShouldThrowNotFoundError()
           throws NotFoundException {
     service.addNewOwner(OWNER_ID);
 
     NotFoundException notFoundException =
-            assertThrows(
-                    NotFoundException.class,
-                    () -> service.getRestaurantByIdOfOwner(OWNER_ID, "autre number"));
+        assertThrows(
+            NotFoundException.class,
+            () -> service.getRestaurantByIdOfOwner(OWNER_ID, "autre number"));
 
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
@@ -147,45 +144,45 @@ class RestaurantServiceTest {
   @EmptySource
   @ValueSource(strings = {"", "   ", "\t", "\n"})
   public void givenOwnerId_whenNullOrEmpty_TheVerifyOwnerIdThrowMissingParameterException(
-          String ownerId) {
+      String ownerId) {
 
     MissingParameterException missingParameterException =
-            assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(ownerId));
+        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(ownerId));
 
     assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_OWNER_ID);
   }
 
   @Test
   public void
-  givenRestaurant_whenNameIsNullorEmpty_thenVerifyRestaurantParameterThrowMissingParameterException() {
+      givenRestaurant_whenNameIsNullorEmpty_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
     restaurant.setName(null);
     restaurantDto = restaurantAssembler.toDto(restaurant);
     MissingParameterException missingParameterException =
-            assertThrows(
-                    MissingParameterException.class,
-                    () -> service.verifyRestaurantParameter(restaurantDto));
+        assertThrows(
+            MissingParameterException.class,
+            () -> service.verifyRestaurantParameter(restaurantDto));
 
     assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_RESTAURANT_PARAMETER);
   }
 
   @Test
   public void
-  givenRestaurant_whenHoursIsNull_thenVerifyRestaurantParameterThrowMissingParameterException() {
+      givenRestaurant_whenHoursIsNull_thenVerifyRestaurantParameterThrowMissingParameterException() {
 
     restaurant.setHours(null);
     restaurantDto = restaurantAssembler.toDto(restaurant);
     MissingParameterException missingParameterException =
-            assertThrows(
-                    MissingParameterException.class,
-                    () -> service.verifyRestaurantParameter(restaurantDto));
+        assertThrows(
+            MissingParameterException.class,
+            () -> service.verifyRestaurantParameter(restaurantDto));
 
     assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_RESTAURANT_PARAMETER);
   }
 
   @Test
   public void
-  givenRestaurant_whenHoursIsInvald_thenVerifyRestaurantParameterThrowInvalidParameterException() {
+      givenRestaurant_whenHoursIsInvald_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
     hours.setOpen(CLOSE);
     hours.setClose(OPEN);
@@ -193,40 +190,35 @@ class RestaurantServiceTest {
     restaurantDto = restaurantAssembler.toDto(restaurant);
 
     InvalidParameterException invalidParameterException =
-            assertThrows(
-                    InvalidParameterException.class,
-                    () -> service.verifyRestaurantParameter(restaurantDto));
+        assertThrows(
+            InvalidParameterException.class,
+            () -> service.verifyRestaurantParameter(restaurantDto));
 
     assertThat(invalidParameterException.getMessage()).isEqualTo(INVALID_RESTAURANT_PARAMETER);
   }
 
   @Test
   public void
-  givenRestaurant_whenCapacityLessThanOne_thenVerifyRestaurantParameterThrowInvalidParameterException() {
+      givenRestaurant_whenCapacityLessThanOne_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
     InvalidParameterException invalidParameterException =
-            assertThrows(
-                    InvalidParameterException.class,
-                    () -> service.verifyRestaurantParameter(restaurantDto));
+        assertThrows(
+            InvalidParameterException.class,
+            () -> service.verifyRestaurantParameter(restaurantDto));
 
     assertThat(invalidParameterException.getMessage()).isEqualTo(INVALID_RESTAURANT_PARAMETER);
   }
 
   @Test
   public void givenOwnerId_whenOwnerIdIsEmptyOrNull_verifyOwnerIdThrowMissingParameterException()
-          throws Exception {
+      throws Exception {
 
     service.addNewOwner(OWNER_ID);
     MissingParameterException missingParameterException =
-            assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
+        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
 
     assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_OWNER_ID);
   }
-
-
-
-
-
 
   @Test
   void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
@@ -236,21 +228,24 @@ class RestaurantServiceTest {
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
     restaurant.addReservation(reservation);
 
-    Reservation actualReservation = restaurantRespository.getReservationByNumber(reservation.getNumber());
-
+    Reservation actualReservation =
+        restaurantRespository.getReservationByNumber(reservation.getNumber());
 
     assertThat(actualReservation).isNotNull();
     assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
   }
+
   @Test
   void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
     String nonExistingReservationNumber = "nonExisting";
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
 
-    assertThrows(NotFoundException.class, () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
     assertThrows(
-            NotFoundException.class,
-            () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
+        NotFoundException.class,
+        () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
+    assertThrows(
+        NotFoundException.class,
+        () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
   }
 }
