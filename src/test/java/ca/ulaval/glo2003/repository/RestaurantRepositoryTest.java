@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RestaurantRespositoryTest {
+class RestaurantRepositoryTest {
 
   public static final int CAPACITY = 100;
   private RestaurantRepository repository;
@@ -43,18 +43,18 @@ class RestaurantRespositoryTest {
     restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
     repository = new RestaurantRepository();
     reservation =
-        new Reservation(
-            RESERVATION_ID,
-            LocalDate.now(),
-            LocalTime.of(12, 0),
-            LocalTime.of(18, 0),
-            2,
-            new Customer());
+            new Reservation(
+                    RESERVATION_ID,
+                    LocalDate.now(),
+                    LocalTime.of(12, 0),
+                    LocalTime.of(18, 0),
+                    2,
+                    new Customer());
   }
 
   @Test
   void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
-      throws NotFoundException {
+          throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -66,7 +66,7 @@ class RestaurantRespositoryTest {
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+  givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
           throws NotFoundException {
 
     repository.addOwner(OWNER_ID);
@@ -79,14 +79,14 @@ class RestaurantRespositoryTest {
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+  givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
           throws NotFoundException {
     repository.addOwner(OWNER_ID);
 
     NotFoundException notFoundException =
-        assertThrows(
-            NotFoundException.class,
-            () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID));
+            assertThrows(
+                    NotFoundException.class,
+                    () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID));
 
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
@@ -107,7 +107,7 @@ class RestaurantRespositoryTest {
 
   @Test
   void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
-      throws NotFoundException {
+          throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -118,7 +118,7 @@ class RestaurantRespositoryTest {
 
   @Test
   void givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
-      throws NotFoundException {
+          throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -135,26 +135,27 @@ class RestaurantRespositoryTest {
     repository.addRestaurant(OWNER_ID, restaurant);
 
     NotFoundException notFoundException =
-        assertThrows(
-            NotFoundException.class,
-            () -> repository.addReservation(reservation, invalidRestaurantId));
+            assertThrows(
+                    NotFoundException.class,
+                    () -> repository.addReservation(reservation, invalidRestaurantId));
 
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
+
   @Test
   void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
-    Reservation expectedReservation = new Reservation();
-    expectedReservation.setNumber("res123");
+
+    reservation.setNumber("res123");
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
-    restaurant.addReservation(expectedReservation);
+    restaurant.addReservation(reservation);
 
     Reservation actualReservation =
-        repository.getReservationByNumber(expectedReservation.getNumber());
+        repository.getReservationByNumber(reservation.getNumber());
 
     assertThat(actualReservation).isNotNull();
-    assertThat(actualReservation.getNumber()).isEqualTo(expectedReservation.getNumber());
+    assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
   }
 
   @Test
