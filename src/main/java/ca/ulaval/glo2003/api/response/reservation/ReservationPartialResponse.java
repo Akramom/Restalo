@@ -1,5 +1,6 @@
 package ca.ulaval.glo2003.api.response.reservation;
 
+import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
 import ca.ulaval.glo2003.domain.entity.Customer;
 import ca.ulaval.glo2003.domain.entity.Time;
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ public class ReservationPartialResponse {
   private Time time;
   private int groupSize;
   private Customer customer;
+
+  private RestaurantPartialResponse restaurant;
 
   public ReservationPartialResponse(
       String number, LocalDate date, Time time, int groupSize, Customer customer) {

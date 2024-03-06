@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 public class ReservationResponse extends ReservationPartialResponse {
 
-  private RestaurantPartialResponse restaurantPartialResponse;
+  private RestaurantPartialResponse restaurant;
 
   public ReservationResponse(
       String number,
@@ -17,6 +17,14 @@ public class ReservationResponse extends ReservationPartialResponse {
       Customer customer,
       RestaurantPartialResponse restaurantPartialResponse) {
     super(number, date, time, groupSize, customer);
-    this.restaurantPartialResponse = restaurantPartialResponse;
+    this.restaurant = restaurantPartialResponse;
+  }
+
+  public RestaurantPartialResponse getRestaurant() {
+    return restaurant;
+  }
+
+  public void setRestaurant(RestaurantPartialResponse restaurant) {
+    this.restaurant = restaurant;
   }
 }
