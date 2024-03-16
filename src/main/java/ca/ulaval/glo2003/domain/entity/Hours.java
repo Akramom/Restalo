@@ -1,7 +1,10 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import dev.morphia.annotations.Entity;
 import java.time.LocalTime;
+import java.util.Objects;
 
+@Entity
 public class Hours {
   private LocalTime open;
   private LocalTime close;
@@ -27,6 +30,18 @@ public class Hours {
 
   public void setClose(LocalTime close) {
     this.close = close;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Hours hours)) return false;
+    return Objects.equals(open, hours.open) && Objects.equals(close, hours.close);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(open, close);
   }
 
   @Override

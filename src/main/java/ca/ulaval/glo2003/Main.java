@@ -7,10 +7,9 @@ import ca.ulaval.glo2003.api.resource.RestaurantResource;
 import ca.ulaval.glo2003.api.resource.SearchResource;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.repository.*;
+import ca.ulaval.glo2003.util.DatastoreProvide;
 import java.net.URI;
 import java.util.Optional;
-
-import ca.ulaval.glo2003.util.DatastoreProvide;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -18,7 +17,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Main {
   public static String BASE_URI;
 
-  private static RestaurantRepository restaurantRespository;
+  private static IRestaurantRepository restaurantRespository;
   private static PersistenceType persistence;
   private static String mongoClusterUrl;
   private static String mongoDatabase;
@@ -39,10 +38,16 @@ public class Main {
             .orElseGet(() -> PersistenceType.fromString("inmemory"));
     System.out.println("persistence: " + persistence);
 
+    if (persistence.equals(PersistenceType.MONGO)) {
+      mongoClusterUrl = System.getenv("MONGO_CLUSTER_URL");
+      mongoDatabase = System.getenv("MONGO_DATABASE");
+      restaurantRespository =
+          new RestaurantRepositoryMongo(
+              new DatastoreProvide(mongoClusterUrl, mongoDatabase).provide());
+    } else restaurantRespository = new RestaurantRepositoryInMemory();
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();
-    RestaurantRepository restaurantRespository = new RestaurantRepository();
     RestaurantService restaurantService = new RestaurantService(restaurantRespository);
     rc.register(healthCheckResource)
         .register(new RestaurantResource(restaurantService))
