@@ -1,21 +1,44 @@
 package ca.ulaval.glo2003;
 
+import ca.ulaval.glo2003.api.exceptionMapper.*;
 import ca.ulaval.glo2003.api.resource.HealthResource;
 import ca.ulaval.glo2003.api.resource.ReservationResource;
 import ca.ulaval.glo2003.api.resource.RestaurantResource;
 import ca.ulaval.glo2003.api.resource.SearchResource;
 import ca.ulaval.glo2003.application.service.RestaurantService;
-import ca.ulaval.glo2003.domain.exception.exceptionMapper.*;
-import ca.ulaval.glo2003.repository.RestaurantRepository;
+import ca.ulaval.glo2003.repository.*;
 import java.net.URI;
+import java.util.Optional;
+
+import ca.ulaval.glo2003.util.DatastoreProvide;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 public class Main {
-  public static final String BASE_URI = "http://0.0.0.0:8080/";
+  public static String BASE_URI;
+
+  private static RestaurantRepository restaurantRespository;
+  private static PersistenceType persistence;
+  private static String mongoClusterUrl;
+  private static String mongoDatabase;
 
   public static HttpServer startServer() {
+
+    String port = System.getenv("PORT");
+    if (port == null) {
+      port = "8080";
+    }
+    BASE_URI = "http://0.0.0.0:" + port;
+
+    Optional<String> entryPersistence = Optional.ofNullable(System.getProperty("persistence"));
+
+    persistence =
+        entryPersistence
+            .map(PersistenceType::fromString)
+            .orElseGet(() -> PersistenceType.fromString("inmemory"));
+    System.out.println("persistence: " + persistence);
+
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();

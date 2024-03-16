@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  db:
+    image: mongo
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - 27017:27017
+volumes:
+  mongo_data:
+
