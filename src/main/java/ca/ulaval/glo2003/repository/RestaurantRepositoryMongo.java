@@ -19,7 +19,6 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public RestaurantRepositoryMongo(Datastore datastore) {
     this.datastore = datastore;
     this.datastore.getMapper().mapPackage(Restaurant.class.getPackageName());
-    // this.datastore.getMapper().mapPackage("ca.ulaval.glo2003.domain.entity");
   }
 
   @Override
@@ -37,7 +36,6 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   @Override
   public Restaurant addRestaurant(String ownerId, Restaurant restaurant) throws NotFoundException {
 
-    System.out.println("on sauvegarde ici ");
     if (restaurant.getId() == null) {
       restaurant.setId(Util.generateId());
     }
