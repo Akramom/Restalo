@@ -1,4 +1,4 @@
-package ca.ulaval.glo2003.domain.exception.exceptionMapper;
+package ca.ulaval.glo2003.api.exceptionMapper;
 
 import ca.ulaval.glo2003.domain.error.ErrorBuilder;
 import jakarta.ws.rs.core.Response;

@@ -1,15 +1,17 @@
 package ca.ulaval.glo2003.api.resource;
 
-import ca.ulaval.glo2003.api.response.reservation.ReservationPartialResponse;
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
+import ca.ulaval.glo2003.api.assemblers.request.ReservationRequestAssembler;
+import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
+import ca.ulaval.glo2003.api.assemblers.response.RestaurantResponseAssembler;
+import ca.ulaval.glo2003.api.request.ReservationRequest;
+import ca.ulaval.glo2003.api.request.RestaurantRequest;
+import ca.ulaval.glo2003.api.response.restaurant.OwnerRestaurantResponse;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.util.Util;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -19,24 +21,31 @@ import java.util.List;
 @Path("/restaurants")
 public class RestaurantResource {
 
-  private RestaurantService restaurantService;
+  private final RestaurantService restaurantService;
+  private final RestaurantRequestAssembler restaurantRequestAssembler;
+  private final RestaurantResponseAssembler restaurantResponseAssembler;
+  private final ReservationRequestAssembler reservationRequestAssembler;
 
   public RestaurantResource(RestaurantService restaurantService) {
+
     this.restaurantService = restaurantService;
+    this.restaurantRequestAssembler = new RestaurantRequestAssembler();
+    this.reservationRequestAssembler = new ReservationRequestAssembler();
+    this.restaurantResponseAssembler = new RestaurantResponseAssembler();
   }
 
   @POST
   @Path("/")
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response addRestaurant(@HeaderParam("Owner") String ownerId, RestaurantDto restaurantDto)
-      throws Exception {
-    restaurantService.verifyOwnerId(ownerId);
-    restaurantService.verifyRestaurantParameter(restaurantDto);
-    RestaurantResponse restaurantResponse = restaurantService.addRestaurant(ownerId, restaurantDto);
+  public Response addRestaurant(
+      @HeaderParam("Owner") String ownerId, RestaurantRequest restaurantRequest) throws Exception {
 
-    return Response.created(
-            URI.create("http://localhost:8080/restaurants/" + restaurantResponse.getId()))
+    RestaurantDto restaurantDto = this.restaurantRequestAssembler.toDto(restaurantRequest);
+
+    RestaurantDto addedRestaurant = restaurantService.addRestaurant(ownerId, restaurantDto);
+
+    return Response.created(URI.create("http://localhost:8080/restaurants/" + addedRestaurant.id()))
         .build();
   }
 
@@ -45,11 +54,12 @@ public class RestaurantResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response getRestaurants(@HeaderParam("Owner") String ownerId) throws Exception {
 
-    restaurantService.verifyOwnerId(ownerId);
+    List<RestaurantDto> restaurantDtos = restaurantService.getAllRestaurantsOfOwner(ownerId);
 
-    List<RestaurantResponse> restaurants = restaurantService.getAllRestaurantsOfOwner(ownerId);
+    List<OwnerRestaurantResponse> restaurantResponses =
+        restaurantDtos.stream().map(this.restaurantResponseAssembler::fromDto).toList();
 
-    return Response.ok(restaurants).build();
+    return Response.ok(restaurantResponses).build();
   }
 
   @GET
@@ -58,10 +68,10 @@ public class RestaurantResource {
   public Response getRestaurant(
       @HeaderParam("Owner") String ownerId, @PathParam("id") String restaurantId) throws Exception {
 
-    restaurantService.verifyOwnerId(ownerId);
+    RestaurantDto restaurantDto = restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
 
-    RestaurantPartialResponse restaurantResponse =
-        restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
+    OwnerRestaurantResponse restaurantResponse =
+        this.restaurantResponseAssembler.fromDto(restaurantDto);
 
     return Response.ok(restaurantResponse).build();
   }
@@ -71,22 +81,15 @@ public class RestaurantResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response addReservation(
-      @PathParam("id") String restaurantId, ReservationDto reservationDto)
+      @PathParam("id") String restaurantId, ReservationRequest reservationRequest)
       throws MissingParameterException, InvalidParameterException, NotFoundException {
 
-    restaurantService.verifyExistRestaurant(restaurantId);
-    restaurantService.verifyEmptyReservationParameter(reservationDto);
+    ReservationDto reservationDto = this.reservationRequestAssembler.toDto(reservationRequest);
 
-    int reservationDuration = restaurantService.getRestaurantReservationDuration(restaurantId);
-    reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
-    reservationDto.setEndTime(Util.setEndTime(reservationDto.getStartTime(), reservationDuration));
-
-    restaurantService.verifyValidReservationParameter(restaurantId, reservationDto);
-    ReservationPartialResponse reservationPartialResponse =
+    ReservationDto addedReservation =
         restaurantService.addReservation(reservationDto, restaurantId);
     return Response.created(
-            URI.create(
-                "http://localhost:8080/reservations/" + reservationPartialResponse.getNumber()))
+            URI.create("http://localhost:8080/reservations/" + addedReservation.getNumber()))
         .build();
   }
 }

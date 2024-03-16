@@ -1,13 +1,10 @@
-package ca.ulaval.glo2003.application.dtos;
+package ca.ulaval.glo2003.api.request;
 
-public class SearchDto {
+import ca.ulaval.glo2003.application.dtos.OpenedDto;
+
+public class SearchRequest {
   private String name;
   private OpenedDto opened;
-
-  public SearchDto(String name, OpenedDto opened) {
-    this.name = name;
-    this.opened = opened;
-  }
 
   public String getName() {
     return name;

@@ -5,20 +5,20 @@ import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
+import ca.ulaval.glo2003.api.exceptionMapper.InvalidParameterExceptionMapper;
+import ca.ulaval.glo2003.api.exceptionMapper.MissingParameterExceptionMapper;
+import ca.ulaval.glo2003.api.exceptionMapper.NotFoundExceptionMapper;
+import ca.ulaval.glo2003.api.request.RestaurantRequest;
 import ca.ulaval.glo2003.api.resource.RestaurantResource;
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
-import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
+import ca.ulaval.glo2003.application.dtos.HoursDto;
+import ca.ulaval.glo2003.application.dtos.ReservationDurationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.entity.Hours;
-import ca.ulaval.glo2003.domain.entity.ReservationDuration;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.error.Error;
-import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.domain.exception.exceptionMapper.InvalidParameterExceptionMapper;
-import ca.ulaval.glo2003.domain.exception.exceptionMapper.MissingParameterExceptionMapper;
-import ca.ulaval.glo2003.domain.exception.exceptionMapper.NotFoundExceptionMapper;
-import ca.ulaval.glo2003.repository.RestaurantRepository;
+import ca.ulaval.glo2003.repository.RestaurantRepositoryInMemory;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.Response;
@@ -35,7 +35,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
   public static final String MISSING_RESTAURANT_MESSAGE = "Missing restaurant parameter.";
   public static final String INVALID_RESTAURANT_MESSAGE = "Invalid restaurant parameter.";
-  public static final String NOT_FOUND_MESSAGE = "No restaurant found for the owner.";
   public static final String MISSING_OWNER_ID = "Missing owner ID.";
   public final String UN_NOM = "un nom";
   private final String RESTAURANT_ID = "10000";
@@ -46,18 +45,18 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   private Hours hours;
   private RestaurantService restaurantService;
 
-  private RestaurantRepository restaurantRespository;
-  private RestaurantAssembler restaurantAssembler;
+  private RestaurantRepositoryInMemory restaurantRespository;
+  private RestaurantRequestAssembler restaurantRequestAssembler;
   private RestaurantDto restaurantDto;
 
-  private Restaurant restaurant;
+  private RestaurantRequest restaurantRequest;
   private Response response;
 
   @Override
   protected Application configure() {
-    restaurantRespository = new RestaurantRepository();
+    restaurantRespository = new RestaurantRepositoryInMemory();
     restaurantService = new RestaurantService(restaurantRespository);
-    restaurantAssembler = new RestaurantAssembler();
+    restaurantRequestAssembler = new RestaurantRequestAssembler();
     return new ResourceConfig()
         .register(new RestaurantResource(restaurantService))
         .register(MissingParameterExceptionMapper.class)
@@ -71,8 +70,14 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     hours = new Hours(OPEN, CLOSE);
 
-    restaurant = new Restaurant(UN_NOM, CAPACITY, hours, new ReservationDuration(70));
-    restaurantDto = restaurantAssembler.toDto(restaurant);
+    restaurantRequest =
+        new RestaurantRequest(
+            RESTAURANT_ID,
+            UN_NOM,
+            CAPACITY,
+            new HoursDto(hours.getOpen(), hours.getClose()),
+            new ReservationDurationDto(70));
+    restaurantDto = restaurantRequestAssembler.toDto(restaurantRequest);
   }
 
   @Test
@@ -80,7 +85,10 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenRestaurantAndOwnerId_whenRestaurantIsValid_ThenAddRestaurantAddTheRestaurantToRepository() {
 
     Response response =
-        target("/restaurants/").request().header("Owner", OWNER_ID).post(Entity.json(restaurant));
+        target("/restaurants/")
+            .request()
+            .header("Owner", OWNER_ID)
+            .post(Entity.json(restaurantRequest));
 
     String location = ((String) response.getHeaders().get("Location").get(0));
     int contentLength =
@@ -94,7 +102,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   @Test
   void givenRestaurant_whenOwnerIdNotProvide_ThenAddRestaurantReturnBodyWithMissingError() {
 
-    response = target("/restaurants/").request().post(Entity.json(restaurant));
+    response = target("/restaurants/").request().post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
     System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -110,7 +118,10 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
           String ownerId) {
 
     response =
-        target("/restaurants/").request().header("Owner", ownerId).post(Entity.json(restaurant));
+        target("/restaurants/")
+            .request()
+            .header("Owner", ownerId)
+            .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
     System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -121,9 +132,15 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   @Test
   void givenRestaurantAndOwnerId_WhenHoursIsNull_ThenAddRestaurantReturnBodyWithMissingError() {
 
-    restaurant.setHours(null);
+    restaurantRequest =
+        new RestaurantRequest(
+            RESTAURANT_ID, UN_NOM, CAPACITY, null, new ReservationDurationDto(70));
+
     response =
-        target("/restaurants/").request().header("Owner", OWNER_ID).post(Entity.json(restaurant));
+        target("/restaurants/")
+            .request()
+            .header("Owner", OWNER_ID)
+            .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
     System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -135,9 +152,19 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   void
       givenRestaurantAndOwnerId_WhenCapacityIsLessThanOne_ThenAddRestaurantReturnBodyWithInvalidError() {
 
-    restaurant.setCapacity(0);
+    restaurantRequest =
+        new RestaurantRequest(
+            RESTAURANT_ID,
+            UN_NOM,
+            0,
+            new HoursDto(hours.getOpen(), hours.getClose()),
+            new ReservationDurationDto(70));
+
     response =
-        target("/restaurants/").request().header("Owner", OWNER_ID).post(Entity.json(restaurant));
+        target("/restaurants/")
+            .request()
+            .header("Owner", OWNER_ID)
+            .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
     System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -150,10 +177,19 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
-    restaurant.setHours(hours);
+    restaurantRequest =
+        new RestaurantRequest(
+            RESTAURANT_ID,
+            UN_NOM,
+            CAPACITY,
+            new HoursDto(hours.getOpen(), hours.getClose()),
+            new ReservationDurationDto(70));
 
     response =
-        target("/restaurants/").request().header("Owner", OWNER_ID).post(Entity.json(restaurant));
+        target("/restaurants/")
+            .request()
+            .header("Owner", OWNER_ID)
+            .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
     System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
@@ -178,22 +214,18 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   @Test
   void
       givenOwnerIdAndRestaurantId_whenRestaurantInRepository_thenGetRestaurantReturnBodyRestaurant()
-          throws NotFoundException {
+          throws Exception {
 
     restaurantService.addNewOwner(OWNER_ID);
-    RestaurantResponse restaurantResponse =
-        restaurantService.addRestaurant(OWNER_ID, restaurantDto);
+    RestaurantDto addedRestaurant = restaurantService.addRestaurant(OWNER_ID, restaurantDto);
 
     response =
-        target("/restaurants/" + restaurantResponse.getId())
-            .request()
-            .header("Owner", OWNER_ID)
-            .get();
+        target("/restaurants/" + addedRestaurant.id()).request().header("Owner", OWNER_ID).get();
     Restaurant body = response.readEntity(Restaurant.class);
     System.out.println(body);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    assertThat(body.getName()).isEqualTo(restaurant.getName());
-    assertThat(body.getId()).isEqualTo(restaurant.getId());
+    assertThat(body.getName()).isEqualTo(restaurantRequest.name());
+    assertThat(body.getId()).isEqualTo(restaurantRequest.id());
   }
 
   @Test

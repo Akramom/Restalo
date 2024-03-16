@@ -1,30 +1,58 @@
 package ca.ulaval.glo2003.api.response.reservation;
 
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
-import ca.ulaval.glo2003.domain.entity.Customer;
-import ca.ulaval.glo2003.domain.entity.Time;
+import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
+import ca.ulaval.glo2003.application.dtos.CustomerDto;
+import ca.ulaval.glo2003.application.dtos.TimeDto;
 import java.time.LocalDate;
 
-public class ReservationResponse extends ReservationPartialResponse {
-
-  private RestaurantPartialResponse restaurant;
+public class ReservationResponse {
+  private String number;
+  private LocalDate date;
+  private TimeDto time;
+  private int groupSize;
+  private CustomerDto customer;
+  private RestaurantResponse restaurant;
 
   public ReservationResponse(
       String number,
       LocalDate date,
-      Time time,
+      TimeDto time,
       int groupSize,
-      Customer customer,
-      RestaurantPartialResponse restaurantPartialResponse) {
-    super(number, date, time, groupSize, customer);
+      CustomerDto customer,
+      RestaurantResponse restaurantPartialResponse) {
+    this.number = number;
+    this.date = date;
+    this.time = time;
+    this.groupSize = groupSize;
+    this.customer = customer;
     this.restaurant = restaurantPartialResponse;
   }
 
-  public RestaurantPartialResponse getRestaurant() {
+  public String getNumber() {
+    return number;
+  }
+
+  public LocalDate getDate() {
+    return date;
+  }
+
+  public TimeDto getTime() {
+    return time;
+  }
+
+  public int getGroupSize() {
+    return groupSize;
+  }
+
+  public CustomerDto getCustomer() {
+    return customer;
+  }
+
+  public RestaurantResponse getRestaurant() {
     return restaurant;
   }
 
-  public void setRestaurant(RestaurantPartialResponse restaurant) {
+  public void setRestaurant(RestaurantResponse restaurant) {
     this.restaurant = restaurant;
   }
 }

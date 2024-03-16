@@ -1,22 +1,19 @@
 package ca.ulaval.glo2003.api.response.reservation;
 
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
-import ca.ulaval.glo2003.domain.entity.Customer;
-import ca.ulaval.glo2003.domain.entity.Time;
+import ca.ulaval.glo2003.application.dtos.CustomerDto;
+import ca.ulaval.glo2003.application.dtos.TimeDto;
 import java.time.LocalDate;
 
-public class ReservationPartialResponse {
+public class OwnerReservationResponse {
 
   private String number;
   private LocalDate date;
-  private Time time;
+  private TimeDto time;
   private int groupSize;
-  private Customer customer;
+  private CustomerDto customer;
 
-  private RestaurantPartialResponse restaurant;
-
-  public ReservationPartialResponse(
-      String number, LocalDate date, Time time, int groupSize, Customer customer) {
+  public OwnerReservationResponse(
+      String number, LocalDate date, TimeDto time, int groupSize, CustomerDto customer) {
     this.number = number;
     this.date = date;
     this.time = time;
@@ -32,7 +29,7 @@ public class ReservationPartialResponse {
     return date;
   }
 
-  public Time getTime() {
+  public TimeDto getTime() {
     return time;
   }
 
@@ -40,7 +37,7 @@ public class ReservationPartialResponse {
     return groupSize;
   }
 
-  public Customer getCustomer() {
+  public CustomerDto getCustomer() {
     return customer;
   }
 }

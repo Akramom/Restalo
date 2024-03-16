@@ -1,6 +1,10 @@
 package ca.ulaval.glo2003.application.assembler;
 
+import ca.ulaval.glo2003.application.dtos.HoursDto;
+import ca.ulaval.glo2003.application.dtos.ReservationDurationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.domain.entity.Hours;
+import ca.ulaval.glo2003.domain.entity.ReservationDuration;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 
 public class RestaurantAssembler {
@@ -12,8 +16,12 @@ public class RestaurantAssembler {
         restaurant.getId(),
         restaurant.getName(),
         restaurant.getCapacity(),
-        restaurant.getHours(),
-        restaurant.getReservation());
+        restaurant.getHours() == null
+            ? null
+            : new HoursDto(restaurant.getHours().getOpen(), restaurant.getHours().getClose()),
+        restaurant.getReservation() == null
+            ? null
+            : new ReservationDurationDto(restaurant.getReservation().duration()));
   }
 
   public Restaurant fromDto(RestaurantDto restaurantDto) {
@@ -21,7 +29,7 @@ public class RestaurantAssembler {
         restaurantDto.id(),
         restaurantDto.name(),
         restaurantDto.capacity(),
-        restaurantDto.hours(),
-        restaurantDto.reservations());
+        new Hours(restaurantDto.hours().getOpen(), restaurantDto.hours().getClose()),
+        new ReservationDuration(restaurantDto.reservations().duration()));
   }
 }
