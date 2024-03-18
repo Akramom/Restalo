@@ -7,13 +7,13 @@ import dev.morphia.Datastore;
 import dev.morphia.Morphia;
 import java.util.concurrent.TimeUnit;
 
-public class DatastoreProvide {
+public class DatastoreProvider {
 
   private final String mongoClusterUrl;
   private final String mongoDatabase;
   private Datastore datastore;
 
-  public DatastoreProvide(String mongoClusterUrl, String mongoDatabase) {
+  public DatastoreProvider(String mongoClusterUrl, String mongoDatabase) {
     this.mongoClusterUrl = mongoClusterUrl;
     this.mongoDatabase = mongoDatabase;
   }

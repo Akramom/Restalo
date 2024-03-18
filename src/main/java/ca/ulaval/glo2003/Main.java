@@ -7,7 +7,7 @@ import ca.ulaval.glo2003.api.resource.RestaurantResource;
 import ca.ulaval.glo2003.api.resource.SearchResource;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.repository.*;
-import ca.ulaval.glo2003.util.DatastoreProvide;
+import ca.ulaval.glo2003.util.DatastoreProvider;
 import java.net.URI;
 import java.util.Optional;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -43,7 +43,7 @@ public class Main {
       mongoDatabase = System.getenv("MONGO_DATABASE");
       restaurantRespository =
           new RestaurantRepositoryMongo(
-              new DatastoreProvide(mongoClusterUrl, mongoDatabase).provide());
+              new DatastoreProvider(mongoClusterUrl, mongoDatabase).provide());
     } else restaurantRespository = new RestaurantRepositoryInMemory();
 
     final ResourceConfig rc = new ResourceConfig();

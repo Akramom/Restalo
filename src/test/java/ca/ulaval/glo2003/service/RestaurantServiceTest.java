@@ -341,6 +341,7 @@ class RestaurantServiceTest {
     LocalTime openAfterFromSearchInput = LocalTime.of(13, 50, 45);
     Hours hours = new Hours(openAfterFromSearchInput, RESTAURANT_CLOSE);
     restaurant.setHours(hours);
+    expectedList.add(restaurant);
     expectedList.add(secondRestaurant);
     expectedList.add(thirdRestaurant);
 
