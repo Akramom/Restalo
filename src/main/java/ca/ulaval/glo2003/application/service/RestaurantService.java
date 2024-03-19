@@ -2,12 +2,9 @@ package ca.ulaval.glo2003.application.service;
 
 import static ca.ulaval.glo2003.util.Constante.*;
 
-import ca.ulaval.glo2003.api.response.reservation.ReservationPartialResponse;
-import ca.ulaval.glo2003.api.response.reservation.ReservationResponse;
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantPartialResponse;
-import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.application.assembler.ReservationAssembler;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
+import ca.ulaval.glo2003.application.assembler.SearchAssembler;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.dtos.SearchDto;
@@ -17,72 +14,56 @@ import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
+import ca.ulaval.glo2003.domain.search.SearchHelper;
 import ca.ulaval.glo2003.repository.*;
+import ca.ulaval.glo2003.util.Util;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RestaurantService {
 
-  private final RestaurantRepository restaurantRepository;
+  private final IRestaurantRepository restaurantRepository;
   private final RestaurantValidator restaurantValidator;
   private final ReservationValidator reservationValidator;
   private final RestaurantAssembler restaurantAssembler;
   private final ReservationAssembler reservationAssembler;
 
-  public RestaurantService(RestaurantRepository restaurantRepository) {
+  private final SearchHelper searchHelper;
+
+  public RestaurantService(IRestaurantRepository restaurantRepository) {
     this.restaurantRepository = restaurantRepository;
     this.restaurantValidator = new RestaurantValidator();
     this.reservationValidator = new ReservationValidator();
     this.restaurantAssembler = new RestaurantAssembler();
     this.reservationAssembler = new ReservationAssembler();
+    this.searchHelper = new SearchHelper();
   }
 
-  public RestaurantResponse addRestaurant(String noOwner, RestaurantDto restaurant) {
-    if (!isExistingOwnerId(noOwner)) {
-      restaurantRepository.addOwner(noOwner);
+  public RestaurantDto addRestaurant(String ownerId, RestaurantDto restaurantDto) throws Exception {
+    this.verifyOwnerId(ownerId);
+    this.verifyRestaurantParameter(restaurantDto);
+    if (!isExistingOwnerId(ownerId)) {
+      restaurantRepository.addOwner(ownerId);
     }
     Restaurant addRestaurant =
-        restaurantRepository.addRestaurant(noOwner, restaurantAssembler.fromDto(restaurant));
+        restaurantRepository.addRestaurant(ownerId, restaurantAssembler.fromDto(restaurantDto));
 
-    return new RestaurantResponse(
-        addRestaurant.getId(),
-        addRestaurant.getName(),
-        addRestaurant.getCapacity(),
-        addRestaurant.getHours(),
-        addRestaurant.getReservation());
+    return restaurantAssembler.toDto(addRestaurant);
   }
 
-  public RestaurantPartialResponse getRestaurantByIdOfOwner(String ownerId, String restaurantId)
-      throws NotFoundException {
+  public RestaurantDto getRestaurantByIdOfOwner(String ownerId, String restaurantId)
+      throws Exception {
+    this.verifyOwnerId(ownerId);
 
     Restaurant restaurant = restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
-    RestaurantPartialResponse restaurantResponse =
-        new RestaurantResponse(
-            restaurant.getId(),
-            restaurant.getName(),
-            restaurant.getCapacity(),
-            restaurant.getHours(),
-            restaurant.getReservation());
 
-    return restaurantResponse;
+    return restaurantAssembler.toDto(restaurant);
   }
 
-  public Restaurant getRestaurantByOwnerAndRestaurantId(String ownerId, String restaurantId)
-      throws NotFoundException {
-    return restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
-  }
-
-  public List<RestaurantResponse> getAllRestaurantsOfOwner(String ownerId) {
-
-    return restaurantRepository.getAllRestaurants(ownerId).stream()
-        .map(
-            restaurant ->
-                new RestaurantResponse(
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    restaurant.getCapacity(),
-                    restaurant.getHours(),
-                    restaurant.getReservation()))
+  public List<RestaurantDto> getAllRestaurantsOfOwner(String ownerId) throws Exception {
+    this.verifyOwnerId(ownerId);
+    return restaurantRepository.getAllOwnerRestaurants(ownerId).stream()
+        .map(this.restaurantAssembler::toDto)
         .collect(Collectors.toList());
   }
 
@@ -92,7 +73,7 @@ public class RestaurantService {
   }
 
   public Boolean isExistingOwnerId(String OwnerId) {
-    for (Owner owner : restaurantRepository.getOwner()) {
+    for (Owner owner : restaurantRepository.getOwners()) {
       String ownerId = owner.getOwnerId();
       if (OwnerId.equals(ownerId)) {
         return true;
@@ -149,59 +130,46 @@ public class RestaurantService {
         reservationDto, restaurant.getHours().getClose());
   }
 
-  public ReservationPartialResponse addReservation(
-      ReservationDto reservationDto, String restaurantId) throws NotFoundException {
+  public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
+      throws NotFoundException, InvalidParameterException, MissingParameterException {
+
+    this.verifyExistRestaurant(restaurantId);
+    this.verifyEmptyReservationParameter(reservationDto);
+
+    int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
+    reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
+    reservationDto.setEndTime(
+        Util.calculEndTime(reservationDto.getStartTime(), reservationDuration));
+
+    this.verifyValidReservationParameter(restaurantId, reservationDto);
+
     Reservation reservation = reservationAssembler.fromDto(reservationDto);
     Reservation addedReservation = restaurantRepository.addReservation(reservation, restaurantId);
 
-    return new ReservationPartialResponse(
-        addedReservation.getNumber(),
-        addedReservation.getDate(),
-        new Time(addedReservation.getStartTime(), addedReservation.getEndTime()),
-        addedReservation.getGroupSize(),
-        reservation.getCustomer());
+    return new ReservationAssembler().toDto(addedReservation);
   }
 
   public int getRestaurantReservationDuration(String restaurantId) throws NotFoundException {
     return restaurantRepository.getRestaurantById(restaurantId).getReservation().duration();
   }
 
-  public ReservationResponse getReservationByNumber(String resevationNumber)
-      throws NotFoundException {
-    Reservation reservation = restaurantRepository.getReservationByNumber(resevationNumber);
-    Restaurant restaurant = restaurantRepository.getRestaurantByReservationNumber(resevationNumber);
+  public ReservationDto getReservationByNumber(String reservationNumber)
+      throws NotFoundException, MissingParameterException {
+    this.verifyReservationNumber(reservationNumber);
 
-    RestaurantPartialResponse restaurantResponse =
-        new RestaurantPartialResponse(
-            restaurant.getId(),
-            restaurant.getName(),
-            restaurant.getCapacity(),
-            restaurant.getHours());
-    ReservationResponse reservationResponse =
-        new ReservationResponse(
-            reservation.getNumber(),
-            reservation.getDate(),
-            new Time(reservation.getStartTime(), reservation.getEndTime()),
-            reservation.getGroupSize(),
-            reservation.getCustomer(),
-            restaurantResponse);
-
-    return reservationResponse;
+    Reservation reservation = restaurantRepository.getReservationByNumber(reservationNumber);
+    Restaurant restaurant =
+        restaurantRepository.getRestaurantByReservationNumber(reservationNumber);
+    return new ReservationAssembler().toDto(reservation, restaurant);
   }
 
-  public List<RestaurantPartialResponse> searchRestaurant(SearchDto searchDto) {
+  public List<RestaurantDto> searchRestaurant(SearchDto searchDto) {
+
+    List<Restaurant> allRestaurant = restaurantRepository.getAllRestaurants();
 
     List<Restaurant> restaurants =
-        restaurantRepository.search(new Search(searchDto.getName(), searchDto.getOpened()));
+        searchHelper.searchRestaurant(allRestaurant, new SearchAssembler().fromDto(searchDto));
 
-    return restaurants.stream()
-        .map(
-            restaurant ->
-                new RestaurantPartialResponse(
-                    restaurant.getId(),
-                    restaurant.getName(),
-                    restaurant.getCapacity(),
-                    restaurant.getHours()))
-        .collect(Collectors.toList());
+    return restaurants.stream().map(this.restaurantAssembler::toDto).collect(Collectors.toList());
   }
 }

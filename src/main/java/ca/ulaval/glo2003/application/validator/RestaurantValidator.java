@@ -1,7 +1,7 @@
 package ca.ulaval.glo2003.application.validator;
 
+import ca.ulaval.glo2003.application.dtos.HoursDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
-import ca.ulaval.glo2003.domain.entity.Hours;
 import java.time.LocalTime;
 
 public class RestaurantValidator {
@@ -9,7 +9,7 @@ public class RestaurantValidator {
 
   public Boolean isRestaurantParameterEmpty(RestaurantDto restaurant) {
     String name = restaurant.name();
-    Hours hours = restaurant.hours();
+    HoursDto hours = restaurant.hours();
 
     if (isStringEmpty(name)) {
       return true;
@@ -30,7 +30,7 @@ public class RestaurantValidator {
     return capacity > 0;
   }
 
-  public Boolean isValidOpeningHours(Hours openingHours) {
+  public Boolean isValidOpeningHours(HoursDto openingHours) {
     LocalTime openTime = openingHours.getOpen();
     LocalTime closeTime = openingHours.getClose();
 

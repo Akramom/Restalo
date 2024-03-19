@@ -1,4 +1,6 @@
-package ca.ulaval.glo2003.domain.entity;
+package ca.ulaval.glo2003.domain.search;
+
+import ca.ulaval.glo2003.domain.entity.Opened;
 
 public class Search {
   private String name;

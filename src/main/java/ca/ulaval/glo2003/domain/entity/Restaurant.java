@@ -1,17 +1,31 @@
 package ca.ulaval.glo2003.domain.entity;
 
 import ca.ulaval.glo2003.util.Util;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
+@Entity
 public class Restaurant {
 
   private String name;
   private int capacity;
-  private String id;
+  @Id private String id;
   private ReservationDuration reservationDuration;
   private Hours hours;
+
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  private String ownerId;
   private List<Reservation> reservationList;
 
   public Restaurant(
@@ -23,6 +37,24 @@ public class Restaurant {
     this.reservationList = new ArrayList<>();
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Restaurant that)) return false;
+    return capacity == that.capacity
+        && Objects.equals(name, that.name)
+        && Objects.equals(id, that.id)
+        && Objects.equals(reservationDuration, that.reservationDuration)
+        && Objects.equals(hours, that.hours)
+        && Objects.equals(ownerId, that.ownerId)
+        && Objects.equals(reservationList, that.reservationList);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, capacity, id, reservationDuration, hours, ownerId, reservationList);
   }
 
   public Restaurant(

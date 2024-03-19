@@ -1,15 +1,30 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
+@Entity
 public class Reservation {
   private LocalDate date;
   private LocalTime startTime;
   private LocalTime endTime;
   private int groupSize;
   private Customer customer;
-  private String number;
+
+  @Id private String number;
+
+  public String getRestaurantId() {
+    return restaurantId;
+  }
+
+  public void setRestaurantId(String restaurantId) {
+    this.restaurantId = restaurantId;
+  }
+
+  private String restaurantId;
 
   public Reservation(
       String number,
@@ -94,5 +109,23 @@ public class Reservation {
         + customer.getPhoneNumber()
         + '}'
         + '}';
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Reservation that)) return false;
+    return groupSize == that.groupSize
+        && Objects.equals(date, that.date)
+        && Objects.equals(startTime, that.startTime)
+        && Objects.equals(endTime, that.endTime)
+        && Objects.equals(customer, that.customer)
+        && Objects.equals(number, that.number)
+        && Objects.equals(restaurantId, that.restaurantId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(date, startTime, endTime, groupSize, customer, number, restaurantId);
   }
 }

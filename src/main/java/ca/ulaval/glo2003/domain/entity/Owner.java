@@ -1,15 +1,18 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.Id;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 public class Owner {
-  private String ownerId;
+
+  @Id private String ownerId;
   private String lastname;
   private String firstname;
   private String phoneNumer;
-
   private List<Restaurant> restaurants;
 
   public Owner(String lastname, String firstname, String phoneNumer) {

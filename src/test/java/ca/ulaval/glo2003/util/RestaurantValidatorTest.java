@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
+import ca.ulaval.glo2003.application.dtos.HoursDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
-import ca.ulaval.glo2003.domain.entity.Hours;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 import java.time.LocalTime;
 import java.util.stream.Stream;
@@ -27,13 +27,13 @@ class RestaurantValidatorTest {
   private RestaurantValidator validator;
   private RestaurantAssembler restaurantAssembler;
   @Mock private RestaurantDto restaurantDto;
-  private Hours hours;
+  private HoursDto hours;
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.initMocks(this);
     validator = new RestaurantValidator();
-    hours = new Hours(OPEN, CLOSE);
+    hours = new HoursDto(OPEN, CLOSE);
     restaurantAssembler = new RestaurantAssembler();
   }
 
@@ -118,7 +118,7 @@ class RestaurantValidatorTest {
   @ParameterizedTest
   @MethodSource("provideInvalidHours")
   void givenARestaurant_WhenHoursIsNull_thenIsRestaurantParameterEmptyShouldReturnTrue(
-      Hours hours) {
+      HoursDto hours) {
 
     when(restaurantDto.hours()).thenReturn(hours);
     when(restaurantDto.name()).thenReturn("name");
@@ -136,10 +136,10 @@ class RestaurantValidatorTest {
     assertFalse(validator.isRestaurantParameterEmpty(restaurantDto));
   }
 
-  private static Stream<Hours> provideInvalidHours() {
-    Hours hours1 = null;
-    Hours hours2 = new Hours(null, LocalTime.now());
-    Hours hours3 = new Hours(LocalTime.now(), null);
+  private static Stream<HoursDto> provideInvalidHours() {
+    HoursDto hours1 = null;
+    HoursDto hours2 = new HoursDto(null, LocalTime.now());
+    HoursDto hours3 = new HoursDto(LocalTime.now(), null);
 
     return Stream.of(hours1, hours2, hours3);
   }

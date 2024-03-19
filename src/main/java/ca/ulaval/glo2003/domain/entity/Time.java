@@ -1,7 +1,9 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import dev.morphia.annotations.Entity;
 import java.time.LocalTime;
 
+@Entity
 public class Time {
 
   private LocalTime start;

@@ -1,5 +1,9 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import dev.morphia.annotations.Entity;
+import java.util.Objects;
+
+@Entity
 public class Customer {
   private String name;
   private String email;
@@ -31,6 +35,20 @@ public class Customer {
 
   public String getEmail() {
     return email;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Customer customer)) return false;
+    return Objects.equals(name, customer.name)
+        && Objects.equals(email, customer.email)
+        && Objects.equals(phoneNumber, customer.phoneNumber);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, email, phoneNumber);
   }
 
   public String getPhoneNumber() {

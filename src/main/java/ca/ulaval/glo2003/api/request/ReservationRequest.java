@@ -1,10 +1,10 @@
-package ca.ulaval.glo2003.application.dtos;
+package ca.ulaval.glo2003.api.request;
 
-import ca.ulaval.glo2003.util.Util;
+import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class ReservationDto {
+public class ReservationRequest {
   private int durationInMin;
   private LocalDate date;
   private LocalTime startTime;
@@ -13,17 +13,7 @@ public class ReservationDto {
   private CustomerDto customer;
   private String number;
 
-  public RestaurantDto getRestaurantDto() {
-    return restaurantDto;
-  }
-
-  public void setRestaurantDto(RestaurantDto restaurantDto) {
-    this.restaurantDto = restaurantDto;
-  }
-
-  private RestaurantDto restaurantDto;
-
-  public ReservationDto(
+  public ReservationRequest(
       String number,
       LocalDate date,
       LocalTime startTime,
@@ -48,13 +38,7 @@ public class ReservationDto {
     this.durationInMin = durationInMin;
   }
 
-  public ReservationDto() {
-    setNewID();
-  }
-
-  public String setNewID() {
-    return this.number = Util.generateId();
-  }
+  public ReservationRequest() {}
 
   public LocalDate getDate() {
     return date;
@@ -102,27 +86,5 @@ public class ReservationDto {
 
   public void setNumber(String number) {
     this.number = number;
-  }
-
-  @Override
-  public String toString() {
-    return "{ "
-        + "date :"
-        + date
-        + ", startTime :"
-        + startTime
-        + ", endTime :"
-        + endTime
-        + ", groupSize :"
-        + groupSize
-        + ", customer : {"
-        + "name: "
-        + customer.name()
-        + ", email: "
-        + customer.email()
-        + ", phoneNumber :"
-        + customer.phoneNumber()
-        + '}'
-        + '}';
   }
 }

@@ -1,30 +1,35 @@
 package ca.ulaval.glo2003.repository;
 
-import static ca.ulaval.glo2003.util.Constante.RESERVATION_NOT_FOUND;
-import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
+import static ca.ulaval.glo2003.util.Constante.*;
 
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
-import ca.ulaval.glo2003.domain.entity.Search;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RestaurantRepository {
+public class RestaurantRepositoryInMemory implements IRestaurantRepository {
 
   private List<Owner> owners;
 
-  public RestaurantRepository() {
+  public RestaurantRepositoryInMemory() {
     owners = new ArrayList<>();
   }
 
-  public List<Owner> getOwner() {
+  @Override
+  public List<Owner> getOwners() {
     return owners;
   }
 
+  @Override
+  public Owner getOwner(String ownerId) {
+    return owners.stream().filter(owner -> owner.getOwnerId().equals(ownerId)).toList().getFirst();
+  }
+
+  @Override
   public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
 
     if (restaurant.getId() == null) {
@@ -40,12 +45,14 @@ public class RestaurantRepository {
     return restaurant;
   }
 
+  @Override
   public Owner addOwner(String ownerId) {
     Owner owner = new Owner(ownerId, "Doe", "John", "418-222-2222");
     owners.add(owner);
     return owner;
   }
 
+  @Override
   public Restaurant getOwnerRestaurantById(String ownerId, String restaurantId)
       throws NotFoundException {
     Restaurant unRestaurant =
@@ -61,6 +68,7 @@ public class RestaurantRepository {
     return unRestaurant;
   }
 
+  @Override
   public Restaurant getRestaurantById(String restaurantId) throws NotFoundException {
     Restaurant unRestaurant =
         owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
@@ -70,16 +78,27 @@ public class RestaurantRepository {
     return unRestaurant;
   }
 
-  public List<Restaurant> getAllRestaurants(String ownerId) {
+  @Override
+  public List<Restaurant> getAllOwnerRestaurants(String ownerId) throws NotFoundException {
     List<Restaurant> ownerRestaurants =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
-            .toList()
-            .getFirst()
+            .findFirst()
+            .orElseThrow(() -> new NotFoundException(OWNER_NOT_FOUND))
             .getRestaurants();
     return ownerRestaurants;
   }
 
+  @Override
+  public List<Restaurant> getAllRestaurants() {
+    List<Restaurant> allRestaurant =
+        owners.stream()
+            .flatMap(owner -> owner.getRestaurants().stream())
+            .collect(Collectors.toList());
+    return allRestaurant;
+  }
+
+  @Override
   public Reservation addReservation(Reservation reservation, String restaurantId)
       throws NotFoundException {
 
@@ -96,6 +115,7 @@ public class RestaurantRepository {
     return getReservationByNumber(reservation.getNumber());
   }
 
+  @Override
   public Reservation getReservationByNumber(String reservationNumer) throws NotFoundException {
     return owners.stream()
         .flatMap(owner -> owner.getRestaurants().stream())
@@ -107,6 +127,7 @@ public class RestaurantRepository {
         .orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND));
   }
 
+  @Override
   public Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException {
 
     Restaurant unRestaurant =
@@ -121,26 +142,5 @@ public class RestaurantRepository {
             .findFirst()
             .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
     return unRestaurant;
-  }
-
-  public List<Restaurant> search(Search search) {
-    List<Restaurant> allRestaurant =
-        owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .collect(Collectors.toList());
-
-    if (Util.isSearchDtoNull(search)) {
-      return allRestaurant;
-    }
-
-    if (Util.isSearchDtoOpenedNull(search)) {
-      return Util.searchByName(allRestaurant, search.getName());
-    }
-
-    if (Util.isSearchDtoNameNull(search)) {
-      return Util.searchByOpenedHour(allRestaurant, search.getOpened());
-    }
-
-    return Util.search(allRestaurant, search);
   }
 }

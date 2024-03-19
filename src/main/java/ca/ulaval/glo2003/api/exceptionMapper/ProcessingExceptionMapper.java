@@ -1,4 +1,4 @@
-package ca.ulaval.glo2003.domain.exception.exceptionMapper;
+package ca.ulaval.glo2003.api.exceptionMapper;
 
 import static ca.ulaval.glo2003.util.Constante.ERROR_DESERIALIZE;
 
