@@ -12,11 +12,13 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class RestaurantRepositoryTest {
+class RestaurantRepositoryInMemoryTest implements IRestaurantRepositoryTest {
   private RestaurantRepositoryInMemory repository;
   private Restaurant restaurant;
 
   private Owner owner;
+  public static final String RESTAURANT_ID1 = "300";
+
   public static final int CAPACITY = 100;
   private Reservation reservation;
   private final String RESTAURANT_ID = "10000";
@@ -30,8 +32,9 @@ class RestaurantRepositoryTest {
   private Hours hours;
   private ReservationDuration reservationDuration;
 
+  @Override
   @BeforeEach
-  void setUp() {
+  public void setUp() {
     hours = new Hours(RESTAURANT_OPEN, RESTAURANT_CLOSE);
     owner = new Owner("Equipe", "JOHN", "418-222-2222");
     owner.setOwnerId(OWNER_ID);
@@ -50,8 +53,9 @@ class RestaurantRepositoryTest {
             new Customer());
   }
 
+  @Override
   @Test
-  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
+  public void givenOwnerIdAndRestaurantId_whenAddRestaurant_thenRestaurantIsAddInRepository()
       throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -61,9 +65,10 @@ class RestaurantRepositoryTest {
     assertThat(unRestaurant).isEqualTo(restaurant);
   }
 
+  @Override
   @Test
-  void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+  public void
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_thenReturnRestaurant()
           throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -73,22 +78,24 @@ class RestaurantRepositoryTest {
     assertThat(aRestaurant).isEqualTo(restaurant);
   }
 
+  @Override
   @Test
-  void
-      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+  public void
+      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_thenGetRestaurantShouldThrowNotFoundError()
           throws NotFoundException {
     repository.addOwner(OWNER_ID);
 
     NotFoundException notFoundException =
         assertThrows(
             NotFoundException.class,
-            () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID));
+            () -> repository.getOwnerRestaurantById(OWNER_ID, RESTAURANT_ID1));
 
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
+  @Override
   @Test
-  void givenAnOwnerId_whenGetAllRestaurants_thenReturnListOfRestaurantsForTheOwner()
+  public void givenAnOwnerId_whenGetAllOwnerRestaurants_thenReturnListOfRestaurantsForTheOwner()
       throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -101,8 +108,9 @@ class RestaurantRepositoryTest {
     assertThat(restaurantList).contains(restaurant);
   }
 
+  @Override
   @Test
-  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
+  public void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
       throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -112,9 +120,11 @@ class RestaurantRepositoryTest {
     assertThat(foundRestaurant).isEqualTo(restaurant);
   }
 
+  @Override
   @Test
-  void givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
-      throws NotFoundException {
+  public void
+      givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
+          throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -124,8 +134,9 @@ class RestaurantRepositoryTest {
     assertThat(repository.getReservationByNumber(RESERVATION_ID)).isEqualTo(reservation);
   }
 
+  @Override
   @Test
-  void givenInvalidRestaurantId_whenAddReservation_thenThrowsNotFoundException() {
+  public void givenInvalidRestaurantId_whenAddReservation_thenThrowsNotFoundException() {
     String invalidRestaurantId = "99999";
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -137,13 +148,14 @@ class RestaurantRepositoryTest {
     assertThat(notFoundException.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
+  @Override
   @Test
-  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+  public void getReservationByNumber_WhenExists_thenReturnsReservation() throws NotFoundException {
 
     reservation.setNumber("res123");
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
-    restaurant.addReservation(reservation);
+    repository.addReservation(reservation, restaurant.getId());
 
     Reservation actualReservation = repository.getReservationByNumber(reservation.getNumber());
 
@@ -151,8 +163,9 @@ class RestaurantRepositoryTest {
     assertThat(actualReservation.getNumber()).isEqualTo(reservation.getNumber());
   }
 
+  @Override
   @Test
-  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+  public void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() {
 
     String nonExistingReservationNumber = "nonExisting";
     repository.addOwner(OWNER_ID);
