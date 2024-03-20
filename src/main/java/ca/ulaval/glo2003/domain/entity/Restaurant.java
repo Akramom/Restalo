@@ -3,6 +3,7 @@ package ca.ulaval.glo2003.domain.entity;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import dev.morphia.annotations.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +27,7 @@ public class Restaurant {
   }
 
   private String ownerId;
-  private List<Reservation> reservationList;
+  @Transient private List<Reservation> reservationList;
 
   public Restaurant(
       String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
@@ -34,7 +35,7 @@ public class Restaurant {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    this.reservationList = new ArrayList<>();
+    // this.reservationList = new ArrayList<>();
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
   }
@@ -63,7 +64,7 @@ public class Restaurant {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;
-    this.reservationList = new ArrayList<>();
+    // this.reservationList = new ArrayList<>();
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
   }
@@ -115,10 +116,12 @@ public class Restaurant {
   }
 
   public void addReservation(Reservation reservation) {
+    if (reservationList == null) reservationList = new ArrayList<>();
     reservationList.add(reservation);
   }
 
   public List<Reservation> getReservationList() {
+    if (reservationList == null) reservationList = new ArrayList<>();
     return reservationList;
   }
 
