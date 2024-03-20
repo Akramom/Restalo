@@ -82,7 +82,7 @@ class RestaurantRepositoryMongoTest implements IRestaurantRepositoryTest {
 
   @Override
   @Test
-  public void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
+  public void givenOwnerIdAndRestaurantId_whenAddRestaurant_thenRestaurantIsAddInRepository()
       throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -95,7 +95,7 @@ class RestaurantRepositoryMongoTest implements IRestaurantRepositoryTest {
   @Override
   @Test
   public void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_thenReturnRestaurant()
           throws NotFoundException {
     repository.addOwner(OWNER_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -108,7 +108,7 @@ class RestaurantRepositoryMongoTest implements IRestaurantRepositoryTest {
   @Override
   @Test
   public void
-      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_thenGetRestaurantShouldThrowNotFoundError()
           throws NotFoundException {
     repository.addOwner(OWNER_ID);
 
@@ -179,7 +179,7 @@ class RestaurantRepositoryMongoTest implements IRestaurantRepositoryTest {
 
   @Override
   @Test
-  public void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+  public void getReservationByNumber_WhenExists_thenReturnsReservation() throws NotFoundException {
 
     reservation.setNumber("res123");
     repository.addOwner(OWNER_ID);
@@ -194,7 +194,7 @@ class RestaurantRepositoryMongoTest implements IRestaurantRepositoryTest {
 
   @Override
   @Test
-  public void getReservationByNumber_WhenNotExists_ThrowsNotFoundException()
+  public void getReservationByNumber_whenNotExists_thenThrowsNotFoundException()
       throws NotFoundException {
 
     String nonExistingReservationNumber = "nonExisting";

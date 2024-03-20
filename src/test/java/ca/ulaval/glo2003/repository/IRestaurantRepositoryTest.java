@@ -9,17 +9,17 @@ public interface IRestaurantRepositoryTest {
   void setUp();
 
   @Test
-  void givenOwnerIdAndRestaurantId_WhenAddRestaurant_ThenRestaurantIsAddInRepository()
+  void givenOwnerIdAndRestaurantId_whenAddRestaurant_thenRestaurantIsAddInRepository()
       throws NotFoundException;
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_ThenReturnRestaurant()
+      givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_thenReturnRestaurant()
           throws NotFoundException;
 
   @Test
   void
-      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_ThenGetRestaurantShouldThrowNotFoundError()
+      givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_thenGetRestaurantShouldThrowNotFoundError()
           throws NotFoundException;
 
   @Test
@@ -39,8 +39,8 @@ public interface IRestaurantRepositoryTest {
       throws NotFoundException;
 
   @Test
-  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException;
+  void getReservationByNumber_WhenExists_thenReturnsReservation() throws NotFoundException;
 
   @Test
-  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() throws NotFoundException;
+  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() throws NotFoundException;
 }
