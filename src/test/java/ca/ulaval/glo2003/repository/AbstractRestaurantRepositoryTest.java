@@ -35,7 +35,6 @@ public abstract class AbstractRestaurantRepositoryTest {
   private Hours hours;
   private ReservationDuration reservationDuration;
 
-
   @BeforeEach
   public void setUp() {
 
