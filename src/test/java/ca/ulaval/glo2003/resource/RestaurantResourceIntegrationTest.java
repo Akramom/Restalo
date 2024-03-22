@@ -104,7 +104,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     response = target("/restaurants/").request().post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(MISSING_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(MISSING_OWNER_ID);
@@ -123,7 +122,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             .header("Owner", ownerId)
             .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(MISSING_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(MISSING_OWNER_ID);
@@ -142,7 +140,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             .header("Owner", OWNER_ID)
             .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(MISSING_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(MISSING_RESTAURANT_MESSAGE);
@@ -166,7 +163,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             .header("Owner", OWNER_ID)
             .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(INVALID_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(INVALID_RESTAURANT_MESSAGE);
@@ -191,7 +187,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             .header("Owner", OWNER_ID)
             .post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(INVALID_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(INVALID_RESTAURANT_MESSAGE);
@@ -205,7 +200,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     response = target("/restaurants/" + RESTAURANT_ID).request().header("Owner", OWNER_ID).get();
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(NOT_FOUND);
     assertThat(body.getDescription()).isEqualTo(RESTAURANT_NOT_FOUND);
@@ -222,7 +216,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
     response =
         target("/restaurants/" + addedRestaurant.id()).request().header("Owner", OWNER_ID).get();
     Restaurant body = response.readEntity(Restaurant.class);
-    System.out.println(body);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     assertThat(body.getName()).isEqualTo(restaurantRequest.name());
     assertThat(body.getId()).isEqualTo(restaurantRequest.id());
@@ -235,7 +228,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     response = target("/restaurants/").request().header("Owner", null).get();
     Error body = response.readEntity(Error.class);
-    System.out.println(body);
     assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatus());
     assertThat(body.getError()).isEqualTo(MISSING_PARAMETER);
     assertThat(body.getDescription()).isEqualTo(MISSING_OWNER_ID);
@@ -250,7 +242,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();
     List<Restaurant> body = response.readEntity(List.class);
-    System.out.println(body);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     assertThat(body.size()).isEqualTo((0));
   }
@@ -265,7 +256,6 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();
     List<Restaurant> body = response.readEntity(List.class);
-    System.out.println(body);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
     assertThat(body.size()).isEqualTo(1);
   }
