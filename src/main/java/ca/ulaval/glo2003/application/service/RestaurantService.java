@@ -40,11 +40,8 @@ public class RestaurantService {
   }
 
   public RestaurantDto addRestaurant(String ownerId, RestaurantDto restaurantDto) throws Exception {
-    this.verifyOwnerId(ownerId);
     this.verifyRestaurantParameter(restaurantDto);
-    if (!isExistingOwnerId(ownerId)) {
-      restaurantRepository.addOwner(ownerId);
-    }
+    this.addOwnerIfNew(ownerId);
     Restaurant addRestaurant =
         restaurantRepository.addRestaurant(ownerId, restaurantAssembler.fromDto(restaurantDto));
 
@@ -53,7 +50,6 @@ public class RestaurantService {
 
   public RestaurantDto getRestaurantByIdOfOwner(String ownerId, String restaurantId)
       throws Exception {
-    this.verifyOwnerId(ownerId);
 
     Restaurant restaurant = restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
 
@@ -61,13 +57,13 @@ public class RestaurantService {
   }
 
   public List<RestaurantDto> getAllRestaurantsOfOwner(String ownerId) throws Exception {
-    this.verifyOwnerId(ownerId);
+
     return restaurantRepository.getAllOwnerRestaurants(ownerId).stream()
         .map(this.restaurantAssembler::toDto)
         .collect(Collectors.toList());
   }
 
-  public Owner addNewOwner(String ownerId) {
+  public Owner addOwnerIfNew(String ownerId) {
     if (isExistingOwnerId(ownerId)) return null;
     return restaurantRepository.addOwner(ownerId);
   }
@@ -82,38 +78,19 @@ public class RestaurantService {
     return false;
   }
 
-  public boolean isValidOwnerId(String ownerId) throws Exception {
-    if (this.restaurantValidator.isStringEmpty(ownerId)) {
-      throw new MissingParameterException(MISSING_OWNER_ID);
-    }
-    return true;
+  public void verifyRestaurantParameter(RestaurantDto restaurant) throws Exception {
+    this.restaurantValidator.validRestaurant(restaurant);
   }
 
-  public void verifyOwnerId(String ownerId) throws Exception {
-    isValidOwnerId(ownerId);
-  }
-
-  public boolean verifyRestaurantParameter(RestaurantDto restaurant) throws Exception {
-
-    if (this.restaurantValidator.isRestaurantParameterEmpty(restaurant))
-      throw new MissingParameterException(MISSING_RESTAURANT_PARAMETER);
-
-    if (!this.restaurantValidator.isValidRestaurant(restaurant))
-      throw new InvalidParameterException(INVALID_RESTAURANT_PARAMETER);
-
-    return true;
-  }
-
-  public Restaurant verifyExistRestaurant(String restaurantId)
+  public void verifyExistRestaurant(String restaurantId)
       throws MissingParameterException, NotFoundException {
-    if (this.restaurantValidator.isStringEmpty(restaurantId)) {
+    if (isStringEmpty(restaurantId)) {
       throw new MissingParameterException(MISSING_RESTAURANT_ID);
     }
-    return restaurantRepository.getRestaurantById(restaurantId);
   }
 
   public void verifyReservationNumber(String reservationId) throws MissingParameterException {
-    if (this.reservationValidator.isStringEmpty(reservationId)) {
+    if (isStringEmpty(reservationId)) {
       throw new MissingParameterException(MISSING_RESERVATION_NUMBER);
     }
   }
@@ -171,5 +148,9 @@ public class RestaurantService {
         searchHelper.searchRestaurant(allRestaurant, new SearchAssembler().fromDto(searchDto));
 
     return restaurants.stream().map(this.restaurantAssembler::toDto).collect(Collectors.toList());
+  }
+
+  public Boolean isStringEmpty(String value) {
+    return value == null || value.trim().isEmpty();
   }
 }

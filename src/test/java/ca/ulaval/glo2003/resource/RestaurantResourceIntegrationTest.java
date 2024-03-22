@@ -82,7 +82,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
   @Test
   void
-      givenRestaurantAndOwnerId_whenRestaurantIsValid_ThenAddRestaurantAddTheRestaurantToRepository() {
+      givenRestaurantAndOwnerId_whenRestaurantIsValid_thenAddRestaurantAddTheRestaurantToRepository() {
 
     Response response =
         target("/restaurants/")
@@ -100,7 +100,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   }
 
   @Test
-  void givenRestaurant_whenOwnerIdNotProvide_ThenAddRestaurantReturnBodyWithMissingError() {
+  void givenRestaurant_whenOwnerIdNotProvide_thenAddRestaurantReturnBodyWithMissingError() {
 
     response = target("/restaurants/").request().post(Entity.json(restaurantRequest));
     Error body = response.readEntity(Error.class);
@@ -113,7 +113,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   @NullSource
   @EmptySource
   void
-      givenRestaurantAndOwnerId_whenOwnerIdIsNullOrEmpty_ThenAddRestaurantReturnBodyWithMissingError(
+      givenRestaurantAndOwnerId_whenOwnerIdIsNullOrEmpty_thenAddRestaurantReturnBodyWithMissingError(
           String ownerId) {
 
     response =
@@ -128,7 +128,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   }
 
   @Test
-  void givenRestaurantAndOwnerId_WhenHoursIsNull_ThenAddRestaurantReturnBodyWithMissingError() {
+  void givenRestaurantAndOwnerId_whenHoursIsNull_thenAddRestaurantReturnBodyWithMissingError() {
 
     restaurantRequest =
         new RestaurantRequest(
@@ -147,7 +147,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
   @Test
   void
-      givenRestaurantAndOwnerId_WhenCapacityIsLessThanOne_ThenAddRestaurantReturnBodyWithInvalidError() {
+      givenRestaurantAndOwnerId_whenCapacityIsLessThanOne_thenAddRestaurantReturnBodyWithInvalidError() {
 
     restaurantRequest =
         new RestaurantRequest(
@@ -169,7 +169,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   }
 
   @Test
-  void givenRestaurantAndOwnerId_WhenHoursIsInvalid_ThenAddRestaurantReturnBodyWithInvalidError() {
+  void givenRestaurantAndOwnerId_whenHoursIsInvalid_thenAddRestaurantReturnBodyWithInvalidError() {
 
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
@@ -196,7 +196,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
   void
       givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantReturnBodyWithNotFoundError() {
 
-    restaurantService.addNewOwner(OWNER_ID);
+    restaurantService.addOwnerIfNew(OWNER_ID);
 
     response = target("/restaurants/" + RESTAURANT_ID).request().header("Owner", OWNER_ID).get();
     Error body = response.readEntity(Error.class);
@@ -210,15 +210,15 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenOwnerIdAndRestaurantId_whenRestaurantInRepository_thenGetRestaurantReturnBodyRestaurant()
           throws Exception {
 
-    restaurantService.addNewOwner(OWNER_ID);
+    restaurantService.addOwnerIfNew(OWNER_ID);
     RestaurantDto addedRestaurant = restaurantService.addRestaurant(OWNER_ID, restaurantDto);
 
     response =
         target("/restaurants/" + addedRestaurant.id()).request().header("Owner", OWNER_ID).get();
     Restaurant body = response.readEntity(Restaurant.class);
     assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
-    assertThat(body.getName()).isEqualTo(restaurantRequest.name());
-    assertThat(body.getId()).isEqualTo(restaurantRequest.id());
+    assertThat(body.getName()).isEqualTo(restaurantRequest.getName());
+    assertThat(body.getId()).isEqualTo(restaurantRequest.getId());
   }
 
   @Test
@@ -238,7 +238,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenRestaurantAndOwnerId_whenRestaurantsNotExistInRepository_thenGetRestaurantsReturnBodyWithEmptyListOfRestaurants()
           throws Exception {
 
-    restaurantService.addNewOwner(OWNER_ID);
+    restaurantService.addOwnerIfNew(OWNER_ID);
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();
     List<Restaurant> body = response.readEntity(List.class);
@@ -251,7 +251,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
       givenRestaurantAndOwnerId_whenRestaurantsExistInRepository_thenGetRestaurantsReturnBodyListOfRestaurants()
           throws Exception {
 
-    restaurantService.addNewOwner(OWNER_ID);
+    restaurantService.addOwnerIfNew(OWNER_ID);
     restaurantService.addRestaurant(OWNER_ID, restaurantDto);
 
     response = target("/restaurants/").request().header("Owner", OWNER_ID).get();

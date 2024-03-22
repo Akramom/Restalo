@@ -1,9 +1,14 @@
 package ca.ulaval.glo2003.application.dtos;
 
+import ca.ulaval.glo2003.util.Constante;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 
 public class HoursDto {
+  @NotNull(message = Constante.MISSING_RESTAURANT_PARAMETER)
   private LocalTime open;
+
+  @NotNull(message = Constante.MISSING_RESTAURANT_PARAMETER)
   private LocalTime close;
 
   public HoursDto(LocalTime open, LocalTime close) {

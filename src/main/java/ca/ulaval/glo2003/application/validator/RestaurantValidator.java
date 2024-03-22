@@ -1,29 +1,22 @@
 package ca.ulaval.glo2003.application.validator;
 
+import static ca.ulaval.glo2003.util.Constante.INVALID_RESTAURANT_PARAMETER;
+
 import ca.ulaval.glo2003.application.dtos.HoursDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import java.time.LocalTime;
 
 public class RestaurantValidator {
   public RestaurantValidator() {}
 
-  public Boolean isRestaurantParameterEmpty(RestaurantDto restaurant) {
-    String name = restaurant.name();
-    HoursDto hours = restaurant.hours();
-
-    if (isStringEmpty(name)) {
-      return true;
+  public void validRestaurant(RestaurantDto restaurant) throws InvalidParameterException {
+    if (!isValidOpeningHours(restaurant.hours())) {
+      throw new InvalidParameterException(INVALID_RESTAURANT_PARAMETER);
     }
-
-    if (hours == null || hours.getOpen() == null || hours.getClose() == null) {
-      return true;
+    if (!isValidCapacity(restaurant.capacity())) {
+      throw new InvalidParameterException(INVALID_RESTAURANT_PARAMETER);
     }
-
-    return false;
-  }
-
-  public Boolean isStringEmpty(String value) {
-    return value == null || value.trim().isEmpty();
   }
 
   public Boolean isValidCapacity(int capacity) {
@@ -37,15 +30,5 @@ public class RestaurantValidator {
     int timeOpen = closeTime.getHour() - openTime.getHour();
 
     return timeOpen >= 1;
-  }
-
-  public Boolean isValidRestaurant(RestaurantDto restaurant) {
-    if (!isValidOpeningHours(restaurant.hours())) {
-      return false;
-    }
-    if (!isValidCapacity(restaurant.capacity())) {
-      return false;
-    }
-    return true;
   }
 }

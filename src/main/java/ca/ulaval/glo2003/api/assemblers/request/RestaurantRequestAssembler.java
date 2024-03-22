@@ -9,12 +9,12 @@ public class RestaurantRequestAssembler {
   public RestaurantDto toDto(RestaurantRequest restaurantRequest) {
 
     return new RestaurantDto(
-        restaurantRequest.id(),
-        restaurantRequest.name(),
-        restaurantRequest.capacity(),
-        restaurantRequest.hours(),
-        restaurantRequest.reservations() == null
+        restaurantRequest.getId(),
+        restaurantRequest.getName(),
+        restaurantRequest.getCapacity(),
+        restaurantRequest.getHours(),
+        restaurantRequest.getReservations() == null
             ? new ReservationDurationDto(60)
-            : restaurantRequest.reservations());
+            : restaurantRequest.getReservations());
   }
 }
