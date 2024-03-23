@@ -1,17 +1,31 @@
 package ca.ulaval.glo2003.api.request;
 
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
+import ca.ulaval.glo2003.util.Constante;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ReservationRequest {
   private int durationInMin;
+
+  @NotNull(message = "Missing reservation date.")
   private LocalDate date;
+
+  @NotNull(message = "Missing reservation start time.")
   private LocalTime startTime;
+
   private LocalTime endTime;
   private int groupSize;
+
+  @Valid
+  @NotNull(message = "Missing customer in reservation.")
   private CustomerDto customer;
+
   private String number;
+
+  public ReservationRequest() {}
 
   public ReservationRequest(
       String number,
@@ -37,8 +51,6 @@ public class ReservationRequest {
   public void setDurationInMin(int durationInMin) {
     this.durationInMin = durationInMin;
   }
-
-  public ReservationRequest() {}
 
   public LocalDate getDate() {
     return date;

@@ -3,8 +3,6 @@ package ca.ulaval.glo2003.application.validator;
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.regex.Pattern;
 
@@ -12,39 +10,6 @@ public class ReservationValidator {
   private static final Pattern EMAIL_PATTERN =
       Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
   private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?\\d{10}$");
-
-  public void isEmptyReservationParameter(ReservationDto reservationDto)
-      throws MissingParameterException {
-    LocalDate date = reservationDto.getDate();
-    LocalTime startTime = reservationDto.getStartTime();
-    CustomerDto customer = reservationDto.getCustomer();
-    if (date == null) {
-      throw new MissingParameterException("Missing reservation date.");
-    }
-    if (startTime == null) {
-      throw new MissingParameterException("Missing reservation start time.");
-    }
-    isEmptyCustomer(customer);
-  }
-
-  public void isEmptyCustomer(CustomerDto customer) throws MissingParameterException {
-    if (customer == null) {
-      throw new MissingParameterException("Missing customer in reservation.");
-    }
-    if (isStringEmpty(customer.name())) {
-      throw new MissingParameterException("Missing customer name in reservation.");
-    }
-    if (isStringEmpty(customer.email())) {
-      throw new MissingParameterException("Missing customer email in reservation.");
-    }
-    if (isStringEmpty(customer.phoneNumber())) {
-      throw new MissingParameterException("Missing customer phone number in reservation.");
-    }
-  }
-
-  public Boolean isStringEmpty(String value) {
-    return value == null || value.trim().isEmpty();
-  }
 
   public void validateReservationToRestaurant(
       ReservationDto reservationDto, LocalTime restaurantClosingTime)
@@ -87,8 +52,8 @@ public class ReservationValidator {
   }
 
   private void validateCustomer(CustomerDto customer) throws InvalidParameterException {
-    String phoneNumber = customer.phoneNumber();
-    String email = customer.email();
+    String phoneNumber = customer.getPhoneNumber();
+    String email = customer.getEmail();
 
     validatePhoneNumber(phoneNumber);
     validateEmail(email);

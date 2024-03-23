@@ -12,7 +12,6 @@ import ca.ulaval.glo2003.application.validator.ReservationValidator;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.SearchHelper;
 import ca.ulaval.glo2003.repository.*;
@@ -82,22 +81,8 @@ public class RestaurantService {
     this.restaurantValidator.validRestaurant(restaurant);
   }
 
-  public void verifyExistRestaurant(String restaurantId)
-      throws MissingParameterException, NotFoundException {
-    if (isStringEmpty(restaurantId)) {
-      throw new MissingParameterException(MISSING_RESTAURANT_ID);
-    }
-  }
-
-  public void verifyReservationNumber(String reservationId) throws MissingParameterException {
-    if (isStringEmpty(reservationId)) {
-      throw new MissingParameterException(MISSING_RESERVATION_NUMBER);
-    }
-  }
-
-  public void verifyEmptyReservationParameter(ReservationDto reservationDto)
-      throws MissingParameterException {
-    reservationValidator.isEmptyReservationParameter(reservationDto);
+  public void verifyExistRestaurant(String restaurantId) throws NotFoundException {
+    restaurantRepository.getRestaurantById(restaurantId);
   }
 
   public void verifyValidReservationParameter(String restaurantId, ReservationDto reservationDto)
@@ -108,10 +93,8 @@ public class RestaurantService {
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
-      throws NotFoundException, InvalidParameterException, MissingParameterException {
-
+      throws NotFoundException, InvalidParameterException {
     this.verifyExistRestaurant(restaurantId);
-    this.verifyEmptyReservationParameter(reservationDto);
 
     int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
     reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
@@ -130,10 +113,7 @@ public class RestaurantService {
     return restaurantRepository.getRestaurantById(restaurantId).getReservation().duration();
   }
 
-  public ReservationDto getReservationByNumber(String reservationNumber)
-      throws NotFoundException, MissingParameterException {
-    this.verifyReservationNumber(reservationNumber);
-
+  public ReservationDto getReservationByNumber(String reservationNumber) throws NotFoundException {
     Reservation reservation = restaurantRepository.getReservationByNumber(reservationNumber);
     Restaurant restaurant =
         restaurantRepository.getRestaurantByReservationNumber(reservationNumber);
@@ -148,9 +128,5 @@ public class RestaurantService {
         searchHelper.searchRestaurant(allRestaurant, new SearchAssembler().fromDto(searchDto));
 
     return restaurants.stream().map(this.restaurantAssembler::toDto).collect(Collectors.toList());
-  }
-
-  public Boolean isStringEmpty(String value) {
-    return value == null || value.trim().isEmpty();
   }
 }
