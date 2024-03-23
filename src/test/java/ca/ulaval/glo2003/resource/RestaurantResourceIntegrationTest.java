@@ -9,10 +9,10 @@ import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
 import ca.ulaval.glo2003.api.exceptionMapper.InvalidParameterExceptionMapper;
 import ca.ulaval.glo2003.api.exceptionMapper.MissingParameterExceptionMapper;
 import ca.ulaval.glo2003.api.exceptionMapper.NotFoundExceptionMapper;
+import ca.ulaval.glo2003.api.request.HoursRequest;
+import ca.ulaval.glo2003.api.request.ReservationDurationRequest;
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
 import ca.ulaval.glo2003.api.resource.RestaurantResource;
-import ca.ulaval.glo2003.application.dtos.HoursDto;
-import ca.ulaval.glo2003.application.dtos.ReservationDurationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.entity.Hours;
@@ -75,8 +75,8 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             RESTAURANT_ID,
             UN_NOM,
             CAPACITY,
-            new HoursDto(hours.getOpen(), hours.getClose()),
-            new ReservationDurationDto(70));
+            new HoursRequest(hours.getOpen(), hours.getClose()),
+            new ReservationDurationRequest(70));
     restaurantDto = restaurantRequestAssembler.toDto(restaurantRequest);
   }
 
@@ -132,7 +132,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
 
     restaurantRequest =
         new RestaurantRequest(
-            RESTAURANT_ID, UN_NOM, CAPACITY, null, new ReservationDurationDto(70));
+            RESTAURANT_ID, UN_NOM, CAPACITY, null, new ReservationDurationRequest(70));
 
     response =
         target("/restaurants/")
@@ -154,8 +154,8 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             RESTAURANT_ID,
             UN_NOM,
             0,
-            new HoursDto(hours.getOpen(), hours.getClose()),
-            new ReservationDurationDto(70));
+            new HoursRequest(hours.getOpen(), hours.getClose()),
+            new ReservationDurationRequest(70));
 
     response =
         target("/restaurants/")
@@ -178,8 +178,8 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
             RESTAURANT_ID,
             UN_NOM,
             CAPACITY,
-            new HoursDto(hours.getOpen(), hours.getClose()),
-            new ReservationDurationDto(70));
+            new HoursRequest(hours.getOpen(), hours.getClose()),
+            new ReservationDurationRequest(70));
 
     response =
         target("/restaurants/")

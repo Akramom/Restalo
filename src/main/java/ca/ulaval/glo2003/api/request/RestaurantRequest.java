@@ -1,7 +1,5 @@
 package ca.ulaval.glo2003.api.request;
 
-import ca.ulaval.glo2003.application.dtos.HoursDto;
-import ca.ulaval.glo2003.application.dtos.ReservationDurationDto;
 import ca.ulaval.glo2003.util.Constante;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -19,9 +17,9 @@ public class RestaurantRequest {
 
   @Valid
   @NotNull(message = Constante.MISSING_RESTAURANT_PARAMETER)
-  public HoursDto hours;
+  public HoursRequest hours;
 
-  public ReservationDurationDto reservations;
+  public ReservationDurationRequest reservations;
 
   public RestaurantRequest() {}
 
@@ -29,8 +27,8 @@ public class RestaurantRequest {
       String id,
       String name,
       int capacity,
-      HoursDto hours,
-      ReservationDurationDto reservationDurationDto) {
+      HoursRequest hours,
+      ReservationDurationRequest reservationDurationDto) {
     this.id = id;
     this.name = name;
     this.capacity = capacity;
@@ -50,11 +48,11 @@ public class RestaurantRequest {
     return capacity;
   }
 
-  public HoursDto getHours() {
+  public HoursRequest getHours() {
     return hours;
   }
 
-  public ReservationDurationDto getReservations() {
+  public ReservationDurationRequest getReservations() {
     return reservations;
   }
 
@@ -70,7 +68,7 @@ public class RestaurantRequest {
     this.capacity = capacity;
   }
 
-  public void setHours(HoursDto hours) {
+  public void setHours(HoursRequest hours) {
     this.hours = hours;
   }
 }

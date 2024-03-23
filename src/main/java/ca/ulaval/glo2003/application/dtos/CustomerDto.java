@@ -1,20 +1,9 @@
 package ca.ulaval.glo2003.application.dtos;
 
-import ca.ulaval.glo2003.util.Constante;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-
 public class CustomerDto {
-  @NotNull(message = Constante.MISSING_CUSTOMER_PARAMETER)
-  @NotEmpty(message = Constante.MISSING_CUSTOMER_PARAMETER)
+
   String name;
-
-  @NotNull(message = Constante.MISSING_CUSTOMER_PARAMETER)
-  @NotEmpty(message = Constante.MISSING_CUSTOMER_PARAMETER)
   String email;
-
-  @NotNull(message = Constante.MISSING_CUSTOMER_PARAMETER)
-  @NotEmpty(message = Constante.MISSING_CUSTOMER_PARAMETER)
   String phoneNumber;
 
   public CustomerDto() {}

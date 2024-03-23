@@ -1,6 +1,5 @@
 package ca.ulaval.glo2003.api.request;
 
-import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -20,7 +19,7 @@ public class ReservationRequest {
 
   @Valid
   @NotNull(message = "Missing customer in reservation.")
-  private CustomerDto customer;
+  private CustomerRequest customer;
 
   private String number;
 
@@ -33,7 +32,7 @@ public class ReservationRequest {
       LocalTime endTime,
       int duration,
       int groupSize,
-      CustomerDto customer) {
+      CustomerRequest customer) {
     this.date = date;
     this.startTime = startTime;
     this.endTime = endTime;
@@ -67,7 +66,7 @@ public class ReservationRequest {
     return groupSize;
   }
 
-  public CustomerDto getCustomer() {
+  public CustomerRequest getCustomer() {
     return customer;
   }
 
@@ -91,7 +90,7 @@ public class ReservationRequest {
     this.groupSize = groupSize;
   }
 
-  public void setCustomer(CustomerDto customer) {
+  public void setCustomer(CustomerRequest customer) {
     this.customer = customer;
   }
 
