@@ -1,7 +1,6 @@
 package ca.ulaval.glo2003.api.request;
 
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
-import ca.ulaval.glo2003.util.Constante;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
