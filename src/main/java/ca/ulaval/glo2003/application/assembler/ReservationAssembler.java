@@ -19,9 +19,9 @@ public class ReservationAssembler {
         reservationDto.getEndTime(),
         reservationDto.getGroupSize(),
         new Customer(
-            reservationDto.getCustomer().name(),
-            reservationDto.getCustomer().email(),
-            reservationDto.getCustomer().phoneNumber()));
+            reservationDto.getCustomer().getName(),
+            reservationDto.getCustomer().getEmail(),
+            reservationDto.getCustomer().getPhoneNumber()));
   }
 
   public ReservationDto toDto(Reservation reservation) {

@@ -12,6 +12,10 @@ import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
+import ca.ulaval.glo2003.util.Constante;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -39,8 +43,12 @@ public class RestaurantResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response addRestaurant(
-      @HeaderParam("Owner") String ownerId, RestaurantRequest restaurantRequest) throws Exception {
-
+      @HeaderParam("Owner")
+          @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          String ownerId,
+      @Valid RestaurantRequest restaurantRequest)
+      throws Exception {
     RestaurantDto restaurantDto = this.restaurantRequestAssembler.toDto(restaurantRequest);
 
     RestaurantDto addedRestaurant = restaurantService.addRestaurant(ownerId, restaurantDto);
@@ -52,8 +60,12 @@ public class RestaurantResource {
   @GET
   @Path("/")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getRestaurants(@HeaderParam("Owner") String ownerId) throws Exception {
-
+  public Response getRestaurants(
+      @HeaderParam("Owner")
+          @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          String ownerId)
+      throws Exception {
     List<RestaurantDto> restaurantDtos = restaurantService.getAllRestaurantsOfOwner(ownerId);
 
     List<OwnerRestaurantResponse> restaurantResponses =
@@ -66,8 +78,12 @@ public class RestaurantResource {
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   public Response getRestaurant(
-      @HeaderParam("Owner") String ownerId, @PathParam("id") String restaurantId) throws Exception {
-
+      @HeaderParam("Owner")
+          @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          String ownerId,
+      @PathParam("id") String restaurantId)
+      throws Exception {
     RestaurantDto restaurantDto = restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
 
     OwnerRestaurantResponse restaurantResponse =
@@ -81,7 +97,7 @@ public class RestaurantResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   public Response addReservation(
-      @PathParam("id") String restaurantId, ReservationRequest reservationRequest)
+      @PathParam("id") String restaurantId, @Valid ReservationRequest reservationRequest)
       throws MissingParameterException, InvalidParameterException, NotFoundException {
 
     ReservationDto reservationDto = this.reservationRequestAssembler.toDto(reservationRequest);

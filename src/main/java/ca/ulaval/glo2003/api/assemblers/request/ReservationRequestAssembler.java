@@ -1,6 +1,7 @@
 package ca.ulaval.glo2003.api.assemblers.request;
 
 import ca.ulaval.glo2003.api.request.ReservationRequest;
+import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 
 public class ReservationRequestAssembler {
@@ -12,6 +13,9 @@ public class ReservationRequestAssembler {
         reservationRequest.getEndTime(),
         reservationRequest.getDurationInMin(),
         reservationRequest.getGroupSize(),
-        reservationRequest.getCustomer());
+        new CustomerDto(
+            reservationRequest.getCustomer().getName(),
+            reservationRequest.getCustomer().getEmail(),
+            reservationRequest.getCustomer().getPhoneNumber()));
   }
 }
