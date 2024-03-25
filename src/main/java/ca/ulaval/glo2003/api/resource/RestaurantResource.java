@@ -9,6 +9,7 @@ import ca.ulaval.glo2003.api.response.restaurant.OwnerRestaurantResponse;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
@@ -16,6 +17,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Path("/restaurants")
@@ -92,4 +95,22 @@ public class RestaurantResource {
             URI.create("http://localhost:8080/reservations/" + addedReservation.getNumber()))
         .build();
   }
+  @GET
+  @Path("/{id}/availabilities")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAvailabilities(@PathParam("id") String restaurantId, @QueryParam("date") String dateStr) throws NotFoundException {
+    LocalDate date;
+    try {
+      date = restaurantService.validateAndParseDate(dateStr);
+    } catch (IllegalArgumentException e) {
+      return Response.status(Response.Status.BAD_REQUEST)
+              .entity(new InvalidParameterException("INVALID_PARAMETER"))
+              .build();
+    }
+    List<Availability> availabilities = restaurantService.calculateAvailabilities(restaurantId, date);
+    return Response.ok(availabilities).build();
+  }
+
 }
+
+

@@ -52,6 +52,10 @@ public class Restaurant {
         && Objects.equals(reservationList, that.reservationList);
   }
 
+  public int getDuration() {
+    return reservationDuration.duration();
+  }
+
   @Override
   public int hashCode() {
     return Objects.hash(name, capacity, id, reservationDuration, hours, ownerId, reservationList);
