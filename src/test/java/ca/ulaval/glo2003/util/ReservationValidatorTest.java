@@ -8,14 +8,11 @@ import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.validator.ReservationValidator;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -41,93 +38,10 @@ public class ReservationValidatorTest {
     when(reservationDto.getEndTime()).thenReturn(START_TIME.plusMinutes(RESERVATION_DURATION));
     when(reservationDto.getGroupSize()).thenReturn(GROUP_SIZE);
     when(reservationDto.getCustomer()).thenReturn(customer);
-    when(reservationDto.getCustomer().name()).thenReturn(CUSTOMER_NAME);
-    when(reservationDto.getCustomer().email()).thenReturn(EMAIL);
-    when(reservationDto.getCustomer().phoneNumber()).thenReturn(PHONE_NUMBER);
+    when(reservationDto.getCustomer().getName()).thenReturn(CUSTOMER_NAME);
+    when(reservationDto.getCustomer().getEmail()).thenReturn(EMAIL);
+    when(reservationDto.getCustomer().getPhoneNumber()).thenReturn(PHONE_NUMBER);
     validator = new ReservationValidator();
-  }
-
-  @Test
-  void whenReservationParametersNotNullOrEmpty_thenShouldNotThrow() {
-    assertDoesNotThrow(() -> validator.isEmptyReservationParameter(reservationDto));
-  }
-
-  @ParameterizedTest
-  @NullSource
-  void whenDateIsNull_thenShouldThrow(LocalDate date) {
-    when(reservationDto.getDate()).thenReturn(date);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
-  }
-
-  @ParameterizedTest
-  @NullSource
-  void whenStartTimeIsNull_thenShouldThrow(LocalTime startTime) {
-    when(reservationDto.getStartTime()).thenReturn(startTime);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
-  }
-
-  @ParameterizedTest
-  @NullSource
-  void whenCustomerIsNull_thenShouldThrow(CustomerDto customer) {
-    when(reservationDto.getCustomer()).thenReturn(customer);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
-  }
-
-  @ParameterizedTest
-  @NullSource
-  @EmptySource
-  @ValueSource(strings = {"", "   ", "\t", "\n"})
-  void whenCustomerNameIsNullOrEmpty_thenShouldThrow(String name) {
-    when(reservationDto.getCustomer().name()).thenReturn(name);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
-  }
-
-  @ParameterizedTest
-  @NullSource
-  @EmptySource
-  @ValueSource(strings = {"", "   ", "\t", "\n"})
-  void whenCustomerEmailIsNullOrEmpty_thenShouldThrow(String email) {
-    when(reservationDto.getCustomer().email()).thenReturn(email);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
-  }
-
-  @ParameterizedTest
-  @NullSource
-  @EmptySource
-  @ValueSource(strings = {"", "   ", "\t", "\n"})
-  void whenCustomerPhoneNumberIsNullOrEmpty_thenShouldThrow(String phoneNumber) {
-    when(reservationDto.getCustomer().phoneNumber()).thenReturn(phoneNumber);
-
-    assertThrows(
-        MissingParameterException.class,
-        () -> {
-          validator.isEmptyReservationParameter(reservationDto);
-        });
   }
 
   @Test
@@ -173,7 +87,7 @@ public class ReservationValidatorTest {
   @ParameterizedTest
   @ValueSource(strings = {"a111111111", "*-/1111111"})
   void whenCustomerPhoneNumberHasLetterOrSymbols_thenShouldThrow(String phoneNumber) {
-    when(reservationDto.getCustomer().phoneNumber()).thenReturn(phoneNumber);
+    when(reservationDto.getCustomer().getPhoneNumber()).thenReturn(phoneNumber);
 
     assertThrows(
         InvalidParameterException.class,
@@ -185,7 +99,7 @@ public class ReservationValidatorTest {
   @ParameterizedTest
   @ValueSource(strings = {"1", "12312345678"})
   void whenCustomerPhoneNumberDoesNotHave10Digits_thenShouldThrow(String phoneNumber) {
-    when(reservationDto.getCustomer().phoneNumber()).thenReturn(phoneNumber);
+    when(reservationDto.getCustomer().getPhoneNumber()).thenReturn(phoneNumber);
 
     assertThrows(
         InvalidParameterException.class,
@@ -197,7 +111,7 @@ public class ReservationValidatorTest {
   @ParameterizedTest
   @ValueSource(strings = {"@test.com", "test1@.com", "test@test."})
   void whenCustomerEmailHasMissingParts_thenShouldThrow(String email) {
-    when(reservationDto.getCustomer().email()).thenReturn(email);
+    when(reservationDto.getCustomer().getEmail()).thenReturn(email);
 
     assertThrows(
         InvalidParameterException.class,
@@ -209,7 +123,7 @@ public class ReservationValidatorTest {
   @ParameterizedTest
   @ValueSource(strings = {"test1test.com", "test1@testcom"})
   void whenCustomerEmailHasMissingSymbols_thenShouldThrow(String email) {
-    when(reservationDto.getCustomer().email()).thenReturn(email);
+    when(reservationDto.getCustomer().getEmail()).thenReturn(email);
 
     assertThrows(
         InvalidParameterException.class,
@@ -221,7 +135,7 @@ public class ReservationValidatorTest {
   @ParameterizedTest
   @ValueSource(strings = {"test1*@test.com", "te@st1@test.com", "test1@test.c/om"})
   void whenCustomerEmailHasExtraSymbols_thenShouldThrow(String email) {
-    when(reservationDto.getCustomer().email()).thenReturn(email);
+    when(reservationDto.getCustomer().getEmail()).thenReturn(email);
 
     assertThrows(
         InvalidParameterException.class,

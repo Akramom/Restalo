@@ -33,7 +33,7 @@ public class DatastoreProvider {
       datastore =
           Morphia.createDatastore(
               MongoClients.create(settings), mongoDatabase == null ? "restalo" : mongoDatabase);
-      System.out.println(datastore.getDatabase().getName());
+      System.out.println("base de donnée: " + datastore.getDatabase().getName());
       System.out.println("Connexion à base de donnée réussie.");
     } catch (Exception e) {
       throw new RuntimeException(

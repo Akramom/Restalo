@@ -117,11 +117,11 @@ public class ReservationDto {
         + groupSize
         + ", customer : {"
         + "name: "
-        + customer.name()
+        + customer.getName()
         + ", email: "
-        + customer.email()
+        + customer.getEmail()
         + ", phoneNumber :"
-        + customer.phoneNumber()
+        + customer.getPhoneNumber()
         + '}'
         + '}';
   }

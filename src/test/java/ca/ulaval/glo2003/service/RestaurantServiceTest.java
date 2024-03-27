@@ -11,7 +11,6 @@ import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.Search;
 import ca.ulaval.glo2003.repository.RestaurantRepositoryInMemory;
@@ -22,10 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class RestaurantServiceTest {
   public final String UN_NOM = "un nom";
@@ -103,7 +98,7 @@ class RestaurantServiceTest {
   void
       givenOwnerIdAndRestaurantId_whenRestaurantNotExistInRepository_thenGetRestaurantByIdOfOwnerShouldThrowNotFoundError()
           throws NotFoundException {
-    service.addNewOwner(OWNER_ID);
+    service.addOwnerIfNew(OWNER_ID);
 
     NotFoundException notFoundException =
         assertThrows(
@@ -129,9 +124,9 @@ class RestaurantServiceTest {
 
   @Test
   void givenOwnerId_whenOwnerAlreadyExists_ThenAddOwnerReturnNull() {
-    service.addNewOwner(OWNER_ID);
+    service.addOwnerIfNew(OWNER_ID);
 
-    Owner owner = service.addNewOwner(OWNER_ID);
+    Owner owner = service.addOwnerIfNew(OWNER_ID);
 
     assertThat(owner).isNull();
   }
@@ -140,7 +135,7 @@ class RestaurantServiceTest {
   void givenOwnerId_whenOwnerDoesNotExists_ThenAddOwnerReturnsNewOwnerInstance() {
     Owner expectedOwner = new Owner(OWNER_ID);
 
-    Owner owner = service.addNewOwner(OWNER_ID);
+    Owner owner = service.addOwnerIfNew(OWNER_ID);
 
     assertThat(owner.getOwnerId()).isEqualTo(expectedOwner.getOwnerId());
     assertThat(owner.getRestaurants()).isEqualTo(expectedOwner.getRestaurants());
@@ -149,7 +144,7 @@ class RestaurantServiceTest {
   @Test
   void givenOwnerId_whenExist_thenIsExistOwnerIdReturnTrue() {
 
-    service.addNewOwner(OWNER_ID);
+    service.addOwnerIfNew(OWNER_ID);
 
     assertEquals(true, service.isExistingOwnerId(OWNER_ID));
   }
@@ -159,51 +154,9 @@ class RestaurantServiceTest {
     assertEquals(false, service.isExistingOwnerId(OWNER_ID));
   }
 
-  @ParameterizedTest
-  @NullSource
-  @EmptySource
-  @ValueSource(strings = {"", "   ", "\t", "\n"})
-  public void givenOwnerId_whenNullOrEmpty_TheVerifyOwnerIdThrowMissingParameterException(
-      String ownerId) {
-
-    MissingParameterException missingParameterException =
-        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(ownerId));
-
-    assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_OWNER_ID);
-  }
-
   @Test
   public void
-      givenRestaurant_whenNameIsNullorEmpty_thenVerifyRestaurantParameterThrowMissingParameterException() {
-
-    restaurant.setName(null);
-    restaurantDto = restaurantAssembler.toDto(restaurant);
-    MissingParameterException missingParameterException =
-        assertThrows(
-            MissingParameterException.class,
-            () -> service.verifyRestaurantParameter(restaurantDto));
-
-    assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_RESTAURANT_PARAMETER);
-  }
-
-  @Test
-  public void
-      givenRestaurant_whenHoursIsNull_thenVerifyRestaurantParameterThrowMissingParameterException() {
-
-    restaurant.setHours(null);
-    restaurantDto = restaurantAssembler.toDto(restaurant);
-
-    MissingParameterException missingParameterException =
-        assertThrows(
-            MissingParameterException.class,
-            () -> service.verifyRestaurantParameter(restaurantDto));
-
-    assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_RESTAURANT_PARAMETER);
-  }
-
-  @Test
-  public void
-      givenRestaurant_whenHoursIsInvald_thenVerifyRestaurantParameterThrowInvalidParameterException() {
+      givenRestaurant_whenHoursAreInvalid_thenVerifyRestaurantParameterThrowInvalidParameterException() {
 
     hours.setOpen(CLOSE);
     hours.setClose(OPEN);
@@ -230,17 +183,6 @@ class RestaurantServiceTest {
             () -> service.verifyRestaurantParameter(restaurantDto));
 
     assertThat(invalidParameterException.getMessage()).isEqualTo(INVALID_RESTAURANT_PARAMETER);
-  }
-
-  @Test
-  public void givenOwnerId_whenOwnerIdIsEmptyOrNull_verifyOwnerIdThrowMissingParameterException()
-      throws Exception {
-
-    service.addNewOwner(OWNER_ID);
-    MissingParameterException missingParameterException =
-        assertThrows(MissingParameterException.class, () -> service.verifyOwnerId(null));
-
-    assertThat(missingParameterException.getMessage()).isEqualTo(MISSING_OWNER_ID);
   }
 
   @Test

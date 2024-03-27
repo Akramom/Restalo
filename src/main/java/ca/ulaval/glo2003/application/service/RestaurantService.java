@@ -12,7 +12,6 @@ import ca.ulaval.glo2003.application.validator.ReservationValidator;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.SearchHelper;
 import ca.ulaval.glo2003.repository.*;
@@ -45,11 +44,8 @@ public class RestaurantService {
   }
 
   public RestaurantDto addRestaurant(String ownerId, RestaurantDto restaurantDto) throws Exception {
-    this.verifyOwnerId(ownerId);
     this.verifyRestaurantParameter(restaurantDto);
-    if (!isExistingOwnerId(ownerId)) {
-      restaurantRepository.addOwner(ownerId);
-    }
+    this.addOwnerIfNew(ownerId);
     Restaurant addRestaurant =
         restaurantRepository.addRestaurant(ownerId, restaurantAssembler.fromDto(restaurantDto));
 
@@ -58,7 +54,6 @@ public class RestaurantService {
 
   public RestaurantDto getRestaurantByIdOfOwner(String ownerId, String restaurantId)
       throws Exception {
-    this.verifyOwnerId(ownerId);
 
     Restaurant restaurant = restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
 
@@ -66,13 +61,13 @@ public class RestaurantService {
   }
 
   public List<RestaurantDto> getAllRestaurantsOfOwner(String ownerId) throws Exception {
-    this.verifyOwnerId(ownerId);
+
     return restaurantRepository.getAllOwnerRestaurants(ownerId).stream()
         .map(this.restaurantAssembler::toDto)
         .collect(Collectors.toList());
   }
 
-  public Owner addNewOwner(String ownerId) {
+  public Owner addOwnerIfNew(String ownerId) {
     if (isExistingOwnerId(ownerId)) return null;
     return restaurantRepository.addOwner(ownerId);
   }
@@ -87,45 +82,12 @@ public class RestaurantService {
     return false;
   }
 
-  public boolean isValidOwnerId(String ownerId) throws Exception {
-    if (this.restaurantValidator.isStringEmpty(ownerId)) {
-      throw new MissingParameterException(MISSING_OWNER_ID);
-    }
-    return true;
+  public void verifyRestaurantParameter(RestaurantDto restaurant) throws Exception {
+    this.restaurantValidator.validRestaurant(restaurant);
   }
 
-  public void verifyOwnerId(String ownerId) throws Exception {
-    isValidOwnerId(ownerId);
-  }
-
-  public boolean verifyRestaurantParameter(RestaurantDto restaurant) throws Exception {
-
-    if (this.restaurantValidator.isRestaurantParameterEmpty(restaurant))
-      throw new MissingParameterException(MISSING_RESTAURANT_PARAMETER);
-
-    if (!this.restaurantValidator.isValidRestaurant(restaurant))
-      throw new InvalidParameterException(INVALID_RESTAURANT_PARAMETER);
-
-    return true;
-  }
-
-  public Restaurant verifyExistRestaurant(String restaurantId)
-      throws MissingParameterException, NotFoundException {
-    if (this.restaurantValidator.isStringEmpty(restaurantId)) {
-      throw new MissingParameterException(MISSING_RESTAURANT_ID);
-    }
-    return restaurantRepository.getRestaurantById(restaurantId);
-  }
-
-  public void verifyReservationNumber(String reservationId) throws MissingParameterException {
-    if (this.reservationValidator.isStringEmpty(reservationId)) {
-      throw new MissingParameterException(MISSING_RESERVATION_NUMBER);
-    }
-  }
-
-  public void verifyEmptyReservationParameter(ReservationDto reservationDto)
-      throws MissingParameterException {
-    reservationValidator.isEmptyReservationParameter(reservationDto);
+  public void verifyExistRestaurant(String restaurantId) throws NotFoundException {
+    restaurantRepository.getRestaurantById(restaurantId);
   }
 
   public void verifyValidReservationParameter(String restaurantId, ReservationDto reservationDto)
@@ -136,10 +98,8 @@ public class RestaurantService {
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
-      throws NotFoundException, InvalidParameterException, MissingParameterException {
-
+      throws NotFoundException, InvalidParameterException {
     this.verifyExistRestaurant(restaurantId);
-    this.verifyEmptyReservationParameter(reservationDto);
 
     int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
     reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
@@ -158,10 +118,7 @@ public class RestaurantService {
     return restaurantRepository.getRestaurantById(restaurantId).getReservation().duration();
   }
 
-  public ReservationDto getReservationByNumber(String reservationNumber)
-      throws NotFoundException, MissingParameterException {
-    this.verifyReservationNumber(reservationNumber);
-
+  public ReservationDto getReservationByNumber(String reservationNumber) throws NotFoundException {
     Reservation reservation = restaurantRepository.getReservationByNumber(reservationNumber);
     Restaurant restaurant =
         restaurantRepository.getRestaurantByReservationNumber(reservationNumber);
