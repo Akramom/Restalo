@@ -129,4 +129,9 @@ public class RestaurantService {
 
     return restaurants.stream().map(this.restaurantAssembler::toDto).collect(Collectors.toList());
   }
+
+  public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
+      throws NotFoundException {
+    restaurantRepository.deleteOwnerRestaurantById(ownerId, restaurantId);
+  }
 }

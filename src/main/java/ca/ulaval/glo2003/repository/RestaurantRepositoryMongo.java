@@ -9,6 +9,7 @@ import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
+import dev.morphia.DeleteOptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,5 +100,54 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException {
     Reservation reservation = getReservationByNumber(number);
     return getRestaurantById(reservation.getRestaurantId());
+  }
+
+  @Override
+  public void deleteOwnerRestaurantById(String ownerId, String restaurantId)
+      throws NotFoundException {
+    getOwnerRestaurantById(ownerId, restaurantId);
+
+    datastore
+        .find(Restaurant.class)
+        .filter(eq("id", restaurantId))
+        .delete(new DeleteOptions().multi(false));
+
+    datastore
+        .find(Reservation.class)
+        .filter(eq("restaurantId", restaurantId))
+        .delete(new DeleteOptions().multi(true));
+    /*
+
+    	datastore.delete(Restaurant.class, restaurantId);
+
+    datastore.delete(restaurant, new DeleteOptions());
+
+    datastore.find(Restaurant.class)
+    			.filter(Filters.eq("id", restaurantId))
+    			.delete(new DeleteOptions());
+
+    	datastore.delete(datastore.find(Restaurant.class)
+    			.filter(Filters.eq("id", restaurantId)).stream().findFirst().orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND)));
+
+    	datastore.find(Reservation.class)
+    			.filter(Filters.eq("restaurantId", restaurantId))
+    			.delete(new DeleteOptions().multi(true));
+
+    	Bson studentFilter = Filters.eq( "id", doc.get("id") );
+    	Bson delete = Updates.pull("scores", new Document("score", lowestHomework).append("type", "homework"));
+    	collection.updateOne(studentFilter, delete);
+
+    	getOwnerRestaurantById(ownerId, restaurantId);
+
+    	datastore.update(pull("restaurants", eq("id", restaurantId)));
+
+    	datastore
+    			.find(Owner.class)
+    			.filter(eq("ownerId", ownerId)).pull("restaurants", eq("id", restaurantId));
+
+    	List<Restaurant> restaurants = datastore.find(Restaurant.class).filter(eq("ownerId", ownerId), ne("id", restaurantId)).stream().toList();
+    	System.out.println(restaurants);
+    	datastore.delete("id", restaurantId);
+    	*/
   }
 }

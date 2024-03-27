@@ -108,4 +108,19 @@ public class RestaurantResource {
             URI.create("http://localhost:8080/reservations/" + addedReservation.getNumber()))
         .build();
   }
+
+  @DELETE
+  @Path("/{id}")
+  public Response deleteRestaurant(
+      @HeaderParam("Owner")
+          @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          String ownerId,
+      @PathParam("id") String restaurantId)
+      throws NotFoundException {
+
+    restaurantService.deleteRestaurantIfOwner(restaurantId, ownerId);
+
+    return Response.noContent().build();
+  }
 }
