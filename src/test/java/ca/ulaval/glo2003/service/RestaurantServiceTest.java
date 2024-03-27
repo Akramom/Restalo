@@ -77,7 +77,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOwnerIdAndRestaurant_WhenAddRestaurant_thenRestaurantIsAddInRepository()
+  void givenOwnerIdAndRestaurant_whenAddRestaurant_thenRestaurantIsAddInRepository()
       throws Exception {
 
     RestaurantDto addedRestaurant = service.addRestaurant(OWNER_ID, restaurantDto);
@@ -109,7 +109,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOwneriD_WhenGetAllRestaurantsOfOwner_ThenReturnListOfRestaurantsOfOwner()
+  void givenOwnerId_whenGetAllRestaurantsOfOwner_thenReturnListOfRestaurantsOfOwner()
       throws Exception {
     service.addRestaurant(OWNER_ID, restaurantDto);
     service.addRestaurant(OWNER_ID, restaurantDto);
@@ -123,7 +123,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOwnerId_whenOwnerAlreadyExists_ThenAddOwnerReturnNull() {
+  void givenOwnerId_whenOwnerAlreadyExists_thenAddOwnerReturnNull() {
     service.addOwnerIfNew(OWNER_ID);
 
     Owner owner = service.addOwnerIfNew(OWNER_ID);
@@ -132,7 +132,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOwnerId_whenOwnerDoesNotExists_ThenAddOwnerReturnsNewOwnerInstance() {
+  void givenOwnerId_whenOwnerDoesNotExists_thenAddOwnerReturnsNewOwnerInstance() {
     Owner expectedOwner = new Owner(OWNER_ID);
 
     Owner owner = service.addOwnerIfNew(OWNER_ID);
@@ -186,7 +186,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void getReservationByNumber_WhenExists_ReturnsReservation() throws NotFoundException {
+  void getReservationByNumber_whenExists_thenReturnsReservation() throws NotFoundException {
 
     reservation.setNumber("res123");
     restaurantRespository.addOwner(OWNER_ID);
@@ -201,7 +201,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void getReservationByNumber_WhenNotExists_ThrowsNotFoundException() {
+  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() {
     String nonExistingReservationNumber = "nonExisting";
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
@@ -217,20 +217,21 @@ class RestaurantServiceTest {
   @Test
   void givenNoParameterSearchInput_thenReturnsEveryRestaurants() {
     addOwnerAndRestaurantsRepository();
-    List<Restaurant> expectedList = new ArrayList<>();
-    expectedList.add(restaurant);
-    expectedList.add(secondRestaurant);
-    expectedList.add(thirdRestaurant);
+    List<Restaurant> expectedRestaurants = new ArrayList<>();
+    expectedRestaurants.add(restaurant);
+    expectedRestaurants.add(secondRestaurant);
+    expectedRestaurants.add(thirdRestaurant);
     String name = null;
     Opened opened = null;
     searchInput.setName(name);
     searchInput.setOpened(opened);
 
-    List<Restaurant> matchingRestaurants =
+    List<Restaurant> foundRestaurants =
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
-    assertThat(matchingRestaurants).isEqualTo(expectedList);
+
+    assertThat(foundRestaurants).isEqualTo(expectedRestaurants);
   }
 
   void addOwnerAndRestaurantsRepository() {
@@ -243,72 +244,76 @@ class RestaurantServiceTest {
   @Test
   void
       givenNameSearchInput_whenMatchingRestaurantNamesExistsNotCaseOrSpaceSensitive_thenReturnsListWithMatchingRestaurants() {
-    List<Restaurant> expectedList = new ArrayList<>();
+    List<Restaurant> expectedRestaurants = new ArrayList<>();
     restaurant.setName("La vie");
-    expectedList.add(restaurant);
+    expectedRestaurants.add(restaurant);
     secondRestaurant.setName("Lave La");
-    expectedList.add(secondRestaurant);
+    expectedRestaurants.add(secondRestaurant);
     addOwnerAndRestaurantsRepository();
     searchInput.setName("l a v");
 
-    List<Restaurant> matchingRestaurants =
+    List<Restaurant> foundRestaurants =
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
-    assertThat(matchingRestaurants).isEqualTo(expectedList);
+
+    assertThat(foundRestaurants).isEqualTo(expectedRestaurants);
   }
 
   @Test
   void givenOnlyNameSearchInput_thenReturnsListRestaurantsMatchingName() {
     addOwnerAndRestaurantsRepository();
-    List<Restaurant> expectedList = new ArrayList<>();
-    expectedList.add(restaurant);
-    expectedList.add(secondRestaurant);
-    expectedList.add(thirdRestaurant);
+    List<Restaurant> expectedRestaurants = new ArrayList<>();
+    expectedRestaurants.add(restaurant);
+    expectedRestaurants.add(secondRestaurant);
+    expectedRestaurants.add(thirdRestaurant);
     Opened opened = null;
     searchInput.setOpened(opened);
 
-    List<Restaurant> matchingRestaurants =
+    List<Restaurant> foundRestaurants =
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
-    assertThat(matchingRestaurants).isEqualTo(expectedList);
+
+    assertThat(foundRestaurants).isEqualTo(expectedRestaurants);
   }
 
   @Test
   void
       givenHoursSearchInput_whenMatchingRestaurantHoursExists_thenReturnListWithMatchingRestaurants() {
     addOwnerAndRestaurantsRepository();
-    List<Restaurant> expectedList = new ArrayList<>();
+    List<Restaurant> expectedRestaurants = new ArrayList<>();
     LocalTime openAfterFromSearchInput = LocalTime.of(13, 50, 45);
     Hours hours = new Hours(openAfterFromSearchInput, RESTAURANT_CLOSE);
     restaurant.setHours(hours);
-    expectedList.add(restaurant);
-    expectedList.add(secondRestaurant);
-    expectedList.add(thirdRestaurant);
+    expectedRestaurants.add(restaurant);
+    expectedRestaurants.add(secondRestaurant);
+    expectedRestaurants.add(thirdRestaurant);
 
     List<Restaurant> matchingRestaurants =
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
-    assertThat(matchingRestaurants).isEqualTo(expectedList);
+
+    assertThat(matchingRestaurants).isEqualTo(expectedRestaurants);
   }
 
   @Test
   void givenOnlyOpenedSearchInput_thenReturnsListRestaurantsMatchingHours() {
     addOwnerAndRestaurantsRepository();
-    List<Restaurant> expectedList = new ArrayList<>();
-    expectedList.add(restaurant);
-    expectedList.add(secondRestaurant);
-    expectedList.add(thirdRestaurant);
+    List<Restaurant> expectedRestaurants = new ArrayList<>();
+    expectedRestaurants.add(restaurant);
+    expectedRestaurants.add(secondRestaurant);
+    expectedRestaurants.add(thirdRestaurant);
     String name = null;
     searchInput.setName(name);
 
-    List<Restaurant> matchingRestaurants =
+    List<Restaurant> foundRestaurants =
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
-    assertThat(matchingRestaurants).isEqualTo(expectedList);
+
+    assertThat(foundRestaurants).isEqualTo(expectedRestaurants);
   }
 
   @Test
@@ -325,6 +330,7 @@ class RestaurantServiceTest {
         service.searchRestaurant(new SearchAssembler().toDto(searchInput)).stream()
             .map(new RestaurantAssembler()::fromDto)
             .collect(Collectors.toList());
+
     assertThat(matchingRestaurants).isEqualTo(expectedList);
   }
 

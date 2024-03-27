@@ -107,47 +107,21 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
       throws NotFoundException {
     getOwnerRestaurantById(ownerId, restaurantId);
 
-    datastore
-        .find(Restaurant.class)
-        .filter(eq("id", restaurantId))
-        .delete(new DeleteOptions().multi(false));
+    deleteRestaurantReservations(restaurantId);
+    deleteRestaurant(restaurantId);
+  }
 
+  public void deleteRestaurantReservations(String restaurantId) {
     datastore
         .find(Reservation.class)
         .filter(eq("restaurantId", restaurantId))
         .delete(new DeleteOptions().multi(true));
-    /*
+  }
 
-    	datastore.delete(Restaurant.class, restaurantId);
-
-    datastore.delete(restaurant, new DeleteOptions());
-
-    datastore.find(Restaurant.class)
-    			.filter(Filters.eq("id", restaurantId))
-    			.delete(new DeleteOptions());
-
-    	datastore.delete(datastore.find(Restaurant.class)
-    			.filter(Filters.eq("id", restaurantId)).stream().findFirst().orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND)));
-
-    	datastore.find(Reservation.class)
-    			.filter(Filters.eq("restaurantId", restaurantId))
-    			.delete(new DeleteOptions().multi(true));
-
-    	Bson studentFilter = Filters.eq( "id", doc.get("id") );
-    	Bson delete = Updates.pull("scores", new Document("score", lowestHomework).append("type", "homework"));
-    	collection.updateOne(studentFilter, delete);
-
-    	getOwnerRestaurantById(ownerId, restaurantId);
-
-    	datastore.update(pull("restaurants", eq("id", restaurantId)));
-
-    	datastore
-    			.find(Owner.class)
-    			.filter(eq("ownerId", ownerId)).pull("restaurants", eq("id", restaurantId));
-
-    	List<Restaurant> restaurants = datastore.find(Restaurant.class).filter(eq("ownerId", ownerId), ne("id", restaurantId)).stream().toList();
-    	System.out.println(restaurants);
-    	datastore.delete("id", restaurantId);
-    	*/
+  public void deleteRestaurant(String restaurantId) {
+    datastore
+        .find(Restaurant.class)
+        .filter(eq("id", restaurantId))
+        .delete(new DeleteOptions().multi(false));
   }
 }
