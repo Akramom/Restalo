@@ -138,7 +138,7 @@ public class RestaurantService {
     Restaurant restaurant = restaurantRepository.getRestaurantById(restaurantId);
     List<Availability> availabilities = new ArrayList<>();
     LocalTime time = restaurant.getHours().getOpen().plusMinutes(15 - (restaurant.getHours().getOpen().getMinute() % 15));
-    while (time.isBefore(restaurant.getHours().getClose().minusMinutes(restaurant.getDuration()))) {
+    while (time.isBefore(restaurant.getHours().getClose())) {
       int remainingPlaces = calculateRemainingPlaces(restaurant, date, time);
       availabilities.add(new Availability(time.toString(), remainingPlaces));
       time = time.plusMinutes(15);
@@ -146,13 +146,20 @@ public class RestaurantService {
     return availabilities;
   }
 
+
+
   private int calculateRemainingPlaces(Restaurant restaurant, LocalDate date, LocalTime time) {
-    int reservedPlaces = restaurant.getReservationList().stream()
-            .filter(reservation -> reservation.getDate().equals(date) && reservation.getStartTime().equals(time))
-            .mapToInt(Reservation::getGroupSize)
-            .sum();
+    int reservedPlaces = 0;
+    for (Reservation reservation : restaurant.getReservationList()) {
+      if (reservation.getDate().equals(date) &&
+              !time.isBefore(reservation.getStartTime()) &&
+              time.isBefore(reservation.getEndTime())) {
+        reservedPlaces += reservation.getGroupSize();
+      }
+    }
     return restaurant.getCapacity() - reservedPlaces;
   }
+
 
   public static LocalTime addToNext15MinSlot(LocalTime time) {
     int minutes = time.getMinute();
