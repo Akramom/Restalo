@@ -4,11 +4,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
 import ca.ulaval.glo2003.application.dtos.HoursDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
-import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import java.time.LocalTime;
 import org.junit.jupiter.api.*;
@@ -21,9 +19,7 @@ class RestaurantValidatorTest {
 
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
-  @Mock private Restaurant restaurant;
   private RestaurantValidator validator;
-  private RestaurantAssembler restaurantAssembler;
   @Mock private RestaurantDto restaurantDto;
   private HoursDto hours;
 
@@ -32,7 +28,6 @@ class RestaurantValidatorTest {
     MockitoAnnotations.initMocks(this);
     validator = new RestaurantValidator();
     hours = new HoursDto(OPEN, CLOSE);
-    restaurantAssembler = new RestaurantAssembler();
   }
 
   @ParameterizedTest
@@ -43,19 +38,17 @@ class RestaurantValidatorTest {
 
   @ParameterizedTest
   @ValueSource(ints = {0, -1, -2})
-  void givenCapacityLesserThanOne_validCapacityShouldReturnfalse(int capacity) {
+  void givenCapacityLesserThanOne_validCapacityShouldReturnFalse(int capacity) {
     assertFalse(validator.isValidCapacity(capacity));
   }
 
   @Test
-  void
-      givenAnHours_WhenOpenIsLongerThanCloseOfAtLeastOneHour_ThenValidOpeningHoursShouldReturnTrue() {
+  void givenHours_whenRestaurantOpensForAtLeast1Hour_thenValidOpeningHoursShouldReturnTrue() {
     assertTrue(validator.isValidOpeningHours(hours));
   }
 
   @Test
-  void
-      givenAnHours_WhenOpenIsLessThanCloseOfAtLeastOneHour_ThenValidOpeningHoursShouldReturnFalse() {
+  void givenHours_whenRestaurantOpenLessThan1Hour_thenValidOpeningHoursShouldReturnFalse() {
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
 
@@ -63,7 +56,7 @@ class RestaurantValidatorTest {
   }
 
   @Test
-  void givenARestaurant_WhenHoursIsNotValid_thenValidRestaurantShouldReturnFalse() {
+  void givenARestaurant_whenHoursIsNotValid_thenValidRestaurantShouldReturnFalse() {
     hours.setClose(OPEN);
     hours.setOpen(CLOSE);
 
@@ -78,7 +71,7 @@ class RestaurantValidatorTest {
   }
 
   @Test
-  void givenARestaurant_WhenCapacityIsNotValid_thenValidRestaurantShouldReturnFalse() {
+  void givenARestaurant_whenCapacityIsNotValid_thenValidRestaurantShouldReturnFalse() {
 
     when(restaurantDto.hours()).thenReturn(hours);
     when(restaurantDto.capacity()).thenReturn(0);
@@ -91,8 +84,7 @@ class RestaurantValidatorTest {
   }
 
   @Test
-  void givenARestaurant_WhenCapacityAnHoursIsValid_thenValidRestaurantShouldReturnTrue() {
-
+  void givenARestaurant_whenCapacityAndHoursAreValid_thenValidRestaurantShouldReturnTrue() {
     when(restaurantDto.hours()).thenReturn(hours);
     when(restaurantDto.capacity()).thenReturn(2);
 

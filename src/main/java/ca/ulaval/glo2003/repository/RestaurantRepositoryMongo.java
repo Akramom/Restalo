@@ -9,6 +9,7 @@ import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
+import dev.morphia.DeleteOptions;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,5 +100,28 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException {
     Reservation reservation = getReservationByNumber(number);
     return getRestaurantById(reservation.getRestaurantId());
+  }
+
+  @Override
+  public void deleteOwnerRestaurantById(String ownerId, String restaurantId)
+      throws NotFoundException {
+    getOwnerRestaurantById(ownerId, restaurantId);
+
+    deleteRestaurantReservations(restaurantId);
+    deleteRestaurant(restaurantId);
+  }
+
+  public void deleteRestaurantReservations(String restaurantId) {
+    datastore
+        .find(Reservation.class)
+        .filter(eq("restaurantId", restaurantId))
+        .delete(new DeleteOptions().multi(true));
+  }
+
+  public void deleteRestaurant(String restaurantId) {
+    datastore
+        .find(Restaurant.class)
+        .filter(eq("id", restaurantId))
+        .delete(new DeleteOptions().multi(false));
   }
 }

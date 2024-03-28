@@ -16,6 +16,8 @@ public class Reservation {
 
   @Id private String number;
 
+  private String restaurantId;
+
   public String getRestaurantId() {
     return restaurantId;
   }
@@ -23,8 +25,6 @@ public class Reservation {
   public void setRestaurantId(String restaurantId) {
     this.restaurantId = restaurantId;
   }
-
-  private String restaurantId;
 
   public Reservation(
       String number,

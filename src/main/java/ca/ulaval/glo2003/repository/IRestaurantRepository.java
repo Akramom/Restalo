@@ -28,4 +28,6 @@ public interface IRestaurantRepository {
   Reservation getReservationByNumber(String reservationNumer) throws NotFoundException;
 
   Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException;
+
+  void deleteOwnerRestaurantById(String ownerId, String restaurantId) throws NotFoundException;
 }
