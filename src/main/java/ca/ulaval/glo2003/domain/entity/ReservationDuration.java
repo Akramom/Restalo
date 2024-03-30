@@ -4,8 +4,8 @@ import dev.morphia.annotations.Entity;
 
 @Entity
 public record ReservationDuration(int duration) {
-    @Override
-    public int duration() {
-        return duration;
-    }
+  @Override
+  public int duration() {
+    return duration;
+  }
 }

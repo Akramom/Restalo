@@ -6,10 +6,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import static ca.ulaval.glo2003.util.Constante.SERVICE_IS_HEALTHY;
+
 @Path("/health")
 public class HealthResource {
 
-  public final String SERVICE_IS_HEALTHY = "Service is healthy";
+
 
   @GET
   @Path("")
