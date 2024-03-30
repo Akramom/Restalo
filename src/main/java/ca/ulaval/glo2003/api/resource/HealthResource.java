@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003.api.resource;
 
+import static ca.ulaval.glo2003.util.Constante.SERVICE_IS_HEALTHY;
+
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -8,8 +10,6 @@ import jakarta.ws.rs.core.Response;
 
 @Path("/health")
 public class HealthResource {
-
-  public final String SERVICE_IS_HEALTHY = "Service is healthy";
 
   @GET
   @Path("")

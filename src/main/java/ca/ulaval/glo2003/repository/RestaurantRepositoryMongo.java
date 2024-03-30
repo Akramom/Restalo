@@ -3,6 +3,7 @@ package ca.ulaval.glo2003.repository;
 import static ca.ulaval.glo2003.util.Constante.*;
 import static dev.morphia.query.experimental.filters.Filters.eq;
 
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
@@ -10,6 +11,8 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
 import dev.morphia.DeleteOptions;
+import dev.morphia.query.experimental.updates.UpdateOperators;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +43,8 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
     if (restaurant.getId() == null) {
       restaurant.setId(Util.generateId());
     }
+
+    datastore.save(restaurant.getAvailabilities());
 
     Owner owner = getOwner(ownerId);
     restaurant.setOwnerId(owner.getOwnerId());
@@ -123,5 +128,31 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
         .find(Restaurant.class)
         .filter(eq("id", restaurantId))
         .delete(new DeleteOptions().multi(false));
+  }
+
+  public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+      throws NotFoundException {
+
+    getRestaurantById(restaurantId);
+    List<Availability> availabilities =
+        datastore.find(Availability.class).filter(eq("restaurantId", restaurantId)).stream()
+            .filter(availability -> availability.getStart().toLocalDate().equals(date))
+            .collect(Collectors.toList());
+
+    return availabilities;
+  }
+
+  @Override
+  public void updateAvailability(Availability updatedAvailability) {
+    datastore
+        .find(Availability.class)
+        .filter(eq("id", updatedAvailability.getId()))
+        .modify(UpdateOperators.set("remainingPlaces", updatedAvailability.getRemainingPlaces()))
+        .execute();
+  }
+
+  @Override
+  public void deleteReservation(String reservationNumber) {
+    datastore.find(Reservation.class).filter(eq("number", reservationNumber)).delete();
   }
 }

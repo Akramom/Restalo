@@ -2,10 +2,12 @@ package ca.ulaval.glo2003.api.resource;
 
 import ca.ulaval.glo2003.api.assemblers.request.ReservationRequestAssembler;
 import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
+import ca.ulaval.glo2003.api.assemblers.response.AvailabilityResponseAssembler;
 import ca.ulaval.glo2003.api.assemblers.response.RestaurantResponseAssembler;
 import ca.ulaval.glo2003.api.request.ReservationRequest;
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
 import ca.ulaval.glo2003.api.response.restaurant.OwnerRestaurantResponse;
+import ca.ulaval.glo2003.application.dtos.AvailabilityDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
@@ -20,6 +22,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @Path("/restaurants")
@@ -29,6 +33,7 @@ public class RestaurantResource {
   private final RestaurantRequestAssembler restaurantRequestAssembler;
   private final RestaurantResponseAssembler restaurantResponseAssembler;
   private final ReservationRequestAssembler reservationRequestAssembler;
+  private final AvailabilityResponseAssembler availabilityResponseAssembler;
 
   public RestaurantResource(RestaurantService restaurantService) {
 
@@ -36,6 +41,7 @@ public class RestaurantResource {
     this.restaurantRequestAssembler = new RestaurantRequestAssembler();
     this.reservationRequestAssembler = new ReservationRequestAssembler();
     this.restaurantResponseAssembler = new RestaurantResponseAssembler();
+    this.availabilityResponseAssembler = new AvailabilityResponseAssembler();
   }
 
   @POST
@@ -122,5 +128,28 @@ public class RestaurantResource {
     restaurantService.deleteRestaurantIfOwner(restaurantId, ownerId);
 
     return Response.noContent().build();
+  }
+
+  @GET
+  @Path("/{id}/availabilities")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response getAvailabilities(
+      @NotEmpty(message = Constante.MISSING_RESTAURANT_ID)
+          @NotNull(message = Constante.MISSING_RESTAURANT_ID)
+          @PathParam("id")
+          String restaurantId,
+      @QueryParam("date")
+          @NotEmpty(message = Constante.MISSING_DATE)
+          @NotNull(message = Constante.MISSING_DATE)
+          String dateStr)
+      throws NotFoundException, DateTimeParseException {
+
+    LocalDate date = LocalDate.parse(dateStr);
+
+    List<AvailabilityDto> availabilities =
+        restaurantService.getAvailabilityService().getAvailabilities(restaurantId, date);
+
+    return Response.ok(availabilities.stream().map(availabilityResponseAssembler::fromDto).toList())
+        .build();
   }
 }

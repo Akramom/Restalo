@@ -26,6 +26,15 @@ public class Util {
     return time.plusMinutes(15 - minutesOverThePrevious15MinSlot);
   }
 
+  public static LocalTime adjustToPrevious15Minutes(LocalTime time) {
+    int minutes = time.getMinute();
+    int minutesOverThePrevious15MinSlot = minutes % 15;
+    if (minutesOverThePrevious15MinSlot == 0) {
+      return time;
+    }
+    return time.minusMinutes(minutesOverThePrevious15MinSlot);
+  }
+
   public static boolean containsSubstr_toLowerC(String originalStr, String subStr) {
     return originalStr
         .replaceAll("\\s+", "")
