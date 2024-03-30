@@ -2,11 +2,13 @@ package ca.ulaval.glo2003.repository;
 
 import static ca.ulaval.glo2003.util.Constante.*;
 
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,5 +144,34 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
             .findFirst()
             .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND));
     return unRestaurant;
+  }
+
+  @Override
+  public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    return getRestaurantById(restaurantId).getAvailabilities().stream()
+        .filter(availability -> availability.getStart().toLocalDate().equals(date))
+        .collect(Collectors.toList());
+  }
+
+  public void updateAvailability(Availability updatedAvailability) {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .filter(restaurant -> restaurant.getId().equals(updatedAvailability.getRestaurantId()))
+        .findFirst()
+        .ifPresent(restaurant -> restaurant.setAvailability(updatedAvailability));
+  }
+
+  @Override
+  public void deleteReservation(String reservationNumber) throws NotFoundException {
+
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .flatMap(restaurant -> restaurant.getReservationList().stream())
+        .toList()
+        .remove(
+            owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+                .flatMap(restaurant -> restaurant.getReservationList().stream())
+                .filter(reservation -> reservation.getNumber().equals(reservationNumber))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND)));
   }
 }

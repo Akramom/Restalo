@@ -1,9 +1,11 @@
 package ca.ulaval.glo2003.repository;
 
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IRestaurantRepository {
@@ -28,4 +30,11 @@ public interface IRestaurantRepository {
   Reservation getReservationByNumber(String reservationNumer) throws NotFoundException;
 
   Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException;
+
+  List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+      throws NotFoundException;
+
+  void updateAvailability(Availability updatedAvailability);
+
+  void deleteReservation(String reservationNumber) throws NotFoundException;
 }

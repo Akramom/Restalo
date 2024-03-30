@@ -2,14 +2,16 @@ package ca.ulaval.glo2003.api.resource;
 
 import ca.ulaval.glo2003.api.assemblers.request.ReservationRequestAssembler;
 import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
+import ca.ulaval.glo2003.api.assemblers.response.AvailabilityResponseAssembler;
 import ca.ulaval.glo2003.api.assemblers.response.RestaurantResponseAssembler;
 import ca.ulaval.glo2003.api.request.ReservationRequest;
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
 import ca.ulaval.glo2003.api.response.restaurant.OwnerRestaurantResponse;
+import ca.ulaval.glo2003.application.dtos.AvailabilityDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.application.service.AvailabilityService;
 import ca.ulaval.glo2003.application.service.RestaurantService;
-import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
@@ -32,6 +34,7 @@ public class RestaurantResource {
   private final RestaurantRequestAssembler restaurantRequestAssembler;
   private final RestaurantResponseAssembler restaurantResponseAssembler;
   private final ReservationRequestAssembler reservationRequestAssembler;
+  private final AvailabilityResponseAssembler availabilityResponseAssembler;
 
   public RestaurantResource(RestaurantService restaurantService) {
 
@@ -39,6 +42,7 @@ public class RestaurantResource {
     this.restaurantRequestAssembler = new RestaurantRequestAssembler();
     this.reservationRequestAssembler = new ReservationRequestAssembler();
     this.restaurantResponseAssembler = new RestaurantResponseAssembler();
+    this.availabilityResponseAssembler = new AvailabilityResponseAssembler();
   }
 
   @POST
@@ -111,22 +115,27 @@ public class RestaurantResource {
             URI.create("http://localhost:8080/reservations/" + addedReservation.getNumber()))
         .build();
   }
+
   @GET
   @Path("/{id}/availabilities")
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getAvailabilities(@PathParam("id") String restaurantId, @QueryParam("date") String dateStr) throws NotFoundException {
-    LocalDate date;
-    try {
-      date = restaurantService.validateAndParseDate(dateStr);
-    } catch (IllegalArgumentException e) {
-      return Response.status(Response.Status.BAD_REQUEST)
-              .entity(new InvalidParameterException("INVALID_PARAMETER"))
-              .build();
-    }
-    List<Availability> availabilities = restaurantService.calculateAvailabilities(restaurantId, date);
-    return Response.ok(availabilities).build();
+  public Response getAvailabilities(
+      @NotEmpty(message = Constante.MISSING_RESTAURANT_ID)
+          @NotNull(message = Constante.MISSING_RESTAURANT_ID)
+          @PathParam("id")
+          String restaurantId,
+      @QueryParam("date")
+          @NotEmpty(message = Constante.MISSING_DATE)
+          @NotNull(message = Constante.MISSING_DATE)
+          String dateStr)
+      throws NotFoundException, DateTimeParseException {
+
+    LocalDate date = LocalDate.parse(dateStr);
+
+    List<AvailabilityDto> availabilities =
+        restaurantService.getAvailabilityService().getAvailabilities(restaurantId, date);
+
+    return Response.ok(availabilities.stream().map(availabilityResponseAssembler::fromDto).toList())
+        .build();
   }
-
 }
-
-

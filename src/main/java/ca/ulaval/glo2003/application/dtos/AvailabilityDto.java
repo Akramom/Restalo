@@ -1,18 +1,14 @@
-package ca.ulaval.glo2003.domain.entity;
+package ca.ulaval.glo2003.application.dtos;
 
-import ca.ulaval.glo2003.util.Util;
-import dev.morphia.annotations.Entity;
-import dev.morphia.annotations.Id;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-public class Availability {
+public class AvailabilityDto {
   private LocalDateTime start;
   private int remainingPlaces;
 
   private String restaurantId;
-  @Id private String id;
+  private String id;
 
   public String getId() {
     return id;
@@ -30,13 +26,7 @@ public class Availability {
     this.restaurantId = restaurantId;
   }
 
-  public Availability(LocalDateTime start, int remainingPlaces) {
-    id = Util.generateId();
-    this.remainingPlaces = remainingPlaces;
-    this.start = start;
-  }
-
-  public Availability(String id, String restaurantId, LocalDateTime start, int remainingPlaces) {
+  public AvailabilityDto(String id, String restaurantId, LocalDateTime start, int remainingPlaces) {
     this.id = id;
     this.restaurantId = restaurantId;
     this.remainingPlaces = remainingPlaces;
