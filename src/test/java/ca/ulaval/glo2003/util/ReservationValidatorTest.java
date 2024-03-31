@@ -67,6 +67,17 @@ public class ReservationValidatorTest {
   }
 
   @Test
+  void whenAdjustedReservationStartTimeBeforeOpenTime_thenShouldThrow() {
+    when(reservationDto.getStartTime()).thenReturn(RESTAURANT_OPENING_TIME.minusMinutes(20));
+
+    assertThrows(
+            InvalidParameterException.class,
+            () ->
+                    validator.validateReservationToRestaurant(
+                            reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
   void whenReservationStartTimeAfterClosingTime_thenShouldThrow() {
     when(reservationDto.getStartTime()).thenReturn(RESTAURANT_CLOSE_TIME.plusMinutes(10));
 
@@ -89,6 +100,17 @@ public class ReservationValidatorTest {
           validator.validateReservationToRestaurant(
               reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
+  }
+  @ParameterizedTest
+  @ValueSource(ints = {0, -1, 51})
+  void whenGroupSizeInvalid_thenShouldThrow(int groupSize) {
+    when(reservationDto.getGroupSize()).thenReturn(groupSize);
+
+    assertThrows(
+            InvalidParameterException.class,
+            () ->
+                    validator.validateReservationToRestaurant(
+                            reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @ParameterizedTest
