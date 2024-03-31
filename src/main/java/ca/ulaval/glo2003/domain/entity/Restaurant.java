@@ -37,7 +37,7 @@ public class Restaurant {
   private List<Reservation> reservationList;
 
   public List<Availability> getAvailabilities() {
-    if (availabilities == null) initAvailabilities();
+    if (availabilities == null) availabilities = new ArrayList<>();
     return availabilities;
   }
 
@@ -51,29 +51,25 @@ public class Restaurant {
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
+    availabilities = new ArrayList<>();
   }
 
-  public void initAvailabilities() {
+  public void addAvailabilities(LocalDate dateAvailability) {
+    if (availabilities == null) availabilities = new ArrayList<>();
+
     LocalTime startTimeAvailability;
     LocalTime endTimeAvailability;
-    LocalDate dateAvailability;
-
-    availabilities = new ArrayList<>();
-    dateAvailability = LocalDate.now();
-    for (int i = 0; i < 365; i++) {
-      startTimeAvailability = Util.ajustStartTimeToNext15Min(hours.getOpen());
-      endTimeAvailability =
-          Util.adjustToPrevious15Minutes(hours.getClose())
-              .minusMinutes(reservationDuration == null ? 60 : reservationDuration.duration());
-      while (startTimeAvailability.isBefore(endTimeAvailability)
-          || startTimeAvailability.equals(endTimeAvailability)) {
-        LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
-        Availability availability = new Availability(start, capacity);
-        availability.setRestaurantId(id);
-        availabilities.add(availability);
-        startTimeAvailability = startTimeAvailability.plusMinutes(15);
-      }
-      dateAvailability = dateAvailability.plusDays(1);
+    startTimeAvailability = Util.ajustStartTimeToNext15Min(hours.getOpen());
+    endTimeAvailability =
+        Util.adjustToPrevious15Minutes(hours.getClose())
+            .minusMinutes(reservationDuration == null ? 60 : reservationDuration.duration());
+    while (startTimeAvailability.isBefore(endTimeAvailability)
+        || startTimeAvailability.equals(endTimeAvailability)) {
+      LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
+      Availability availability = new Availability(start, capacity);
+      availability.setRestaurantId(id);
+      availabilities.add(availability);
+      startTimeAvailability = startTimeAvailability.plusMinutes(15);
     }
   }
 
@@ -103,6 +99,7 @@ public class Restaurant {
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
+    availabilities = new ArrayList<>();
   }
 
   public void generateId() {
@@ -150,7 +147,7 @@ public class Restaurant {
 
   public void setId(String id) {
     this.id = id;
-    initAvailabilities();
+    if (availabilities == null) availabilities = new ArrayList<>();
   }
 
   public void setReservations(ReservationDuration reservationDuration) {
@@ -189,5 +186,9 @@ public class Restaurant {
         + ", reservations="
         + reservationList
         + '}';
+  }
+
+  public void removeReservation(String reservationNumber) {
+    getReservationList().removeIf(reservation -> reservation.getNumber().equals(reservationNumber));
   }
 }

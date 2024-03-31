@@ -169,6 +169,19 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   @Override
   public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
       throws NotFoundException {
+
+    List<Availability> availabilityList;
+    availabilityList =
+        getRestaurantById(restaurantId).getAvailabilities().stream()
+            .filter(availability -> availability.getStart().toLocalDate().equals(date))
+            .toList();
+    if (availabilityList.isEmpty())
+      owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+          .filter(restaurant -> restaurant.getId().equals(restaurantId))
+          .toList()
+          .getFirst()
+          .addAvailabilities(date);
+
     return getRestaurantById(restaurantId).getAvailabilities().stream()
         .filter(availability -> availability.getStart().toLocalDate().equals(date))
         .collect(Collectors.toList());
@@ -182,16 +195,11 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public void deleteReservation(String reservationNumber) throws NotFoundException {
-
+  public void deleteReservation(String reservationNumber, String restaurantId)
+      throws NotFoundException {
     owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
-        .flatMap(restaurant -> restaurant.getReservationList().stream())
-        .toList()
-        .remove(
-            owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
-                .flatMap(restaurant -> restaurant.getReservationList().stream())
-                .filter(reservation -> reservation.getNumber().equals(reservationNumber))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(RESERVATION_NOT_FOUND)));
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .findFirst()
+        .ifPresent(restaurant -> restaurant.removeReservation(reservationNumber));
   }
 }

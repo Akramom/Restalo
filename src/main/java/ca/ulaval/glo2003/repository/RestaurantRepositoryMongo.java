@@ -44,7 +44,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
       restaurant.setId(Util.generateId());
     }
 
-    datastore.save(restaurant.getAvailabilities());
+    // datastore.save(restaurant.getAvailabilities());
 
     Owner owner = getOwner(ownerId);
     restaurant.setOwnerId(owner.getOwnerId());
@@ -133,13 +133,21 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
       throws NotFoundException {
 
-    getRestaurantById(restaurantId);
+    Restaurant restaurant = getRestaurantById(restaurantId);
+
     List<Availability> availabilities =
         datastore.find(Availability.class).filter(eq("restaurantId", restaurantId)).stream()
             .filter(availability -> availability.getStart().toLocalDate().equals(date))
-            .collect(Collectors.toList());
+            .toList();
 
-    return availabilities;
+    if (availabilities.isEmpty()) {
+      restaurant.addAvailabilities(date);
+      datastore.save(restaurant.getAvailabilities());
+    }
+
+    return datastore.find(Availability.class).filter(eq("restaurantId", restaurantId)).stream()
+        .filter(availability -> availability.getStart().toLocalDate().equals(date))
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -152,7 +160,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   }
 
   @Override
-  public void deleteReservation(String reservationNumber) {
+  public void deleteReservation(String reservationNumber, String restaurantId) {
     datastore.find(Reservation.class).filter(eq("number", reservationNumber)).delete();
   }
 }

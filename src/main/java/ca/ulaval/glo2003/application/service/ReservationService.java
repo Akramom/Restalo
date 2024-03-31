@@ -43,6 +43,6 @@ public class ReservationService {
     Restaurant restaurant =
         restaurantRepository.getRestaurantByReservationNumber(reservationNumber);
     this.availabilityService.releaseAvailibilities(reservation, restaurant.getId());
-    restaurantRepository.deleteReservation(reservationNumber);
+    restaurantRepository.deleteReservation(reservationNumber, restaurant.getId());
   }
 }

@@ -38,5 +38,5 @@ public interface IRestaurantRepository {
 
   void updateAvailability(Availability updatedAvailability);
 
-  void deleteReservation(String reservationNumber) throws NotFoundException;
+  void deleteReservation(String reservationNumber, String restaurantId) throws NotFoundException;
 }
