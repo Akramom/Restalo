@@ -89,7 +89,10 @@ public class RestaurantService {
       throws InvalidParameterException, NotFoundException {
     Restaurant restaurant = restaurantRepository.getRestaurantById(restaurantId);
     reservationValidator.validateReservationToRestaurant(
-        reservationDto, restaurant.getHours().getClose());
+        reservationDto,
+        restaurant.getHours().getOpen(),
+        restaurant.getHours().getClose(),
+        restaurant.getCapacity());
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)

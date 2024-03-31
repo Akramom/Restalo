@@ -20,11 +20,13 @@ import org.mockito.MockitoAnnotations;
 public class ReservationValidatorTest {
   private final LocalDate DATE = LocalDate.of(12, 12, 12);
   private final LocalTime START_TIME = LocalTime.of(13, 13, 13);
+  private final int MAX_CAPACITY = 10;
   private final int GROUP_SIZE = 2;
   private final String CUSTOMER_NAME = "Jane Doe";
   private final String EMAIL = "test@test.com";
   private final String PHONE_NUMBER = "1111111111";
   private final int RESERVATION_DURATION = 60;
+  private final LocalTime RESTAURANT_OPENING_TIME = LocalTime.of(10, 10);
   private final LocalTime RESTAURANT_CLOSE_TIME = LocalTime.of(20, 20, 20);
   public ReservationValidator validator;
   @Mock private ReservationDto reservationDto;
@@ -47,7 +49,9 @@ public class ReservationValidatorTest {
   @Test
   void whenParametersValid_thenShouldNotThrow() {
     assertDoesNotThrow(
-        () -> validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME));
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @Test
@@ -57,7 +61,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -68,7 +73,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -80,7 +86,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -92,7 +99,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -104,7 +112,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -116,7 +125,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -128,7 +138,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -140,7 +151,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 }
