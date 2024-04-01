@@ -130,24 +130,31 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
         .delete(new DeleteOptions().multi(false));
   }
 
-  public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+  @Override
+  public boolean isExistAvailabilityForADate(String restaurantId, LocalDate date)
       throws NotFoundException {
+    return !getAvailabilitiesForADate(restaurantId, date).isEmpty();
+  }
 
+  @Override
+  public List<Availability> getAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
     Restaurant restaurant = getRestaurantById(restaurantId);
 
-    List<Availability> availabilities =
-        datastore.find(Availability.class).filter(eq("restaurantId", restaurantId)).stream()
-            .filter(availability -> availability.getStart().toLocalDate().equals(date))
-            .toList();
-
-    if (availabilities.isEmpty()) {
-      restaurant.addAvailabilities(date);
-      datastore.save(restaurant.getAvailabilities());
-    }
-
-    return datastore.find(Availability.class).filter(eq("restaurantId", restaurantId)).stream()
+    return datastore
+        .find(Availability.class)
+        .filter(eq("restaurantId", restaurant.getId()))
+        .stream()
         .filter(availability -> availability.getStart().toLocalDate().equals(date))
-        .collect(Collectors.toList());
+        .toList();
+  }
+
+  @Override
+  public void addAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    Restaurant restaurant = getRestaurantById(restaurantId);
+    restaurant.addAvailabilities(date);
+    datastore.save(restaurant.getAvailabilities());
   }
 
   @Override

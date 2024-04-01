@@ -25,7 +25,11 @@ public class AvailabilityService {
 
   public List<AvailabilityDto> getAvailabilities(String restaurantId, LocalDate date)
       throws NotFoundException {
-    return restaurantRepository.getAvailabilities(restaurantId, date).stream()
+
+    if (!restaurantRepository.isExistAvailabilityForADate(restaurantId, date))
+      restaurantRepository.addAvailabilitiesForADate(restaurantId, date);
+
+    return restaurantRepository.getAvailabilitiesForADate(restaurantId, date).stream()
         .map(availabilityAssembler::toDto)
         .collect(Collectors.toList());
   }

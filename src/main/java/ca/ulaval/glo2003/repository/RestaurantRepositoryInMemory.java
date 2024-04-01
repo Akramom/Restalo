@@ -166,25 +166,24 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
                 .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND)));
   }
 
-  @Override
-  public List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+  public boolean isExistAvailabilityForADate(String restaurantId, LocalDate date)
       throws NotFoundException {
+    return !getAvailabilitiesForADate(restaurantId, date).isEmpty();
+  }
 
-    List<Availability> availabilityList;
-    availabilityList =
-        getRestaurantById(restaurantId).getAvailabilities().stream()
-            .filter(availability -> availability.getStart().toLocalDate().equals(date))
-            .toList();
-    if (availabilityList.isEmpty())
-      owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
-          .filter(restaurant -> restaurant.getId().equals(restaurantId))
-          .toList()
-          .getFirst()
-          .addAvailabilities(date);
-
+  public List<Availability> getAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
     return getRestaurantById(restaurantId).getAvailabilities().stream()
         .filter(availability -> availability.getStart().toLocalDate().equals(date))
-        .collect(Collectors.toList());
+        .toList();
+  }
+
+  public void addAvailabilitiesForADate(String restaurantId, LocalDate date) {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .toList()
+        .getFirst()
+        .addAvailabilities(date);
   }
 
   public void updateAvailability(Availability updatedAvailability) {

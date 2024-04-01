@@ -33,8 +33,12 @@ public interface IRestaurantRepository {
 
   void deleteOwnerRestaurantById(String ownerId, String restaurantId) throws NotFoundException;
 
-  List<Availability> getAvailabilities(String restaurantId, LocalDate date)
+  boolean isExistAvailabilityForADate(String restaurantId, LocalDate date) throws NotFoundException;
+
+  List<Availability> getAvailabilitiesForADate(String restaurantId, LocalDate date)
       throws NotFoundException;
+
+  void addAvailabilitiesForADate(String restaurantId, LocalDate date) throws NotFoundException;
 
   void updateAvailability(Availability updatedAvailability);
 
