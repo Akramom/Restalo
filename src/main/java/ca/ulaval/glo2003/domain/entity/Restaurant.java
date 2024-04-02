@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003.domain.entity;
 
+import static ca.ulaval.glo2003.util.Constante.DEFAULT_DURATION;
+
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -50,7 +52,7 @@ public class Restaurant {
     this.capacity = capacity;
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
-    else this.reservationDuration = new ReservationDuration(60);
+    else this.reservationDuration = new ReservationDuration(DEFAULT_DURATION);
     availabilities = new ArrayList<>();
   }
 
@@ -62,7 +64,8 @@ public class Restaurant {
     startTimeAvailability = Util.ajustStartTimeToNext15Min(hours.getOpen());
     endTimeAvailability =
         Util.adjustToPrevious15Minutes(hours.getClose())
-            .minusMinutes(reservationDuration == null ? 60 : reservationDuration.duration());
+            .minusMinutes(
+                reservationDuration == null ? DEFAULT_DURATION : reservationDuration.duration());
     while (startTimeAvailability.isBefore(endTimeAvailability)
         || startTimeAvailability.equals(endTimeAvailability)) {
       LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
@@ -98,7 +101,7 @@ public class Restaurant {
     this.capacity = capacity;
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
-    else this.reservationDuration = new ReservationDuration(60);
+    else this.reservationDuration = new ReservationDuration(DEFAULT_DURATION);
     availabilities = new ArrayList<>();
   }
 

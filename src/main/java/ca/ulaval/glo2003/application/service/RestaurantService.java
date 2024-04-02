@@ -10,7 +10,7 @@ import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.domain.search.SearchHelper;
+import ca.ulaval.glo2003.domain.search.SearchRestaurantHelper;
 import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.util.Util;
 import java.util.List;
@@ -22,8 +22,13 @@ public class RestaurantService {
   private final RestaurantValidator restaurantValidator;
   private final RestaurantAssembler restaurantAssembler;
   private final ReservationAssembler reservationAssembler;
-  private final SearchHelper searchHelper;
+  private final SearchRestaurantHelper searchHelper;
   private ReservationService reservationService;
+
+  public ReservationService getReservationService() {
+    return reservationService;
+  }
+
   private AvailabilityService availabilityService;
 
   public void setAvailabilityService(AvailabilityService availabilityService) {
@@ -39,7 +44,7 @@ public class RestaurantService {
     this.restaurantValidator = new RestaurantValidator();
     this.restaurantAssembler = new RestaurantAssembler();
     this.reservationAssembler = new ReservationAssembler();
-    this.searchHelper = new SearchHelper();
+    this.searchHelper = new SearchRestaurantHelper();
   }
 
   public RestaurantDto addRestaurant(String ownerId, RestaurantDto restaurantDto) throws Exception {

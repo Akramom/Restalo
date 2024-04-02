@@ -1,7 +1,7 @@
 package ca.ulaval.glo2003.resource;
 
 import static ca.ulaval.glo2003.domain.error.ErrorType.*;
-import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
+import static ca.ulaval.glo2003.util.Constante.*;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,7 +95,7 @@ class RestaurantResourceIntegrationTest extends JerseyTest {
         Integer.parseInt((String) response.getHeaders().get("content-Length").get(0));
 
     assertEquals(Response.Status.CREATED.getStatusCode(), response.getStatus());
-    assertEquals(true, location.startsWith("http://localhost:8080/restaurants/"));
+    assertEquals(true, location.startsWith(URL + ":" + PORT + "/restaurants/"));
     assertEquals(0, contentLength);
   }
 
