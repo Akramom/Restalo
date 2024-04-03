@@ -2,11 +2,13 @@ package ca.ulaval.glo2003.repository;
 
 import static ca.ulaval.glo2003.util.Constante.*;
 
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -162,5 +164,41 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
                 .filter(restaurant -> restaurant.getId().equals(restaurantId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND)));
+  }
+
+  public boolean isExistAvailabilityForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    return !getAvailabilitiesForADate(restaurantId, date).isEmpty();
+  }
+
+  public List<Availability> getAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    return getRestaurantById(restaurantId).getAvailabilities().stream()
+        .filter(availability -> availability.getStart().toLocalDate().equals(date))
+        .toList();
+  }
+
+  public void addAvailabilitiesForADate(String restaurantId, LocalDate date) {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .toList()
+        .getFirst()
+        .addAvailabilities(date);
+  }
+
+  public void updateAvailability(Availability updatedAvailability) {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .filter(restaurant -> restaurant.getId().equals(updatedAvailability.getRestaurantId()))
+        .findFirst()
+        .ifPresent(restaurant -> restaurant.setAvailability(updatedAvailability));
+  }
+
+  @Override
+  public void deleteReservation(String reservationNumber, String restaurantId)
+      throws NotFoundException {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .findFirst()
+        .ifPresent(restaurant -> restaurant.removeReservation(reservationNumber));
   }
 }

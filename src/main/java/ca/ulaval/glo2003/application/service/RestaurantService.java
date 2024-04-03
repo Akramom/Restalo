@@ -1,14 +1,11 @@
 package ca.ulaval.glo2003.application.service;
 
-import static ca.ulaval.glo2003.util.Constante.*;
-
 import ca.ulaval.glo2003.application.assembler.ReservationAssembler;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
 import ca.ulaval.glo2003.application.assembler.SearchAssembler;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.dtos.SearchDto;
-import ca.ulaval.glo2003.application.validator.ReservationValidator;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
@@ -23,16 +20,23 @@ public class RestaurantService {
 
   private final IRestaurantRepository restaurantRepository;
   private final RestaurantValidator restaurantValidator;
-  private final ReservationValidator reservationValidator;
   private final RestaurantAssembler restaurantAssembler;
   private final ReservationAssembler reservationAssembler;
-
   private final SearchHelper searchHelper;
+  private ReservationService reservationService;
+  private AvailabilityService availabilityService;
+
+  public void setAvailabilityService(AvailabilityService availabilityService) {
+    this.availabilityService = availabilityService;
+  }
+
+  public void setReservationService(ReservationService reservationService) {
+    this.reservationService = reservationService;
+  }
 
   public RestaurantService(IRestaurantRepository restaurantRepository) {
     this.restaurantRepository = restaurantRepository;
     this.restaurantValidator = new RestaurantValidator();
-    this.reservationValidator = new ReservationValidator();
     this.restaurantAssembler = new RestaurantAssembler();
     this.reservationAssembler = new ReservationAssembler();
     this.searchHelper = new SearchHelper();
@@ -81,15 +85,12 @@ public class RestaurantService {
     this.restaurantValidator.validRestaurant(restaurant);
   }
 
-  public void verifyExistRestaurant(String restaurantId) throws NotFoundException {
-    restaurantRepository.getRestaurantById(restaurantId);
+  public AvailabilityService getAvailabilityService() {
+    return availabilityService;
   }
 
-  public void verifyValidReservationParameter(String restaurantId, ReservationDto reservationDto)
-      throws InvalidParameterException, NotFoundException {
-    Restaurant restaurant = restaurantRepository.getRestaurantById(restaurantId);
-    reservationValidator.validateReservationToRestaurant(
-        reservationDto, restaurant.getHours().getClose());
+  public void verifyExistRestaurant(String restaurantId) throws NotFoundException {
+    restaurantRepository.getRestaurantById(restaurantId);
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
@@ -101,23 +102,23 @@ public class RestaurantService {
     reservationDto.setEndTime(
         Util.calculEndTime(reservationDto.getStartTime(), reservationDuration));
 
-    this.verifyValidReservationParameter(restaurantId, reservationDto);
+    // todo mettre cette validation dans le verifyValidReservationParameter
+    RestaurantDto restaurantDto =
+        restaurantAssembler.toDto(restaurantRepository.getRestaurantById(restaurantId));
+    if (reservationDto.getStartTime().isBefore(restaurantDto.hours().getOpen())) {
+      throw new InvalidParameterException(
+          "The start time of the reservation must be after the open time of the restaurant");
+    }
 
+    this.reservationService.verifyValidReservationParameter(restaurantId, reservationDto);
     Reservation reservation = reservationAssembler.fromDto(reservationDto);
+    this.availabilityService.reserveAvailabilities(reservation, restaurantId);
     Reservation addedReservation = restaurantRepository.addReservation(reservation, restaurantId);
-
     return new ReservationAssembler().toDto(addedReservation);
   }
 
   public int getRestaurantReservationDuration(String restaurantId) throws NotFoundException {
     return restaurantRepository.getRestaurantById(restaurantId).getReservation().duration();
-  }
-
-  public ReservationDto getReservationByNumber(String reservationNumber) throws NotFoundException {
-    Reservation reservation = restaurantRepository.getReservationByNumber(reservationNumber);
-    Restaurant restaurant =
-        restaurantRepository.getRestaurantByReservationNumber(reservationNumber);
-    return new ReservationAssembler().toDto(reservation, restaurant);
   }
 
   public List<RestaurantDto> searchRestaurant(SearchDto searchDto) {

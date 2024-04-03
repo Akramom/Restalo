@@ -3,6 +3,9 @@ package ca.ulaval.glo2003.domain.entity;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +15,11 @@ import java.util.UUID;
 public class Restaurant {
 
   private String name;
+
+  public void setAvailabilities(ArrayList<Availability> availabilities) {
+    this.availabilities = availabilities;
+  }
+
   private int capacity;
   @Id private String id;
   private ReservationDuration reservationDuration;
@@ -28,6 +36,13 @@ public class Restaurant {
   private String ownerId;
   private List<Reservation> reservationList;
 
+  public List<Availability> getAvailabilities() {
+    if (availabilities == null) availabilities = new ArrayList<>();
+    return availabilities;
+  }
+
+  private ArrayList<Availability> availabilities;
+
   public Restaurant(
       String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
     this.id = Util.generateId();
@@ -36,6 +51,26 @@ public class Restaurant {
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
+    availabilities = new ArrayList<>();
+  }
+
+  public void addAvailabilities(LocalDate dateAvailability) {
+    if (availabilities == null) availabilities = new ArrayList<>();
+
+    LocalTime startTimeAvailability;
+    LocalTime endTimeAvailability;
+    startTimeAvailability = Util.ajustStartTimeToNext15Min(hours.getOpen());
+    endTimeAvailability =
+        Util.adjustToPrevious15Minutes(hours.getClose())
+            .minusMinutes(reservationDuration == null ? 60 : reservationDuration.duration());
+    while (startTimeAvailability.isBefore(endTimeAvailability)
+        || startTimeAvailability.equals(endTimeAvailability)) {
+      LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
+      Availability availability = new Availability(start, capacity);
+      availability.setRestaurantId(id);
+      availabilities.add(availability);
+      startTimeAvailability = startTimeAvailability.plusMinutes(15);
+    }
   }
 
   @Override
@@ -64,6 +99,7 @@ public class Restaurant {
     this.hours = hours;
     if (reservationDuration != null) this.reservationDuration = reservationDuration;
     else this.reservationDuration = new ReservationDuration(60);
+    availabilities = new ArrayList<>();
   }
 
   public void generateId() {
@@ -88,6 +124,15 @@ public class Restaurant {
     return this.reservationDuration;
   }
 
+  public void setAvailability(Availability updatedAvailability) {
+    availabilities.stream()
+        .filter(availability -> availability.getId().equals(updatedAvailability.getId()))
+        .findFirst()
+        .ifPresent(
+            availability ->
+                availability.setRemainingPlaces(updatedAvailability.getRemainingPlaces()));
+  }
+
   public void setCapacity(int capacity) {
     this.capacity = capacity;
   }
@@ -102,6 +147,7 @@ public class Restaurant {
 
   public void setId(String id) {
     this.id = id;
+    if (availabilities == null) availabilities = new ArrayList<>();
   }
 
   public void setReservations(ReservationDuration reservationDuration) {
@@ -140,5 +186,9 @@ public class Restaurant {
         + ", reservations="
         + reservationList
         + '}';
+  }
+
+  public void removeReservation(String reservationNumber) {
+    getReservationList().removeIf(reservation -> reservation.getNumber().equals(reservationNumber));
   }
 }
