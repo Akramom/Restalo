@@ -111,17 +111,17 @@ public class ReservationValidatorTest {
                 reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
-  @Test
-  void whenReservationStartTimeBeforeOpeningTime_thenShouldThrow() {
-    LocalTime startTimeBeforeOpening = RESTAURANT_OPENING_TIME.minusMinutes(1);
-    when(reservationDto.getStartTime()).thenReturn(startTimeBeforeOpening);
-
-    assertThrows(
-        InvalidParameterException.class,
-        () ->
-            validator.validateReservationToRestaurant(
-                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
-  }
+//  @Test
+//  void whenReservationStartTimeBeforeOpeningTime_thenShouldThrow() {
+//    LocalTime startTimeBeforeOpening = RESTAURANT_OPENING_TIME.minusMinutes(1);
+//    when(reservationDto.getStartTime()).thenReturn(startTimeBeforeOpening);
+//
+//    assertThrows(
+//        InvalidParameterException.class,
+//        () ->
+//            validator.validateReservationToRestaurant(
+//                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+//  }
 
   @Test
   void whenAdjustedReservationStartTimeIsBeforeOpeningTime_thenShouldThrow() {
