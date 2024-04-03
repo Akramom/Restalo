@@ -4,7 +4,6 @@ import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.util.Util;
-
 import java.time.LocalTime;
 import java.util.regex.Pattern;
 
@@ -31,37 +30,35 @@ public class ReservationValidator {
       LocalTime restaurantClosingTime)
       throws InvalidParameterException {
 
-
     validateAdjustedStartingTime(reservationDto.getStartTime(), restaurantOpeningTime);
     validateStartingTimeBeforeClosingTime(reservationDto.getStartTime(), restaurantClosingTime);
     validateEndingTimeBeforeClosingTime(reservationDto.getEndTime(), restaurantClosingTime);
   }
 
   private void validateStartingTimeBeforeClosingTime(LocalTime startTime, LocalTime closingTime)
-          throws InvalidParameterException {
+      throws InvalidParameterException {
     if (!startTime.isBefore(closingTime)) {
       throw new InvalidParameterException(
-              "The reservation must start before the restaurant's closing time");
+          "The reservation must start before the restaurant's closing time");
     }
   }
 
   private void validateEndingTimeBeforeClosingTime(LocalTime endTime, LocalTime closingTime)
-          throws InvalidParameterException {
+      throws InvalidParameterException {
     if (endTime.isAfter(closingTime)) {
       throw new InvalidParameterException(
-              "The reservation must end before or at the restaurant's closing time");
+          "The reservation must end before or at the restaurant's closing time");
     }
   }
 
   private void validateAdjustedStartingTime(LocalTime startTime, LocalTime openingTime)
-          throws InvalidParameterException {
+      throws InvalidParameterException {
     LocalTime adjustedStartTime = Util.ajustStartTimeToNext15Min(startTime);
     if (adjustedStartTime.isBefore(openingTime)) {
       throw new InvalidParameterException(
-              "The adjusted starting time of the reservation can't be before the restaurant's opening time");
+          "The adjusted starting time of the reservation can't be before the restaurant's opening time");
     }
   }
-
 
   private void validateGroupSize(int groupSize, int maxCapacity) throws InvalidParameterException {
     if (groupSize <= 0) {
