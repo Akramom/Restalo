@@ -89,6 +89,64 @@ public class ReservationValidatorTest {
         });
   }
 
+  @Test
+  void whenReservationEndTimeAfterClosingTime_thenShouldThrow() {
+    LocalTime endTimeAfterClosing = RESTAURANT_CLOSE_TIME.plusMinutes(1);
+    when(reservationDto.getEndTime()).thenReturn(endTimeAfterClosing);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenReservationEndTimeAtClosingTime_thenShouldNotThrow() {
+    when(reservationDto.getEndTime()).thenReturn(RESTAURANT_CLOSE_TIME);
+
+    assertDoesNotThrow(
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenReservationStartTimeBeforeOpeningTime_thenShouldThrow() {
+    LocalTime startTimeBeforeOpening = RESTAURANT_OPENING_TIME.minusMinutes(1);
+    when(reservationDto.getStartTime()).thenReturn(startTimeBeforeOpening);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenAdjustedReservationStartTimeIsBeforeOpeningTime_thenShouldThrow() {
+    LocalTime startTime = RESTAURANT_OPENING_TIME.minusMinutes(16);
+    when(reservationDto.getStartTime()).thenReturn(startTime);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenGroupSizeExceedsMaxCapacity_thenShouldThrow() {
+    int groupSizeExceedingCapacity = MAX_CAPACITY + 1;
+    when(reservationDto.getGroupSize()).thenReturn(groupSizeExceedingCapacity);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
   @ParameterizedTest
   @ValueSource(ints = {0, -1})
   void whenGroupSizeLesserThan1_thenShouldThrow(int groupSize) {

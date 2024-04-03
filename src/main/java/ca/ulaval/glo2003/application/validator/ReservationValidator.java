@@ -28,22 +28,22 @@ public class ReservationValidator {
       LocalTime restaurantOpeningTime,
       LocalTime restaurantClosingTime)
       throws InvalidParameterException {
-    LocalTime openingTime = restaurantOpeningTime;
-    LocalTime closingTime = restaurantClosingTime;
 
-    LocalTime startTime = reservationDto.getStartTime();
-    LocalTime endTime = reservationDto.getEndTime();
+    validateAdjustedStartingTime(reservationDto.getStartTime(), restaurantOpeningTime);
 
-    validateAdjustedStartingTime(startTime, openingTime);
-
-    validateStartingTime(startTime.compareTo(closingTime));
-    validateEndingTime(endTime.compareTo(closingTime));
-  }
-
-  public void validateStartingTime(int startCompareToCloseTime) throws InvalidParameterException {
-    if (startCompareToCloseTime >= 0) {
+    if (reservationDto.getStartTime().isBefore(restaurantOpeningTime)) {
       throw new InvalidParameterException(
-          "The starting of the reservation can not be during or after the restaurant's closing time");
+          "The reservation can't start before the restaurant's opening time");
+    }
+
+    if (!reservationDto.getStartTime().isBefore(restaurantClosingTime)) {
+      throw new InvalidParameterException(
+          "The reservation must start before the restaurant's closing time");
+    }
+
+    if (reservationDto.getEndTime().isAfter(restaurantClosingTime)) {
+      throw new InvalidParameterException(
+          "The reservation can't end after the restaurant's closing time");
     }
   }
 
@@ -52,14 +52,7 @@ public class ReservationValidator {
     LocalTime adjustedStartTime = startTime.plusMinutes(15);
     if (adjustedStartTime.isBefore(openingTime)) {
       throw new InvalidParameterException(
-          "The starting time of the reservation can not be before the restaurant's opening time.");
-    }
-  }
-
-  private void validateEndingTime(int endCompareToCloseTime) throws InvalidParameterException {
-    if (endCompareToCloseTime > 0) {
-      throw new InvalidParameterException(
-          "The reservation can not end after the restaurant's closing time");
+          "The adjusted starting time of the reservation can't be before the restaurant's opening time.");
     }
   }
 
