@@ -27,8 +27,11 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public Owner getOwner(String ownerId) {
-    return owners.stream().filter(owner -> owner.getOwnerId().equals(ownerId)).toList().getFirst();
+  public Owner getOwner(String ownerId) throws NotFoundException {
+    return owners.stream()
+        .filter(owner -> owner.getOwnerId().equals(ownerId))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException(OWNER_NOT_FOUND));
   }
 
   @Override
@@ -49,7 +52,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
 
   @Override
   public Owner addOwner(String ownerId) {
-    Owner owner = new Owner(ownerId, "Doe", "John", "418-222-2222");
+    Owner owner = new Owner(ownerId);
     owners.add(owner);
     return owner;
   }
@@ -105,10 +108,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
       throws NotFoundException {
 
     if (reservation.getNumber() == null) reservation.setNumber(Util.generateId());
-    owners.stream()
-        .flatMap(owner -> owner.getRestaurants().stream())
-        .collect(Collectors.toList())
-        .stream()
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
         .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
@@ -200,5 +200,20 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()
         .ifPresent(restaurant -> restaurant.removeReservation(reservationNumber));
+  }
+
+  @Override
+  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+      throws NotFoundException {
+    return owners.stream()
+        .filter(owner -> owner.getOwnerId().equals(ownerId))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException(OWNER_NOT_FOUND))
+        .getRestaurants()
+        .stream()
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
+        .getReservationList();
   }
 }

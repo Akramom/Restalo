@@ -122,7 +122,6 @@ public class ReservationDto {
         + customer.getEmail()
         + ", phoneNumber :"
         + customer.getPhoneNumber()
-        + '}'
         + '}';
   }
 }

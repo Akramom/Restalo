@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003.api.assemblers.request;
 
+import static ca.ulaval.glo2003.util.Constante.DEFAULT_DURATION;
+
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
 import ca.ulaval.glo2003.application.dtos.HoursDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDurationDto;
@@ -16,7 +18,7 @@ public class RestaurantRequestAssembler {
         new HoursDto(
             restaurantRequest.getHours().getOpen(), restaurantRequest.getHours().getClose()),
         restaurantRequest.getReservations() == null
-            ? new ReservationDurationDto(60)
+            ? new ReservationDurationDto(DEFAULT_DURATION)
             : new ReservationDurationDto(restaurantRequest.getReservations().duration()));
   }
 }

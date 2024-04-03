@@ -1,5 +1,8 @@
 package ca.ulaval.glo2003;
 
+import static ca.ulaval.glo2003.util.Constante.PORT;
+import static ca.ulaval.glo2003.util.Constante.URL;
+
 import ca.ulaval.glo2003.api.exceptionMapper.*;
 import ca.ulaval.glo2003.api.resource.HealthResource;
 import ca.ulaval.glo2003.api.resource.ReservationResource;
@@ -27,10 +30,10 @@ public class Main {
   public static HttpServer startServer() {
 
     String port = System.getenv("PORT");
-    if (port == null) {
-      port = "8080";
+    if (port != null) {
+      PORT = port;
     }
-    BASE_URI = "http://0.0.0.0:" + port;
+    BASE_URI = URL + ":" + PORT;
 
     Optional<String> entryPersistence = Optional.ofNullable(System.getProperty("persistence"));
 

@@ -1,8 +1,12 @@
 package ca.ulaval.glo2003.api.resource;
 
+import static ca.ulaval.glo2003.util.Constante.PORT;
+import static ca.ulaval.glo2003.util.Constante.URL;
+
 import ca.ulaval.glo2003.api.assemblers.request.ReservationRequestAssembler;
 import ca.ulaval.glo2003.api.assemblers.request.RestaurantRequestAssembler;
 import ca.ulaval.glo2003.api.assemblers.response.AvailabilityResponseAssembler;
+import ca.ulaval.glo2003.api.assemblers.response.ReservationResponseAssembler;
 import ca.ulaval.glo2003.api.assemblers.response.RestaurantResponseAssembler;
 import ca.ulaval.glo2003.api.request.ReservationRequest;
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
@@ -12,7 +16,6 @@ import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Constante;
 import jakarta.validation.Valid;
@@ -34,6 +37,7 @@ public class RestaurantResource {
   private final RestaurantResponseAssembler restaurantResponseAssembler;
   private final ReservationRequestAssembler reservationRequestAssembler;
   private final AvailabilityResponseAssembler availabilityResponseAssembler;
+  private final ReservationResponseAssembler reservationResponseAssembler;
 
   public RestaurantResource(RestaurantService restaurantService) {
 
@@ -42,6 +46,7 @@ public class RestaurantResource {
     this.reservationRequestAssembler = new ReservationRequestAssembler();
     this.restaurantResponseAssembler = new RestaurantResponseAssembler();
     this.availabilityResponseAssembler = new AvailabilityResponseAssembler();
+    this.reservationResponseAssembler = new ReservationResponseAssembler();
   }
 
   @POST
@@ -59,7 +64,7 @@ public class RestaurantResource {
 
     RestaurantDto addedRestaurant = restaurantService.addRestaurant(ownerId, restaurantDto);
 
-    return Response.created(URI.create("http://localhost:8080/restaurants/" + addedRestaurant.id()))
+    return Response.created(URI.create(URL + ":" + PORT + "/restaurants/" + addedRestaurant.id()))
         .build();
   }
 
@@ -104,14 +109,14 @@ public class RestaurantResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response addReservation(
       @PathParam("id") String restaurantId, @Valid ReservationRequest reservationRequest)
-      throws MissingParameterException, InvalidParameterException, NotFoundException {
+      throws InvalidParameterException, NotFoundException {
 
     ReservationDto reservationDto = this.reservationRequestAssembler.toDto(reservationRequest);
 
     ReservationDto addedReservation =
         restaurantService.addReservation(reservationDto, restaurantId);
     return Response.created(
-            URI.create("http://localhost:8080/reservations/" + addedReservation.getNumber()))
+            URI.create(URL + ":" + PORT + "/reservations/" + addedReservation.getNumber()))
         .build();
   }
 
@@ -150,6 +155,31 @@ public class RestaurantResource {
         restaurantService.getAvailabilityService().getAvailabilities(restaurantId, date);
 
     return Response.ok(availabilities.stream().map(availabilityResponseAssembler::fromDto).toList())
+        .build();
+  }
+
+  @GET
+  @Path("/{id}/reservations")
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response findReservation(
+      @HeaderParam("Owner")
+          @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          String ownerId,
+      @NotEmpty(message = Constante.MISSING_RESTAURANT_ID)
+          @NotNull(message = Constante.MISSING_RESTAURANT_ID)
+          @PathParam("id")
+          String restaurantId,
+      @QueryParam("date") String date,
+      @QueryParam("customerName") String customerName)
+      throws NotFoundException, DateTimeParseException {
+
+    List<ReservationDto> reservations =
+        this.restaurantService
+            .getReservationService()
+            .searchReservation(ownerId, restaurantId, date, customerName);
+
+    return Response.ok(reservations.stream().map(reservationResponseAssembler::fromDto).toList())
         .build();
   }
 }

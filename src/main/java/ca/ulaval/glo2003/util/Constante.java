@@ -16,4 +16,15 @@ public class Constante {
   public static final String NUMBER_OF_PLACES_UNAVAILABLE =
       "group size is greater than the number of places available";
   public static final String SERVICE_IS_HEALTHY = "Service is healthy";
+  public static final int DEFAULT_DURATION = 60;
+  public static final String UNEXPECTED_ERROR =
+      "An unexpected error occurred. Please review your request.";
+
+  public static final String MISSING_RESERVATION_DATE = "Missing reservation date.";
+  public static final String MISSING_RESERVATION_START_TIME = "Missing reservation start time.";
+  public static final String MISSING_CUSTOMER_IN_RESERVATION = "Missing customer in reservation.";
+  public static final String URL = "http://0.0.0.0";
+  public static final String PATTERN_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+  public static final String PATTERN_PHONE = "^\\+?\\d{10}$";
+  public static String PORT = "8080";
 }
