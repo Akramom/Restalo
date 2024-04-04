@@ -8,9 +8,12 @@ import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public class AvailabilityService {
@@ -47,7 +50,9 @@ public class AvailabilityService {
                         && !availabilityDto
                             .getStart()
                             .toLocalTime()
-                            .isAfter(reservation.getEndTime()))
+                            .isAfter(
+                                Util.adjustToPrevious15Minutes(
+                                    reservation.getEndTime().minusMinutes(1))))
             .peek(
                 availabilityDto -> {
                   remainingPlaces.set(
@@ -64,6 +69,11 @@ public class AvailabilityService {
         });
   }
 
+  BiPredicate<LocalTime, LocalTime> test =
+      (availabilityStartTime, endTime) ->
+          !availabilityStartTime.isAfter(Util.adjustToPrevious15Minutes(endTime.minusMinutes(1)));
+  ;
+
   public void reserveAvailabilities(Reservation reservation, String restaurantId)
       throws NotFoundException, InvalidParameterException {
     AtomicInteger remainingPlaces = new AtomicInteger();
@@ -77,7 +87,9 @@ public class AvailabilityService {
                         && !availabilityDto
                             .getStart()
                             .toLocalTime()
-                            .isAfter(reservation.getEndTime()))
+                            .isAfter(
+                                Util.adjustToPrevious15Minutes(
+                                    reservation.getEndTime().minusMinutes(1))))
             .peek(
                 availabilityDto -> {
                   remainingPlaces.set(
