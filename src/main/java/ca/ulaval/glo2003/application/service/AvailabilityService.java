@@ -10,10 +10,8 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.IRestaurantRepository;
 import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 public class AvailabilityService {
@@ -68,11 +66,6 @@ public class AvailabilityService {
               this.availabilityAssembler.fromDto(availabilityDto));
         });
   }
-
-  BiPredicate<LocalTime, LocalTime> test =
-      (availabilityStartTime, endTime) ->
-          !availabilityStartTime.isAfter(Util.adjustToPrevious15Minutes(endTime.minusMinutes(1)));
-  ;
 
   public void reserveAvailabilities(Reservation reservation, String restaurantId)
       throws NotFoundException, InvalidParameterException {
