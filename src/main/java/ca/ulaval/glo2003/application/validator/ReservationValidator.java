@@ -3,14 +3,15 @@ package ca.ulaval.glo2003.application.validator;
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
+
 import ca.ulaval.glo2003.util.Util;
+import ca.ulaval.glo2003.util.Constante;
 import java.time.LocalTime;
 import java.util.regex.Pattern;
 
 public class ReservationValidator {
-  private static final Pattern EMAIL_PATTERN =
-      Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$");
-  private static final Pattern PHONE_PATTERN = Pattern.compile("^\\+?\\d{10}$");
+  private static final Pattern EMAIL_PATTERN = Pattern.compile(Constante.PATTERN_EMAIL);
+  private static final Pattern PHONE_PATTERN = Pattern.compile(Constante.PATTERN_PHONE);
 
   public void validateReservationToRestaurant(
       ReservationDto reservationDto,

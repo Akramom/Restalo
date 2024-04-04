@@ -21,50 +21,50 @@ RÉFLEXIONS:
 ## Planification du travail
 
 ### Github Project
-<img src="../src/main/resources/image/Project.png"/>
+<img src="Resources/Project.png"/>
 
 ### Milestone
-<img src="../src/main/resources/image/milestone2.png"/>
+<img src="Resources/milestone2.png"/>
 
 ### Issues
 
   ### Issue1
-  <img src="../src/main/resources/image/issue1.png"/>
-  <img src="../src/main/resources/image/issue1_2.png"/>
+  <img src="Resources/issue1.png"/>
+  <img src="Resources/issue1_2.png"/>
   
   ### Issue2
-  <img src="../src/main/resources/image/issue2.png"/>
+  <img src="Resources/issue2.png"/>
   
   ### Issue3
-  <img src="../src/main/resources/image/issue3.png"/>
+  <img src="Resources/issue3.png"/>
 
 ### Pull requests
 
   ### Pull request1
-  <img src="../src/main/resources/image/PR1.png"/>
-  <img src="../src/main/resources/image/PR1-2.png"/>
+  <img src="Resources/PR1.png"/>
+  <img src="Resources/PR1-2.png"/>
   
   ### Pull requests2
-  <img src="../src/main/resources/image/PR2.png"/>
+  <img src="Resources/PR2.png"/>
   
   ### Pull request3
-  <img src="../src/main/resources/image/PR3.png"/>
-  <img src="../src/main/resources/image/PR3-2.png"/>
+  <img src="Resources/PR3.png"/>
+  <img src="Resources/PR3-2.png"/>
 
 
 ### Arbre de commits
-<img src="../src/main/resources/image/CommitBranche.png"/>
+<img src="Resources/CommitBranche.png"/>
 
 
 ### Architecture Restaurant
-<img src="../src/main/resources/image/diagrammeArchitecture.png"/>
+<img src="Resources/diagrammeArchitecture.png"/>
 
 
 ### Architecture Reservation
-<img src="../src/main/resources/image/diagrammeReservation.png"/>
+<img src="Resources/diagrammeReservation.png"/>
 
 ### Architecture Search
-<img src="../src/main/resources/image/diagrammeSearch.png"/>
+<img src="Resources/diagrammeSearch.png"/>
 
 
 -Nous avons classes principales: RestaurantRepository, RestaurantService, ReservationResource, RestaurantResource, SearchResource, ReservationValidator et RestaurantValidator.
@@ -81,7 +81,7 @@ Nous avons séparé comme suit afin de, premièrement, améliorer la cohérence 
 
 Finalement, un des points qui seraient à améliorer, serait de rajouter une autre classe RestaurantService, afin d'éviter qu'une seule classe, soit ReservationService, s'occupe de toutes les dépendances au service. 
 
-
+ 
 
 
 

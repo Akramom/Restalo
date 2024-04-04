@@ -4,7 +4,7 @@
 Nous avons utilisé l'outil gitignore.io de toptal qui permet de generer un fichier .gitignore  selon nos besoins d'element a ignoré a partir 
 du langage du projet ,des frameworks utilisés ou de notre IDE.
 
-<img src="../src/main/resources/image/gitignore.png"/>
+<img src="Resources/gitignore.png"/>
 
 source: getignore.io, https://www.toptal.com/developers/gitignore/
 
@@ -50,10 +50,10 @@ commande maven
 ## Planification du travail
 
 ### Github Project
-<img src="../src/main/resources/image/githubProject.jpeg"/>
+<img src="Resources/githubProject.jpeg"/>
 
 ### Milestone
-<img src="../src/main/resources/image/millestone.png"/>
+<img src="Resources/millestone.png"/>
 
 ### Issues
 
@@ -73,6 +73,6 @@ commande maven
 <img src="../src/main/resources/image/PullR2.jpeg"/>
 
 ### Arbre de commits
-<img src="../src/main/resources/image/arbreCommit.png"/>
+<img src="Resources/arbreCommit.png"/>
 
 

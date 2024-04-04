@@ -3,6 +3,7 @@ package ca.ulaval.glo2003.repository;
 import static ca.ulaval.glo2003.util.Constante.*;
 import static dev.morphia.query.experimental.filters.Filters.eq;
 
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.entity.Restaurant;
@@ -10,6 +11,8 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
 import dev.morphia.DeleteOptions;
+import dev.morphia.query.experimental.updates.UpdateOperators;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,7 +51,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
 
   @Override
   public Owner addOwner(String ownerId) {
-    return datastore.save(new Owner(ownerId, "Doe", "John", "418-"));
+    return datastore.save(new Owner(ownerId));
   }
 
   @Override
@@ -123,5 +126,55 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
         .find(Restaurant.class)
         .filter(eq("id", restaurantId))
         .delete(new DeleteOptions().multi(false));
+  }
+
+  @Override
+  public boolean isExistAvailabilityForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    return !getAvailabilitiesForADate(restaurantId, date).isEmpty();
+  }
+
+  @Override
+  public List<Availability> getAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    Restaurant restaurant = getRestaurantById(restaurantId);
+
+    return datastore
+        .find(Availability.class)
+        .filter(eq("restaurantId", restaurant.getId()))
+        .stream()
+        .filter(availability -> availability.getStart().toLocalDate().equals(date))
+        .toList();
+  }
+
+  @Override
+  public void addAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    Restaurant restaurant = getRestaurantById(restaurantId);
+    restaurant.addAvailabilities(date);
+    datastore.save(restaurant.getAvailabilities());
+  }
+
+  @Override
+  public void updateAvailability(Availability updatedAvailability) {
+    datastore
+        .find(Availability.class)
+        .filter(eq("id", updatedAvailability.getId()))
+        .modify(UpdateOperators.set("remainingPlaces", updatedAvailability.getRemainingPlaces()))
+        .execute();
+  }
+
+  @Override
+  public void deleteReservation(String reservationNumber, String restaurantId) {
+    datastore.find(Reservation.class).filter(eq("number", reservationNumber)).delete();
+  }
+
+  @Override
+  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+      throws NotFoundException {
+    getOwner(ownerId);
+    getOwnerRestaurantById(ownerId, restaurantId);
+    return datastore.find(Reservation.class).filter(eq("restaurantId", restaurantId)).stream()
+        .toList();
   }
 }

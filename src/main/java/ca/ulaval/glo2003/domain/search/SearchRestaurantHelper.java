@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
-public class SearchHelper {
+public class SearchRestaurantHelper {
 
   BiPredicate<Restaurant, String> nameFilter =
       (restaurant, name) -> Util.containsSubstr_toLowerC(restaurant.getName(), name);
@@ -19,7 +19,7 @@ public class SearchHelper {
           restaurant.getHours().getClose().equals(to)
               || restaurant.getHours().getClose().isAfter(to);
 
-  public SearchHelper() {}
+  public SearchRestaurantHelper() {}
 
   public Boolean isSearchDtoOpenedNull(Search search) {
     return search.getOpened() == null;
