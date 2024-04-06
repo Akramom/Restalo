@@ -63,8 +63,8 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
     Restaurant wantedRestaurant =
         owners.stream()
             .filter(owner -> owner.getOwnerId().equals(ownerId))
-            .toList()
-            .getFirst()
+            .findFirst()
+            .orElseThrow(() -> new NotFoundException(OWNER_NOT_FOUND))
             .getRestaurants()
             .stream()
             .filter(restaurant -> restaurant.getId().equals(restaurantId))
@@ -147,8 +147,10 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public void deleteOwnerRestaurantById(String ownerId, String restaurantId)
+  public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
+    getOwnerRestaurantById(ownerId, restaurantId);
+
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
