@@ -31,7 +31,7 @@ public interface IRestaurantRepository {
 
   Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException;
 
-  void deleteOwnerRestaurantById(String ownerId, String restaurantId) throws NotFoundException;
+  void deleteRestaurantIfOwner(String restaurantId, String ownerId) throws NotFoundException;
 
   boolean isExistAvailabilityForADate(String restaurantId, LocalDate date) throws NotFoundException;
 
