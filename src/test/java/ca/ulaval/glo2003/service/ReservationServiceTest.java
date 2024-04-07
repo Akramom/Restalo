@@ -57,7 +57,7 @@ class ReservationServiceTest {
 
   @Test
   void verifyValidReservationParameter_WithValidParameters_DoesNotThrowException()
-      throws InvalidParameterException, NotFoundException {
+      throws NotFoundException {
 
     String restaurantId = "rest123";
     ReservationDto reservationDto =
