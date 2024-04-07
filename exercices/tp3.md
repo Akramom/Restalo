@@ -52,16 +52,15 @@
 ## Critères de succès
 - Seulement le propriétaire du restaurant peut obtenir une liste des réservation
 - Si le propriétaire donne une heure de début et de fin à sa plage horaire et une date, il reçoit une liste de toutes les réservations entre ces deux heures pour ce restaurant à cette date
-- Si le propriétaire donne seulement une heure de début pour la plage horaire et une date, il reçoit une liste de toutes les réservations entre l'heure de début spécifiée et la fermeture du restaurant à cette date
-- Si le propriétaire donne seulement une heure de fin pour la plage horaire et une date, il reçoit une liste de toutes les réservations entre l'ouverture du restaurant et l'heure de fin spécifiée à cette date
-- Si le propriétaire donne seulement une date, il reçoit une liste de toutes les réservation pour cette date
-- Si le propriétaire ne donne pas de date ni de plage horaire, il reçoit une liste de toutes les réservations à son restaurant
+- Les heures de début et fin ne sont pas obligatoirent. Si l'heure de début n'est pas mentionnée, l'heure d'ouverture du restaurant est utilisée. Si l'heure de fin n'est pas mentionnée, l'heure de fermeture du restaurant est utilisée.
+- La date n'est pas obligatoire. 
 
 ## Un client peut modifier la date, l'heure ou le nb de personnes de sa réservation
 ## Critères de succès
 - Seul le client peut modifier sa réservation
 - Modifier le group size doit toujours respecter les disponibilités du restaurant
 - Modifier la date et l'heure de la réservation doit toujours respecter les disponibilités du restaurant
+- Aucun des paramètres n'est obligatoire
 
 ## Le système envoie un courriel au client lorsqu'il reste 24h avant sa réservation
 ## Critère de succès
@@ -72,3 +71,4 @@
 ## Critère de succès
 - Seul le propriétaire peut modifier son Restaurant
 - Modifier le nom, la capacités ou les heures d’ouverture modifie la réservation dans la liste de réservations du restaurant
+- Aucun des paramètres n'est obligatoire
