@@ -47,4 +47,28 @@
 ## Arbre des commits
   <img src="Resources/arbre_commit.png"/>
 
+## Stories
+# Un owner peu obtenir une liste de toutes les réservations de l'un de ses restaurants à une date donnée dans une plage horaire donnée
+# Critères de succès
+- Seulement le propriétaire du restaurant peut obtenir une liste des réservation
+- Si le propriétaire donne une heure de début et de fin à sa plage horaire et une date, il reçoit une liste de toutes les réservations entre ces deux heures pour ce restaurant à cette date
+- Si le propriétaire donne seulement une heure de début pour la plage horaire et une date, il reçoit une liste de toutes les réservations entre l'heure de début spécifiée et la fermeture du restaurant à cette date
+- Si le propriétaire donne seulement une heure de fin pour la plage horaire et une date, il reçoit une liste de toutes les réservations entre l'ouverture du restaurant et l'heure de fin spécifiée à cette date
+- Si le propriétaire donne seulement une date, il reçoit une liste de toutes les réservation pour cette date
+- Si le propriétaire ne donne pas de date ni de plage horaire, il reçoit une liste de toutes les réservations à son restaurant
 
+# Un client peut modifier la date, l'heure ou le nb de personnes de sa réservation
+# Critères de succès
+- Seul le client peut modifier sa réservation
+- Modifier le group size doit toujours respecter les disponibilités du restaurant
+- Modifier la date et l'heure de la réservation doit toujours respecter les disponibilités du restaurant
+
+# Le système envoie un courriel au client lorsqu'il reste 24h avant sa réservation
+# Critère de succès
+- Le client reçoit un courriel pour lui rappeler sa réservation
+- Le courriel s'envoi 24 heures avant la réservation
+
+# Un owner peut modifier le nom, la capacité et les heures d'ouverture de l'un de ses restaurants
+# Critère de succès
+- Seul le propriétaire peut modifier son Restaurant
+- Modifier le nom, la capacités ou les heures d’ouverture modifie la réservation dans la liste de réservations du restaurant
