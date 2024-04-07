@@ -209,4 +209,21 @@ public abstract class AbstractRestaurantRepositoryTest {
     assertThrows(
         NotFoundException.class, () -> repository.deleteRestaurantIfOwner(RESTAURANT_ID, OWNER_ID));
   }
+  @Test
+  public void
+  deleteReservation_whenOwnerAndRestaurantIdValid_thenDeletesReservation()
+          throws NotFoundException {
+    repository.addRestaurant(OWNER_ID, restaurant);
+    repository.addRestaurant(OWNER_ID, otherRestaurant);
+    repository.addReservation(reservation, RESTAURANT_ID);
+    repository.addReservation(otherReservation, OTHER_RESTAURANT_ID);
+
+    repository.deleteReservation(RESERVATION_ID, RESTAURANT_ID);
+    repository.deleteReservation(OTHER_RESERVATION_ID, OTHER_RESTAURANT_ID);
+
+    assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(RESERVATION_ID));
+    assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(OTHER_RESERVATION_ID));
+
+  }
+
 }
