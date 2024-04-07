@@ -3,6 +3,7 @@ package ca.ulaval.glo2003.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import ca.ulaval.glo2003.application.assembler.ReservationAssembler;
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.service.AvailabilityService;
@@ -20,16 +21,17 @@ import org.junit.jupiter.api.Test;
 
 class ReservationServiceTest {
 
-  private ReservationService service;
-  private IRestaurantRepository repository;
+  private ReservationService reservationService;
+  private IRestaurantRepository restaurantRepository;
   private AvailabilityService availabilityService;
+  private final ReservationAssembler reservationAssembler = new ReservationAssembler();
 
   @BeforeEach
   void setUp() {
-    repository = mock(IRestaurantRepository.class);
+    restaurantRepository = mock(IRestaurantRepository.class);
     availabilityService = mock(AvailabilityService.class);
-    service = new ReservationService(repository);
-    service.setAvailabilityService(availabilityService);
+    reservationService = new ReservationService(restaurantRepository);
+    reservationService.setAvailabilityService(availabilityService);
   }
 
   @Test
@@ -46,10 +48,11 @@ class ReservationServiceTest {
             2,
             new Customer("John Doe", "john@example.com", "123456789"));
     Restaurant restaurant = new Restaurant();
-    when(repository.getReservationByNumber(reservationNumber)).thenReturn(reservation);
-    when(repository.getRestaurantByReservationNumber(reservationNumber)).thenReturn(restaurant);
+    when(restaurantRepository.getReservationByNumber(reservationNumber)).thenReturn(reservation);
+    when(restaurantRepository.getRestaurantByReservationNumber(reservationNumber))
+        .thenReturn(restaurant);
 
-    ReservationDto reservationDto = service.getReservationByNumber(reservationNumber);
+    ReservationDto reservationDto = reservationService.getReservationByNumber(reservationNumber);
 
     assertNotNull(reservationDto);
     assertEquals(reservationNumber, reservationDto.getNumber());
@@ -74,9 +77,10 @@ class ReservationServiceTest {
     restaurant.setId(restaurantId);
     restaurant.setHours(
         new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0))); // Set restaurant hours
-    when(repository.getRestaurantById(restaurantId)).thenReturn(restaurant);
+    when(restaurantRepository.getRestaurantById(restaurantId)).thenReturn(restaurant);
 
-    assertDoesNotThrow(() -> service.verifyValidReservationParameter(restaurantId, reservationDto));
+    assertDoesNotThrow(
+        () -> reservationService.verifyValidReservationParameter(restaurantId, reservationDto));
   }
 
   @Test
@@ -97,11 +101,11 @@ class ReservationServiceTest {
     restaurant.setId(restaurantId);
     restaurant.setHours(
         new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0))); // Set restaurant hours
-    when(repository.getRestaurantById(restaurantId)).thenReturn(restaurant);
+    when(restaurantRepository.getRestaurantById(restaurantId)).thenReturn(restaurant);
 
     assertThrows(
         InvalidParameterException.class,
-        () -> service.verifyValidReservationParameter(restaurantId, reservationDto));
+        () -> reservationService.verifyValidReservationParameter(restaurantId, reservationDto));
   }
 
   @Test
@@ -119,32 +123,40 @@ class ReservationServiceTest {
             2,
             new Customer("John Doe", "john@example.com", "123456789"));
     Restaurant restaurant = new Restaurant();
-    restaurant.setId(restaurantId); // Set restaurant ID
-    when(repository.getReservationByNumber(reservationNumber)).thenReturn(reservation);
-    when(repository.getRestaurantByReservationNumber(reservationNumber)).thenReturn(restaurant);
+    restaurant.setId(restaurantId);
+    when(restaurantRepository.getReservationByNumber(reservationNumber)).thenReturn(reservation);
+    when(restaurantRepository.getRestaurantByReservationNumber(reservationNumber))
+        .thenReturn(restaurant);
 
-    service.deleteReservation(reservationNumber);
+    reservationService.deleteReservation(reservationNumber);
 
-    verify(repository, times(1)).deleteReservation(reservationNumber, restaurantId);
+    verify(restaurantRepository, times(1)).deleteReservation(reservationNumber, restaurantId);
   }
 
   @Test
   void given_searchReservation_ReturnsMatchingReservations() throws NotFoundException {
-
     String ownerId = "owner123";
     String restaurantId = "rest123";
     LocalDate date = LocalDate.parse("2023-02-13");
     String customerName = "Alfred Lambert";
-    List<Reservation> reservations = createSampleReservations();
-    when(repository.getRerservationsByRestaurantId(ownerId, restaurantId)).thenReturn(reservations);
+    List<Reservation> expectedReservations = createSampleReservations();
+    when(restaurantRepository.getRerservationsByRestaurantId(ownerId, restaurantId))
+        .thenReturn(expectedReservations);
 
     List<ReservationDto> result =
-        service.searchReservation(ownerId, restaurantId, date.toString(), customerName);
+        reservationService.searchReservation(ownerId, restaurantId, date.toString(), customerName);
 
     assertNotNull(result);
-    assertEquals(reservations.size(), result.size());
-    // assertIterableEquals(reservations, result);
+    assertEquals(expectedReservations.size(), result.size());
 
+    for (int i = 0; i < expectedReservations.size(); i++) {
+      Reservation expectedReservation = expectedReservations.get(i);
+      ReservationDto actualReservationDto = result.get(i);
+
+      Reservation actualReservation = reservationAssembler.fromDto(actualReservationDto);
+
+      assertEquals(expectedReservation, actualReservation);
+    }
   }
 
   private List<Reservation> createSampleReservations() {
