@@ -1,11 +1,13 @@
 package ca.ulaval.glo2003.application.service;
 
-import static ca.ulaval.glo2003.util.Constante.NUMBER_OF_PLACES_UNAVAILABLE;
+import static ca.ulaval.glo2003.util.Constante.*;
 
 import ca.ulaval.glo2003.application.assembler.AvailabilityAssembler;
 import ca.ulaval.glo2003.application.dtos.AvailabilityDto;
+import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
+import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.IRestaurantRepository;
 import ca.ulaval.glo2003.util.Util;
@@ -35,7 +37,7 @@ public class AvailabilityService {
         .collect(Collectors.toList());
   }
 
-  void releaseAvailibilities(Reservation reservation, String restaurantId)
+  public void releaseAvailibilities(Reservation reservation, String restaurantId)
       throws NotFoundException {
     AtomicInteger remainingPlaces = new AtomicInteger();
     List<AvailabilityDto> availabilities = getAvailabilities(restaurantId, reservation.getDate());
@@ -68,27 +70,42 @@ public class AvailabilityService {
   }
 
   public void reserveAvailabilities(Reservation reservation, String restaurantId)
-      throws NotFoundException, InvalidParameterException {
-    AtomicInteger remainingPlaces = new AtomicInteger();
-    List<AvailabilityDto> availabilities = getAvailabilities(restaurantId, reservation.getDate());
+      throws NotFoundException, InvalidParameterException, MissingParameterException {
+    if (reservation.getDate() == null) {
+      throw new MissingParameterException(MISSING_RESERVATION_DATE);
+    }
+    if (reservation.getStartTime() == null) {
+      throw new MissingParameterException(MISSING_RESERVATION_START_TIME);
+    }
+    if (reservation.getCustomer() == null) {
+      throw new MissingParameterException(MISSING_CUSTOMER_IN_RESERVATION);
+    }
 
+    List<Availability> availabilities =
+        restaurantRepository.getAvailabilitiesForADate(restaurantId, reservation.getDate());
+
+    if (availabilities.isEmpty()) {
+      throw new InvalidParameterException(NUMBER_OF_PLACES_UNAVAILABLE);
+    }
+
+    AtomicInteger remainingPlaces = new AtomicInteger();
     availabilities =
         availabilities.stream()
             .filter(
-                availabilityDto ->
-                    !availabilityDto.getStart().toLocalTime().isBefore(reservation.getStartTime())
-                        && !availabilityDto
+                availability ->
+                    !availability.getStart().toLocalTime().isBefore(reservation.getStartTime())
+                        && !availability
                             .getStart()
                             .toLocalTime()
                             .isAfter(
                                 Util.adjustToPrevious15Minutes(
                                     reservation.getEndTime().minusMinutes(1))))
             .peek(
-                availabilityDto -> {
+                availability -> {
                   remainingPlaces.set(
-                      availabilityDto.getRemainingPlaces() - reservation.getGroupSize());
+                      availability.getRemainingPlaces() - reservation.getGroupSize());
 
-                  availabilityDto.setRemainingPlaces(remainingPlaces.get());
+                  availability.setRemainingPlaces(remainingPlaces.get());
                 })
             .toList();
 
@@ -96,10 +113,6 @@ public class AvailabilityService {
       throw new InvalidParameterException(NUMBER_OF_PLACES_UNAVAILABLE);
     }
 
-    availabilities.forEach(
-        availabilityDto -> {
-          restaurantRepository.updateAvailability(
-              this.availabilityAssembler.fromDto(availabilityDto));
-        });
+    availabilities.forEach(restaurantRepository::updateAvailability);
   }
 }
