@@ -81,6 +81,8 @@ En tant que système, j'envoie un courriel au client lorsqu'il reste 24h avant s
 ### Critère de succès
 - Le client reçoit un courriel pour lui rappeler sa réservation
 - Le courriel s'envoi 24 heures avant la réservation
+- Le sujet du courriel "Rappel réservation {{Nom restaurant}}"
+- Le corps du courriel contient le nom du restaurant, la date de la réservation, l'heure de la réservation, la taille du groupe attendu et des sympathies (par exemple: "Au plaisir de vous accueillir")
 
 ## Modifier restaurant
 En tant que propriétaire, je peux modifier le nom, la capacité et les heures d'ouverture de l'un de mes restaurants.
