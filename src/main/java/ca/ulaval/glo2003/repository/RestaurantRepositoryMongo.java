@@ -106,7 +106,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   }
 
   @Override
-  public void deleteOwnerRestaurantById(String ownerId, String restaurantId)
+  public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
     getOwnerRestaurantById(ownerId, restaurantId);
 

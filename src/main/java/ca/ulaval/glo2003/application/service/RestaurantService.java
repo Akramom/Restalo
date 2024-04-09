@@ -144,6 +144,6 @@ public class RestaurantService {
 
   public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
-    restaurantRepository.deleteOwnerRestaurantById(ownerId, restaurantId);
+    restaurantRepository.deleteRestaurantIfOwner(restaurantId, ownerId);
   }
 }

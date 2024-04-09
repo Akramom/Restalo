@@ -8,6 +8,7 @@ import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,7 +48,9 @@ public class AvailabilityService {
                         && !availabilityDto
                             .getStart()
                             .toLocalTime()
-                            .isAfter(reservation.getEndTime()))
+                            .isAfter(
+                                Util.adjustToPrevious15Minutes(
+                                    reservation.getEndTime().minusMinutes(1))))
             .peek(
                 availabilityDto -> {
                   remainingPlaces.set(
@@ -77,7 +80,9 @@ public class AvailabilityService {
                         && !availabilityDto
                             .getStart()
                             .toLocalTime()
-                            .isAfter(reservation.getEndTime()))
+                            .isAfter(
+                                Util.adjustToPrevious15Minutes(
+                                    reservation.getEndTime().minusMinutes(1))))
             .peek(
                 availabilityDto -> {
                   remainingPlaces.set(
