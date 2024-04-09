@@ -47,28 +47,49 @@
 ## Arbre des commits
   <img src="Resources/arbre_commit.png"/>
 
-# Stories
-## Un owner peu obtenir une liste de toutes les réservations de l'un de ses restaurants à une date donnée dans une plage horaire donnée
-## Critères de succès
+### Architecture Restaurant
+<img src="Resources/architecture_restaurant.png"/>
+
+### Architecture Reservation
+<img src="Resources/architecture_reservation.png"/>
+
+### Architecture Search Restaurant
+<img src="Resources/architecture_search.png"/>
+
+### Architecture Search Reservation
+<img src="Resources/architecture_search_reservation.png"/>
+
+### Architecture Availability
+<img src="Resources/architecture_available.png"/>
+
+# Récits utilisateurs
+## Obtenir réservations selon une date et une heure  
+En tant que propriétaire, je peux obtenir une liste de toutes les réservations de l'un de mes restaurants à une date donnée dans une plage horaire donnée.
+### Critères de succès
 - Seulement le propriétaire du restaurant peut obtenir une liste des réservation
 - Si le propriétaire donne une heure de début et de fin à sa plage horaire et une date, il reçoit une liste de toutes les réservations entre ces deux heures pour ce restaurant à cette date
 - Les heures de début et fin ne sont pas obligatoirent. Si l'heure de début n'est pas mentionnée, l'heure d'ouverture du restaurant est utilisée. Si l'heure de fin n'est pas mentionnée, l'heure de fermeture du restaurant est utilisée.
 - La date n'est pas obligatoire. 
 
-## Un client peut modifier la date, l'heure ou le nb de personnes de sa réservation
-## Critères de succès
+## Modifier réservation
+En tant que client, je peux modifier la date, l'heure ou la taille du groupe de ma réservation.
+### Critères de succès
 - Seul le client peut modifier sa réservation
 - Modifier le group size doit toujours respecter les disponibilités du restaurant
 - Modifier la date et l'heure de la réservation doit toujours respecter les disponibilités du restaurant
 - Aucun des paramètres n'est obligatoire
 
-## Le système envoie un courriel au client lorsqu'il reste 24h avant sa réservation
-## Critère de succès
+## Rappeler réservation 
+En tant que système, j'envoie un courriel au client lorsqu'il reste 24h avant sa réservation.
+### Critère de succès
 - Le client reçoit un courriel pour lui rappeler sa réservation
 - Le courriel s'envoi 24 heures avant la réservation
+- Le sujet du courriel "Rappel réservation {{Nom restaurant}}"
+- Le corps du courriel contient le nom du restaurant, la date de la réservation, l'heure de la réservation, la taille du groupe attendu et des sympathies (par exemple: "Au plaisir de vous accueillir")
 
-## Un owner peut modifier le nom, la capacité et les heures d'ouverture de l'un de ses restaurants
-## Critère de succès
+## Modifier restaurant
+En tant que propriétaire, je peux modifier le nom, la capacité et les heures d'ouverture de l'un de mes restaurants.
+### Critère de succès
 - Seul le propriétaire peut modifier son Restaurant
 - Modifier le nom, la capacités ou les heures d’ouverture modifie la réservation dans la liste de réservations du restaurant
 - Aucun des paramètres n'est obligatoire
