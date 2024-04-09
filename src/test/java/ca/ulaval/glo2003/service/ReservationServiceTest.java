@@ -125,7 +125,7 @@ class ReservationServiceTest {
   }
 
   @Test
-  void givenValidReservationNumber_whenReservationExists_thenDeletesReservation()
+  void givenValidReservationNumberAndReservationExists_whenDeletesReservation_thenReservationIsDeleted()
       throws NotFoundException {
 
     String reservationNumber = "res123";
