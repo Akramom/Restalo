@@ -3,8 +3,6 @@ package ca.ulaval.glo2003.application.validator;
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-
-import ca.ulaval.glo2003.util.Util;
 import ca.ulaval.glo2003.util.Constante;
 import java.time.LocalTime;
 import java.util.regex.Pattern;
@@ -31,7 +29,7 @@ public class ReservationValidator {
       LocalTime restaurantClosingTime)
       throws InvalidParameterException {
 
-    validateAdjustedStartingTime(reservationDto.getStartTime(), restaurantOpeningTime);
+    validateStartingTimeAfterOpeningTime(reservationDto.getStartTime(), restaurantOpeningTime);
     validateStartingTimeBeforeClosingTime(reservationDto.getStartTime(), restaurantClosingTime);
     validateEndingTimeBeforeClosingTime(reservationDto.getEndTime(), restaurantClosingTime);
   }
@@ -52,10 +50,9 @@ public class ReservationValidator {
     }
   }
 
-  private void validateAdjustedStartingTime(LocalTime startTime, LocalTime openingTime)
+  private void validateStartingTimeAfterOpeningTime(LocalTime startTime, LocalTime openingTime)
       throws InvalidParameterException {
-    LocalTime adjustedStartTime = Util.ajustStartTimeToNext15Min(startTime);
-    if (adjustedStartTime.isBefore(openingTime)) {
+    if (startTime.isBefore(openingTime)) {
       throw new InvalidParameterException(
           "The adjusted starting time of the reservation can't be before the restaurant's opening time");
     }
