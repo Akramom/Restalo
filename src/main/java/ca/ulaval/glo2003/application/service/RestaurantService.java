@@ -96,10 +96,7 @@ public class RestaurantService {
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
-
       throws NotFoundException, InvalidParameterException, MissingParameterException {
-    this.verifyExistRestaurant(restaurantId);
-
 
     int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
     reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
