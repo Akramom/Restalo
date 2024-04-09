@@ -56,6 +56,9 @@
 ### Architecture Search Restaurant
 <img src="Resources/architecture_search.png"/>
 
+### Architecture Search Reservation
+<img src="Resources/architecture_search_reservation.png"/>
+
 ### Architecture Availability
 <img src="Resources/architecture_available.png"/>
 
