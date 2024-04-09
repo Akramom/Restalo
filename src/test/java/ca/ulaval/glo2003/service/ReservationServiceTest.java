@@ -1,5 +1,6 @@
 package ca.ulaval.glo2003.service;
 
+import static ca.ulaval.glo2003.util.Constante.RESERVATION_NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,8 +36,9 @@ class ReservationServiceTest {
   }
 
   @Test
-  void given_getReservationByNumber_WhenReservationExists_then_ReturnsReservationDto()
-      throws NotFoundException {
+  void
+      givenReservationNumberAndReservationExists_WhenGetReservationByNumber_thenReturnsReservationDto()
+          throws NotFoundException {
 
     String reservationNumber = "res123";
     Reservation reservation =
@@ -59,7 +61,23 @@ class ReservationServiceTest {
   }
 
   @Test
-  void verifyValidReservationParameter_WithValidParameters_DoesNotThrowException()
+  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() throws NotFoundException {
+
+    String nonExistingReservationNumber = "nonExisting";
+
+    when(restaurantRepository.getReservationByNumber(nonExistingReservationNumber))
+        .thenThrow(new NotFoundException(RESERVATION_NOT_FOUND));
+
+    NotFoundException exception =
+        assertThrows(
+            NotFoundException.class,
+            () -> reservationService.getReservationByNumber(nonExistingReservationNumber));
+
+    assertEquals(exception.getMessage(), RESERVATION_NOT_FOUND);
+  }
+
+  @Test
+  void givenValidReservationParameter_WithValidReservationMatchingRestaurant_DoesNotThrowException()
       throws NotFoundException {
 
     String restaurantId = "rest123";
@@ -71,12 +89,10 @@ class ReservationServiceTest {
             LocalTime.of(18, 0),
             120,
             2,
-            new CustomerDto(
-                "John Doe", "john@example.com", "1234567890")); // Corrected phone number
+            new CustomerDto("John Doe", "john@example.com", "1234567890"));
     Restaurant restaurant = new Restaurant();
     restaurant.setId(restaurantId);
-    restaurant.setHours(
-        new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0))); // Set restaurant hours
+    restaurant.setHours(new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0)));
     when(restaurantRepository.getRestaurantById(restaurantId)).thenReturn(restaurant);
 
     assertDoesNotThrow(
@@ -84,8 +100,9 @@ class ReservationServiceTest {
   }
 
   @Test
-  void verifyValidReservationParameter_WithInvalidParameters_ThrowsException()
-      throws NotFoundException {
+  void
+      givenValidReservationParameter_withInvalidReservationToMatchingRestaurant_thenThrowsInvalidParameterException()
+          throws NotFoundException {
 
     String restaurantId = "rest123";
     ReservationDto reservationDto =
@@ -99,8 +116,7 @@ class ReservationServiceTest {
             new CustomerDto("John Doe", "john@example.com", "123456789"));
     Restaurant restaurant = new Restaurant();
     restaurant.setId(restaurantId);
-    restaurant.setHours(
-        new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0))); // Set restaurant hours
+    restaurant.setHours(new Hours(LocalTime.of(10, 0), LocalTime.of(20, 0)));
     when(restaurantRepository.getRestaurantById(restaurantId)).thenReturn(restaurant);
 
     assertThrows(
@@ -109,7 +125,7 @@ class ReservationServiceTest {
   }
 
   @Test
-  void given_deleteReservation_WhenReservationExists_then_DeletesReservation()
+  void givenValidReservationNumber_whenReservationExists_thenDeletesReservation()
       throws NotFoundException {
 
     String reservationNumber = "res123";
@@ -134,7 +150,8 @@ class ReservationServiceTest {
   }
 
   @Test
-  void given_searchReservation_ReturnsMatchingReservations() throws NotFoundException {
+  void givenValidReservationSearchParameters_ReturnsMatchingReservations()
+      throws NotFoundException {
     String ownerId = "owner123";
     String restaurantId = "rest123";
     LocalDate date = LocalDate.parse("2023-02-13");
