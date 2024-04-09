@@ -20,11 +20,13 @@ import org.mockito.MockitoAnnotations;
 public class ReservationValidatorTest {
   private final LocalDate DATE = LocalDate.of(12, 12, 12);
   private final LocalTime START_TIME = LocalTime.of(13, 13, 13);
+  private final int MAX_CAPACITY = 10;
   private final int GROUP_SIZE = 2;
   private final String CUSTOMER_NAME = "Jane Doe";
   private final String EMAIL = "test@test.com";
   private final String PHONE_NUMBER = "1111111111";
   private final int RESERVATION_DURATION = 60;
+  private final LocalTime RESTAURANT_OPENING_TIME = LocalTime.of(10, 10);
   private final LocalTime RESTAURANT_CLOSE_TIME = LocalTime.of(20, 20, 20);
   public ReservationValidator validator;
   @Mock private ReservationDto reservationDto;
@@ -47,7 +49,9 @@ public class ReservationValidatorTest {
   @Test
   void whenParametersValid_thenShouldNotThrow() {
     assertDoesNotThrow(
-        () -> validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME));
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @Test
@@ -57,8 +61,20 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
+  }
+
+  @Test
+  void whenAdjustedReservationStartTimeBeforeOpenTime_thenShouldThrow() {
+    when(reservationDto.getStartTime()).thenReturn(RESTAURANT_OPENING_TIME.minusMinutes(20));
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @Test
@@ -68,8 +84,55 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
+  }
+
+  @Test
+  void whenReservationEndTimeAfterClosingTime_thenShouldThrow() {
+    LocalTime endTimeAfterClosing = RESTAURANT_CLOSE_TIME.plusMinutes(1);
+    when(reservationDto.getEndTime()).thenReturn(endTimeAfterClosing);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenReservationEndTimeAtClosingTime_thenShouldNotThrow() {
+    when(reservationDto.getEndTime()).thenReturn(RESTAURANT_CLOSE_TIME);
+
+    assertDoesNotThrow(
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenAdjustedReservationStartTimeIsBeforeOpeningTime_thenShouldThrow() {
+    LocalTime startTime = RESTAURANT_OPENING_TIME.minusMinutes(16);
+    when(reservationDto.getStartTime()).thenReturn(startTime);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
+  }
+
+  @Test
+  void whenGroupSizeExceedsMaxCapacity_thenShouldThrow() {
+    int groupSizeExceedingCapacity = MAX_CAPACITY + 1;
+    when(reservationDto.getGroupSize()).thenReturn(groupSizeExceedingCapacity);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @ParameterizedTest
@@ -80,8 +143,21 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {0, -1, 51})
+  void whenGroupSizeInvalid_thenShouldThrow(int groupSize) {
+    when(reservationDto.getGroupSize()).thenReturn(groupSize);
+
+    assertThrows(
+        InvalidParameterException.class,
+        () ->
+            validator.validateReservationToRestaurant(
+                reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY));
   }
 
   @ParameterizedTest
@@ -92,7 +168,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -104,7 +181,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -116,7 +194,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -128,7 +207,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 
@@ -140,7 +220,8 @@ public class ReservationValidatorTest {
     assertThrows(
         InvalidParameterException.class,
         () -> {
-          validator.validateReservationToRestaurant(reservationDto, RESTAURANT_CLOSE_TIME);
+          validator.validateReservationToRestaurant(
+              reservationDto, RESTAURANT_OPENING_TIME, RESTAURANT_CLOSE_TIME, MAX_CAPACITY);
         });
   }
 }

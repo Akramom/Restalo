@@ -42,7 +42,10 @@ public class ReservationService {
       throws InvalidParameterException, NotFoundException {
     Restaurant restaurant = restaurantRepository.getRestaurantById(restaurantId);
     reservationValidator.validateReservationToRestaurant(
-        reservationDto, restaurant.getHours().getClose());
+        reservationDto,
+        restaurant.getHours().getOpen(),
+        restaurant.getHours().getClose(),
+        restaurant.getCapacity());
   }
 
   public void deleteReservation(String reservationNumber) throws NotFoundException {

@@ -12,42 +12,59 @@ public class ReservationValidator {
   private static final Pattern PHONE_PATTERN = Pattern.compile(Constante.PATTERN_PHONE);
 
   public void validateReservationToRestaurant(
-      ReservationDto reservationDto, LocalTime restaurantClosingTime)
+      ReservationDto reservationDto,
+      LocalTime restaurantOpeningTime,
+      LocalTime restaurantClosingTime,
+      int maxCapacity)
       throws InvalidParameterException {
-    validateReservationTimeForRestaurant(reservationDto, restaurantClosingTime);
-    validateGroupSize(reservationDto.getGroupSize());
+    validateReservationTimeForRestaurant(
+        reservationDto, restaurantOpeningTime, restaurantClosingTime);
+    validateGroupSize(reservationDto.getGroupSize(), maxCapacity);
     validateCustomer(reservationDto.getCustomer());
   }
 
   public void validateReservationTimeForRestaurant(
-      ReservationDto reservationDto, LocalTime restaurantClosingTime)
+      ReservationDto reservationDto,
+      LocalTime restaurantOpeningTime,
+      LocalTime restaurantClosingTime)
       throws InvalidParameterException {
-    LocalTime closingTime = restaurantClosingTime;
 
-    LocalTime startTime = reservationDto.getStartTime();
-    LocalTime endTime = reservationDto.getEndTime();
-
-    validateStartingTime(startTime.compareTo(closingTime));
-    validateEndingTime(endTime.compareTo(closingTime));
+    validateStartingTimeAfterOpeningTime(reservationDto.getStartTime(), restaurantOpeningTime);
+    validateStartingTimeBeforeClosingTime(reservationDto.getStartTime(), restaurantClosingTime);
+    validateEndingTimeBeforeClosingTime(reservationDto.getEndTime(), restaurantClosingTime);
   }
 
-  public void validateStartingTime(int startCompareToCloseTime) throws InvalidParameterException {
-    if (startCompareToCloseTime >= 0) {
+  private void validateStartingTimeBeforeClosingTime(LocalTime startTime, LocalTime closingTime)
+      throws InvalidParameterException {
+    if (!startTime.isBefore(closingTime)) {
       throw new InvalidParameterException(
-          "The start of the reservation can not be during or after the restaurant's closing time");
+          "The reservation must start before the restaurant's closing time");
     }
   }
 
-  private void validateEndingTime(int endCompareToCloseTime) throws InvalidParameterException {
-    if (endCompareToCloseTime > 0) {
+  private void validateEndingTimeBeforeClosingTime(LocalTime endTime, LocalTime closingTime)
+      throws InvalidParameterException {
+    if (endTime.isAfter(closingTime)) {
       throw new InvalidParameterException(
-          "The reservation can not end after the restaurant's closing time");
+          "The reservation must end before or at the restaurant's closing time");
     }
   }
 
-  private void validateGroupSize(int groupSize) throws InvalidParameterException {
+  private void validateStartingTimeAfterOpeningTime(LocalTime startTime, LocalTime openingTime)
+      throws InvalidParameterException {
+    if (startTime.isBefore(openingTime)) {
+      throw new InvalidParameterException(
+          "The adjusted starting time of the reservation can't be before the restaurant's opening time");
+    }
+  }
+
+  private void validateGroupSize(int groupSize, int maxCapacity) throws InvalidParameterException {
     if (groupSize <= 0) {
       throw new InvalidParameterException("Group size can not be equal or lower than 0");
+    }
+    if (groupSize > maxCapacity) {
+      throw new InvalidParameterException(
+          "The group size exceeds the maximum capacity of the restaurant for this moment");
     }
   }
 
