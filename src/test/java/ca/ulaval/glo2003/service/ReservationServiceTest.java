@@ -61,7 +61,7 @@ class ReservationServiceTest {
   }
 
   @Test
-  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() throws NotFoundException {
+  void givenReservationNumberAndReservationDoesNotExist_whenGetReservationByNumber_thenThrowsNotFoundException() throws NotFoundException {
 
     String nonExistingReservationNumber = "nonExisting";
 
@@ -77,7 +77,7 @@ class ReservationServiceTest {
   }
 
   @Test
-  void givenValidReservationParameter_WithValidReservationMatchingRestaurant_DoesNotThrowException()
+  void givenValidReservationWithValidMatchingRestaurant_whenVerifyValidReservationParameter_thenDoesNotThrowException()
       throws NotFoundException {
 
     String restaurantId = "rest123";
@@ -101,7 +101,8 @@ class ReservationServiceTest {
 
   @Test
   void
-      givenValidReservationParameter_withInvalidReservationToMatchingRestaurant_thenThrowsInvalidParameterException()
+  givenValidReservationWithUnpairedRestaurant_whenVerifyValidReservationParameter_thenThrowsInvalidParameterException()
+
           throws NotFoundException {
 
     String restaurantId = "rest123";
@@ -150,7 +151,7 @@ class ReservationServiceTest {
   }
 
   @Test
-  void givenValidReservationSearchParameters_ReturnsMatchingReservations()
+  void givenValidReservationSearchParameters_whenSearchReservation_ReturnsMatchingReservations()
       throws NotFoundException {
     String ownerId = "owner123";
     String restaurantId = "rest123";
