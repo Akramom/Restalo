@@ -9,7 +9,6 @@ import ca.ulaval.glo2003.application.dtos.SearchDto;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.SearchRestaurantHelper;
 import ca.ulaval.glo2003.repository.*;
@@ -96,7 +95,7 @@ public class RestaurantService {
   }
 
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
-      throws NotFoundException, InvalidParameterException, MissingParameterException {
+      throws NotFoundException, InvalidParameterException {
 
     int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
     reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));

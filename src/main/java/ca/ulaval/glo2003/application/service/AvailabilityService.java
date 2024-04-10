@@ -7,7 +7,6 @@ import ca.ulaval.glo2003.application.dtos.AvailabilityDto;
 import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
-import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.repository.IRestaurantRepository;
 import ca.ulaval.glo2003.util.Util;
@@ -70,23 +69,10 @@ public class AvailabilityService {
   }
 
   public void reserveAvailabilities(Reservation reservation, String restaurantId)
-      throws NotFoundException, InvalidParameterException, MissingParameterException {
-    if (reservation.getDate() == null) {
-      throw new MissingParameterException(MISSING_RESERVATION_DATE);
-    }
-    if (reservation.getStartTime() == null) {
-      throw new MissingParameterException(MISSING_RESERVATION_START_TIME);
-    }
-    if (reservation.getCustomer() == null) {
-      throw new MissingParameterException(MISSING_CUSTOMER_IN_RESERVATION);
-    }
+      throws NotFoundException, InvalidParameterException {
 
     List<Availability> availabilities =
         restaurantRepository.getAvailabilitiesForADate(restaurantId, reservation.getDate());
-
-    if (availabilities.isEmpty()) {
-      throw new InvalidParameterException(NUMBER_OF_PLACES_UNAVAILABLE);
-    }
 
     AtomicInteger remainingPlaces = new AtomicInteger();
     availabilities =
