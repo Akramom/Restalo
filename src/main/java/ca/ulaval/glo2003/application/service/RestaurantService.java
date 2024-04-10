@@ -94,26 +94,13 @@ public class RestaurantService {
     return availabilityService;
   }
 
-  public void verifyExistRestaurant(String restaurantId) throws NotFoundException {
-    restaurantRepository.getRestaurantById(restaurantId);
-  }
-
   public ReservationDto addReservation(ReservationDto reservationDto, String restaurantId)
       throws NotFoundException, InvalidParameterException {
-    this.verifyExistRestaurant(restaurantId);
 
     int reservationDuration = this.getRestaurantReservationDuration(restaurantId);
     reservationDto.setStartTime(Util.ajustStartTimeToNext15Min(reservationDto.getStartTime()));
     reservationDto.setEndTime(
         Util.calculEndTime(reservationDto.getStartTime(), reservationDuration));
-
-    // todo mettre cette validation dans le verifyValidReservationParameter
-    RestaurantDto restaurantDto =
-        restaurantAssembler.toDto(restaurantRepository.getRestaurantById(restaurantId));
-    if (reservationDto.getStartTime().isBefore(restaurantDto.hours().getOpen())) {
-      throw new InvalidParameterException(
-          "The start time of the reservation must be after the open time of the restaurant");
-    }
 
     this.reservationService.verifyValidReservationParameter(restaurantId, reservationDto);
     Reservation reservation = reservationAssembler.fromDto(reservationDto);
