@@ -23,14 +23,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class RestaurantServiceTest {
-  public final String UN_NOM = "un nom";
+  public final String RESTAURANT_NAME = "un nom";
   private final String RESTAURANT_ID = "10000";
   private final String SECOND_RESTAURANT_ID = "10001";
   private final String THIRD_RESTAURANT_ID = "10002";
   private final String RESERVATION_ID = "20000";
-  private final LocalTime RESTAURANT_OPEN = LocalTime.of(10, 30, 45);
-  private final LocalTime RESTAURANT_CLOSE = LocalTime.of(19, 30, 45);
-
   private final String OWNER_ID = "00001";
   private final LocalTime OPEN = LocalTime.of(10, 30, 45);
   private final LocalTime CLOSE = LocalTime.of(19, 30, 45);
@@ -59,11 +56,12 @@ class RestaurantServiceTest {
     service = new RestaurantService(restaurantRespository);
     hours = new Hours(OPEN, CLOSE);
     reservationDuration = new ReservationDuration(70);
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
+    restaurant =
+        new Restaurant(RESTAURANT_ID, RESTAURANT_NAME, CAPACITY, hours, reservationDuration);
     secondRestaurant =
-        new Restaurant(SECOND_RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
+        new Restaurant(SECOND_RESTAURANT_ID, RESTAURANT_NAME, CAPACITY, hours, reservationDuration);
     thirdRestaurant =
-        new Restaurant(THIRD_RESTAURANT_ID, UN_NOM, CAPACITY, hours, reservationDuration);
+        new Restaurant(THIRD_RESTAURANT_ID, RESTAURANT_NAME, CAPACITY, hours, reservationDuration);
     restaurantDto = restaurantAssembler.toDto(restaurant);
     reservation =
         new Reservation(
@@ -73,7 +71,7 @@ class RestaurantServiceTest {
             LocalTime.of(18, 0),
             2,
             new Customer());
-    searchInput = new Search(UN_NOM, SEARCHED_FROM_TO_TIME);
+    searchInput = new Search(RESTAURANT_NAME, SEARCHED_FROM_TO_TIME);
   }
 
   @Test
@@ -174,7 +172,7 @@ class RestaurantServiceTest {
   @Test
   public void
       givenRestaurant_whenCapacityLessThanOne_thenVerifyRestaurantParameterThrowInvalidParameterException() {
-    restaurant = new Restaurant(RESTAURANT_ID, UN_NOM, 0, hours, reservationDuration);
+    restaurant = new Restaurant(RESTAURANT_ID, RESTAURANT_NAME, 0, hours, reservationDuration);
 
     restaurantDto = restaurantAssembler.toDto(restaurant);
     InvalidParameterException invalidParameterException =
@@ -187,8 +185,6 @@ class RestaurantServiceTest {
 
   @Test
   void getReservationByNumber_whenExists_thenReturnsReservation() throws NotFoundException {
-
-    reservation.setNumber("res123");
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
     restaurant.addReservation(reservation);
@@ -206,9 +202,6 @@ class RestaurantServiceTest {
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
 
-    assertThrows(
-        NotFoundException.class,
-        () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
     assertThrows(
         NotFoundException.class,
         () -> restaurantRespository.getReservationByNumber(nonExistingReservationNumber));
@@ -284,7 +277,7 @@ class RestaurantServiceTest {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     LocalTime openAfterFromSearchInput = LocalTime.of(13, 50, 45);
-    Hours hours = new Hours(openAfterFromSearchInput, RESTAURANT_CLOSE);
+    Hours hours = new Hours(openAfterFromSearchInput, CLOSE);
     restaurant.setHours(hours);
     expectedRestaurants.add(restaurant);
     expectedRestaurants.add(secondRestaurant);

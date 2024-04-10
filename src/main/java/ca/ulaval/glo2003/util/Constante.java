@@ -19,7 +19,6 @@ public class Constante {
   public static final int DEFAULT_DURATION = 60;
   public static final String UNEXPECTED_ERROR =
       "An unexpected error occurred. Please review your request.";
-
   public static final String MISSING_RESERVATION_DATE = "Missing reservation date.";
   public static final String MISSING_RESERVATION_START_TIME = "Missing reservation start time.";
   public static final String MISSING_CUSTOMER_IN_RESERVATION = "Missing customer in reservation.";
