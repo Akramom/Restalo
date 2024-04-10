@@ -16,6 +16,7 @@ import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
+import ca.ulaval.glo2003.domain.exception.MissingParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Constante;
 import jakarta.validation.Valid;
@@ -109,7 +110,7 @@ public class RestaurantResource {
   @Produces(MediaType.APPLICATION_JSON)
   public Response addReservation(
       @PathParam("id") String restaurantId, @Valid ReservationRequest reservationRequest)
-      throws InvalidParameterException, NotFoundException {
+      throws InvalidParameterException, NotFoundException, MissingParameterException {
 
     ReservationDto reservationDto = this.reservationRequestAssembler.toDto(reservationRequest);
 
