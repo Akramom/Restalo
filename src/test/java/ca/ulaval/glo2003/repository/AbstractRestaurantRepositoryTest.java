@@ -220,5 +220,4 @@ public abstract class AbstractRestaurantRepositoryTest {
 
     assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(RESERVATION_ID));
   }
-
 }
