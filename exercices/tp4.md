@@ -53,6 +53,15 @@ La licence MIT est l'une des licences open source les plus simples et les plus f
 La licence MIT est l'une des licences open source les plus populaires et les plus largement adoptées. Elle est utilisée par des milliers de projets open source, y compris des projets très populaires tels que jQuery, Rails et Node.js.
 Cette large adoption signifie que les développeurs sont familiers avec la licence MIT et savent comment l'utiliser.
 
+###  code de conduite
+
+Le code de conduite du projet est basé sur le template de Mozilla https://wiki.mozilla.org/Code_of_Conduct/Draft
+
+ce template a été choisi car il est clair, concis , facille a utilisé et adapter au projet open source de toiutes tailles.
+en effet il est largement utilisé et respecte dans la communauté open source.aussi il est personnalisable et peut etre facilement adapté aux besoins specifiques de notre projet
+
+
+
 
 
 
