@@ -105,7 +105,6 @@ Une fois que c'est fait:
 - L'équipe du projet étiquetera le problème en conséquence.
 - Un membre de l'équipe tentera de reproduire le problème avec les étapes que vous avez fournies. S'il n'y a pas d'étapes de reproduction ou pas de moyen évident de reproduire le problème, l'équipe vous demandera ces étapes et marquera le problème comme `needs-repro`. Les bogues avec l'étiquette `needs-repro` ne seront pas traités tant qu'ils ne seront pas reproduits.
 - Si l'équipe parvient à reproduire le problème, il sera marqué `needs-fix`, ainsi que éventuellement d'autres étiquettes (comme `critical`), et le problème sera laissé pour [être implémenté par quelqu'un](#votre-premiere-contribution).
-- If the team is able to reproduce the issue, it will be marked `needs-fix`, as well as possibly other tags (such as `critical`), and the issue will be left to be [implemented by someone](#your-first-code-contribution).
 
 <!-- You might want to create an issue template for bugs and errors that can be used as a guide and that defines the structure of the information to be included. If you do so, reference it here in the description. -->
 
