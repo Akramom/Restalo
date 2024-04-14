@@ -67,7 +67,7 @@ Nous nous occuperons ensuite du problème dès que possible.
 
 ## Je veux contribuer
 
-> ### Legal Notice <!-- omit in toc -->
+> ### Avis légal 
 >Lorsque vous contribuez à ce projet, vous devez accepter que vous avez rédigé 100 % du contenu, que vous avez les droits nécessaires sur le contenu et que le contenu que vous contribuez peut être fourni sous la licence du projet.
 
 ### Signalement de bogues
