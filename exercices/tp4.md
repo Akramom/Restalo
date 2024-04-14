@@ -36,6 +36,26 @@ Il est important de définir clairement les objectifs d'un projet open source av
 #### Définir une feuille de route : 
 Il est important de définir une feuille de route pour un projet open source. Cela aidera à garder le projet sur la bonne voie et à atteindre ses objectifs.
 
+##  Contribution externe
+
+###  3 raisons d'utiliser  une licence MIT
+1) Simplicité et facilité d'utilisation:
+
+La licence MIT est l'une des licences open source les plus simples et les plus faciles à comprendre. Elle est rédigée en un langage clair et concis, ce qui la rend accessible aux développeurs de tous niveaux d'expérience.
+La licence MIT contient peu de conditions et d'obligations, ce qui la rend facile à mettre en œuvre et à respecter. Cela peut être particulièrement important pour les petits projets ou les projets avec des ressources limitées.
+
+2) Permissivité et compatibilité commerciale:
+s
+La licence MIT est l'une des licences open source les plus simples et les plus faciles à comprendre. Elle est rédigée en un langage clair et concis, ce qui la rend accessible aux développeurs de tous niveaux d'expérience.
+
+3) Large adoption et reconnaissance de la communauté:
+
+La licence MIT est l'une des licences open source les plus populaires et les plus largement adoptées. Elle est utilisée par des milliers de projets open source, y compris des projets très populaires tels que jQuery, Rails et Node.js.
+Cette large adoption signifie que les développeurs sont familiers avec la licence MIT et savent comment l'utiliser.
+
+
+
+
 
 
 
