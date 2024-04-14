@@ -36,6 +36,15 @@ Il est important de définir clairement les objectifs d'un projet open source av
 #### Définir une feuille de route : 
 Il est important de définir une feuille de route pour un projet open source. Cela aidera à garder le projet sur la bonne voie et à atteindre ses objectifs.
 
+## information surprenante a porpos de l'open source
+
+**L'open source n'est pas seulement une question de code.**
+
+En effet, si le code open source est au cœur de la philosophie open source, ses principes s'appliquent bien au-delà du développement logiciel.
+L'open source encourage la collaboration, la transparence, le partage des connaissances et l'innovation dans de nombreux domaines, tels que :
+la science ou l'education.
+
+
 ##  Contribution externe
 
 ###  3 raisons d'utiliser  une licence MIT
