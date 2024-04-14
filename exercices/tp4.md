@@ -69,7 +69,17 @@ Le code de conduite du projet est basé sur le template de Mozilla https://wiki.
 ce template a été choisi car il est clair, concis , facille a utilisé et adapter au projet open source de toiutes tailles.
 en effet il est largement utilisé et respecte dans la communauté open source.aussi il est personnalisable et peut etre facilement adapté aux besoins specifiques de notre projet
 
+###  fichier de contribution
 
+Le fichier de contribution du projet sur un template generer grace au generateur [Contributing Gen](https://generator.contributing.md/)
+que nous avons personnalisé en ajoutant  les sections principes fondamentaux, meilleures pratiques de développement et une convention de nommage de branche afin de decrire  les meilleures pratiques de collaboration et de développement que vous voulez encourager au sein du projet
+
+Ce generateur  a été choisi car il permet de créer rapidement et facilement un fichier CONTRIBUTING.md complet et personnalisé, en répondant à des questions simples sur le projet. 
+il utilise des modèles et des meilleures pratiques éprouvés pour garantir que le fichier CONTRIBUTING.md est clair, concis et informatif.
+
+
+
+ 
 
 
 
