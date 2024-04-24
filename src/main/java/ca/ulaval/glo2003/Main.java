@@ -51,6 +51,7 @@ public class Main {
               new DatastoreProvider(mongoClusterUrl, mongoDatabase).provide());
     } else restaurantRepository = new RestaurantRepositoryInMemory();
 
+    //DSN: https://2394ba6d463c6084cdcf709801c55847@o4507098785972224.ingest.de.sentry.io/4507098849738832
     Sentry.init(
         options -> {
           options.setDsn(System.getenv("SENTRY_DSN"));
