@@ -13,6 +13,7 @@ import ca.ulaval.glo2003.application.service.ReservationService;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.util.DatastoreProvider;
+import io.sentry.Sentry;
 import java.net.URI;
 import java.util.Optional;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -28,7 +29,6 @@ public class Main {
   private static String mongoDatabase;
 
   public static HttpServer startServer() {
-
     String port = System.getenv("PORT");
     if (port != null) {
       PORT = port;
@@ -50,6 +50,13 @@ public class Main {
           new RestaurantRepositoryMongo(
               new DatastoreProvider(mongoClusterUrl, mongoDatabase).provide());
     } else restaurantRepository = new RestaurantRepositoryInMemory();
+
+    Sentry.init(
+        options -> {
+          options.setDsn(System.getenv("SENTRY_DSN"));
+
+          options.setTracesSampleRate(1.0);
+        });
 
     final ResourceConfig rc = new ResourceConfig();
     HealthResource healthCheckResource = new HealthResource();
