@@ -2,6 +2,7 @@ package ca.ulaval.glo2003.application.validator;
 
 import ca.ulaval.glo2003.application.dtos.CustomerDto;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
+import ca.ulaval.glo2003.application.dtos.UpdateReservationDto;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.util.Constante;
 import java.time.LocalTime;
@@ -25,6 +26,17 @@ public class ReservationValidator {
 
   public void validateReservationTimeForRestaurant(
       ReservationDto reservationDto,
+      LocalTime restaurantOpeningTime,
+      LocalTime restaurantClosingTime)
+      throws InvalidParameterException {
+
+    validateStartingTimeAfterOpeningTime(reservationDto.getStartTime(), restaurantOpeningTime);
+    validateStartingTimeBeforeClosingTime(reservationDto.getStartTime(), restaurantClosingTime);
+    validateEndingTimeBeforeClosingTime(reservationDto.getEndTime(), restaurantClosingTime);
+  }
+
+  public void validateReservationTimeForRestaurant(
+      UpdateReservationDto reservationDto,
       LocalTime restaurantOpeningTime,
       LocalTime restaurantClosingTime)
       throws InvalidParameterException {
@@ -58,7 +70,7 @@ public class ReservationValidator {
     }
   }
 
-  private void validateGroupSize(int groupSize, int maxCapacity) throws InvalidParameterException {
+  public void validateGroupSize(int groupSize, int maxCapacity) throws InvalidParameterException {
     if (groupSize <= 0) {
       throw new InvalidParameterException("Group size can not be equal or lower than 0");
     }
@@ -82,7 +94,7 @@ public class ReservationValidator {
     }
   }
 
-  private void validateEmail(String email) throws InvalidParameterException {
+  public void validateEmail(String email) throws InvalidParameterException {
     if (!EMAIL_PATTERN.matcher(email).matches()) {
       throw new InvalidParameterException("Invalid Email.");
     }

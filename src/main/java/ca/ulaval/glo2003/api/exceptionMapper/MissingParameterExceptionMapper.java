@@ -19,7 +19,7 @@ public class MissingParameterExceptionMapper
         .build();
   }
 
-  public String getFirstErrorMessage(ConstraintViolationException exception) {
+  private String getFirstErrorMessage(ConstraintViolationException exception) {
     return exception.getConstraintViolations().iterator().next().getMessage();
   }
 }

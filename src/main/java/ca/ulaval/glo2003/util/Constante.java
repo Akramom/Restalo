@@ -10,7 +10,7 @@ public class Constante {
   public static final String RESTAURANT_NOT_FOUND = "restaurant not found.";
   public static final String OWNER_NOT_FOUND = "owner not found.";
   public static final String ERROR_DESERIALIZE =
-      "Invalid restaurant parameter. The restaurant could not be deserialize";
+      "Invalid parsing parameter. entry could not be deserialize";
   public static final String MISSING_DATE = "missing date parameter";
   public static final String INVALID_DATE = "Invalid  date format";
   public static final String NUMBER_OF_PLACES_UNAVAILABLE =
@@ -25,5 +25,8 @@ public class Constante {
   public static final String URL = "http://0.0.0.0";
   public static final String PATTERN_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
   public static final String PATTERN_PHONE = "^\\+?\\d{10}$";
+  public static final String MISSING_EMAIL = "Missing customer email.";
+  public static final String MISSING_RESERVATION_NUMBER = "Missing reservation number.";
+  public static final String EMAIL_NOT_FOUND = "Email not found.";
   public static String PORT = "8080";
 }

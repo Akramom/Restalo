@@ -218,4 +218,21 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
         .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
         .getReservationList();
   }
+
+  @Override
+  public void updateReservation(Reservation updatedReservation) {
+    owners.stream()
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .flatMap(restaurant -> restaurant.getReservationList().stream())
+        .filter(reservation -> reservation.getNumber().equals(updatedReservation.getNumber()))
+        .findFirst()
+        .map(
+            reservation -> {
+              reservation.setDate(updatedReservation.getDate());
+              reservation.setStartTime(updatedReservation.getStartTime());
+              reservation.setEndTime(updatedReservation.getEndTime());
+              reservation.setGroupSize(updatedReservation.getGroupSize());
+              return reservation;
+            });
+  }
 }
