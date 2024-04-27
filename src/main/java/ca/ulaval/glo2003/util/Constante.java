@@ -9,8 +9,7 @@ public class Constante {
   public static final String RESERVATION_NOT_FOUND = "reservation not found.";
   public static final String RESTAURANT_NOT_FOUND = "restaurant not found.";
   public static final String OWNER_NOT_FOUND = "owner not found.";
-  public static final String ERROR_DESERIALIZE =
-      "Invalid restaurant parameter. The restaurant could not be deserialize";
+  public static final String ERROR_DESERIALIZE = "Invalid parameter. Could not deserialize";
   public static final String MISSING_DATE = "missing date parameter";
   public static final String INVALID_DATE = "Invalid  date format";
   public static final String NUMBER_OF_PLACES_UNAVAILABLE =
