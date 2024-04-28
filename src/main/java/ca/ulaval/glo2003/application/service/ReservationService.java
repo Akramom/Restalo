@@ -83,8 +83,13 @@ public class ReservationService {
         updateReservationDto.getGroupSize(), restaurant.getCapacity());
 
     if (!oldReservation.getCustomer().getEmail().equals(customerEmail)) {
-      throw new NotFoundException(Constante.EMAIL_NOT_FOUND); // todo mettre un message d'erreur'
+      throw new NotFoundException(Constante.EMAIL_NOT_FOUND);
     }
+
+    updateReservationDto.setStartTime(
+            updateReservationDto.getStartTime() == null
+                    ? oldReservation.getStartTime()
+                    : updateReservationDto.getStartTime());
 
     updateReservationDto.setEndTime(
         Util.calculEndTime(
