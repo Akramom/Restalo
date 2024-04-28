@@ -205,7 +205,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     return owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))

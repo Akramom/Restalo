@@ -170,7 +170,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     getOwner(ownerId);
     getOwnerRestaurantById(ownerId, restaurantId);
