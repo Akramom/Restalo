@@ -10,10 +10,9 @@ import ca.ulaval.glo2003.api.assemblers.response.ReservationResponseAssembler;
 import ca.ulaval.glo2003.api.assemblers.response.RestaurantResponseAssembler;
 import ca.ulaval.glo2003.api.request.ReservationRequest;
 import ca.ulaval.glo2003.api.request.RestaurantRequest;
+import ca.ulaval.glo2003.api.request.UpdateRestaurantRequest;
 import ca.ulaval.glo2003.api.response.restaurant.OwnerRestaurantResponse;
-import ca.ulaval.glo2003.application.dtos.AvailabilityDto;
-import ca.ulaval.glo2003.application.dtos.ReservationDto;
-import ca.ulaval.glo2003.application.dtos.RestaurantDto;
+import ca.ulaval.glo2003.application.dtos.*;
 import ca.ulaval.glo2003.application.service.RestaurantService;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.MissingParameterException;
@@ -182,5 +181,28 @@ public class RestaurantResource {
 
     return Response.ok(reservations.stream().map(reservationResponseAssembler::fromDto).toList())
         .build();
+  }
+
+  @PUT
+  @Path("/`{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Produces(MediaType.APPLICATION_JSON)
+  public Response updateRestauarant(
+      @NotEmpty(message = Constante.MISSING_RESTAURANT_ID)
+          @NotNull(message = Constante.MISSING_RESTAURANT_ID)
+          @PathParam("id")
+          String restaurantId,
+      @NotEmpty(message = Constante.MISSING_OWNER_ID)
+          @NotNull(message = Constante.MISSING_OWNER_ID)
+          @HeaderParam("Owner")
+          String ownerId,
+      UpdateRestaurantRequest updateRestaurantRequest) throws Exception {
+
+    UpdateRestaurantDto UpdateRestaurantDto =
+        restaurantRequestAssembler.toDto(updateRestaurantRequest);
+
+    restaurantService.updateRestaurant(ownerId, restaurantId, UpdateRestaurantDto);
+
+    return Response.noContent().build();
   }
 }

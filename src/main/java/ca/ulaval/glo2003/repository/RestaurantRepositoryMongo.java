@@ -2,6 +2,7 @@ package ca.ulaval.glo2003.repository;
 
 import static ca.ulaval.glo2003.util.Constante.*;
 import static dev.morphia.query.experimental.filters.Filters.eq;
+import static dev.morphia.query.experimental.filters.Filters.gte;
 
 import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
@@ -11,6 +12,9 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
 import dev.morphia.DeleteOptions;
+import dev.morphia.query.Query;
+import dev.morphia.query.experimental.filters.Filter;
+import dev.morphia.query.experimental.filters.Filters;
 import dev.morphia.query.experimental.updates.UpdateOperators;
 import java.time.LocalDate;
 import java.util.List;
@@ -57,6 +61,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   @Override
   public Restaurant getOwnerRestaurantById(String ownerId, String restaurantId)
       throws NotFoundException {
+    getOwner(ownerId);
     return datastore
         .find(Restaurant.class)
         .filter(eq("ownerId", ownerId), eq("id", restaurantId))
@@ -170,7 +175,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     getOwner(ownerId);
     getOwnerRestaurantById(ownerId, restaurantId);
@@ -189,5 +194,19 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
             UpdateOperators.set("endTime", updatedReservation.getEndTime()),
             UpdateOperators.set("groupSize", updatedReservation.getGroupSize()))
         .execute();
+  }
+
+  @Override
+  public void updateRestaurant(Restaurant updatedRestaurant) {
+    datastore.save(updatedRestaurant);
+  }
+
+  @Override
+  public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date) {
+    datastore
+            .find(Availability.class)
+            .filter(eq("restaurantId", restaurantId))
+            .filter(gte("date", date))
+            .delete(new DeleteOptions().multi(true));
   }
 }

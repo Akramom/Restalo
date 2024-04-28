@@ -12,7 +12,6 @@ import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class AvailabilityService {
@@ -34,6 +33,11 @@ public class AvailabilityService {
     return restaurantRepository.getAvailabilitiesForADate(restaurantId, date).stream()
         .map(availabilityAssembler::toDto)
         .collect(Collectors.toList());
+  }
+
+  public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date)
+          throws NotFoundException {
+    restaurantRepository.deleteAvailabilityForFromDate(restaurantId, date);
   }
 
   public void releaseAvailibilities(Reservation reservation, String restaurantId)

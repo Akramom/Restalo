@@ -205,7 +205,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     return owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
@@ -234,5 +234,28 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
               reservation.setGroupSize(updatedReservation.getGroupSize());
               return reservation;
             });
+  }
+
+  @Override
+  public void updateRestaurant(Restaurant updatedRestaurant) {
+    owners.stream()
+            .flatMap(owner -> owner.getRestaurants().stream())
+            .filter(restaurant -> restaurant.getId().equals(updatedRestaurant.getId()))
+            .findFirst()
+            .map(restaurant -> {
+              restaurant.setName(updatedRestaurant.getName());
+              restaurant.setCapacity(updatedRestaurant.getCapacity());
+              restaurant.setHours(updatedRestaurant.getHours());
+              restaurant.setDuration(updatedRestaurant.getReservation().duration());
+              return restaurant;
+            });
+  }
+
+  @Override
+  public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date) {
+    owners.stream().flatMap(owner -> owner.getRestaurants().stream())
+            .filter(restaurant -> restaurant.getId().equals(restaurantId))
+            .toList().getFirst().getAvailabilities()
+            .removeIf(availability -> availability.getStart().toLocalDate().equals(date)||availability.getStart().toLocalDate().isAfter(date));
   }
 }
