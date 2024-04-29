@@ -1,3 +1,5 @@
+https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/cd.yml/badge.svg https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/maven.yml/badge.svg
+
 # Projet - Restalo
 
 Le meilleur logiciel de réservation en restauration!
@@ -89,3 +91,5 @@ Veuillez vous référer à nos [directive de contribution](./CONTRIBUTING.md) et
 
 ## License
 [MIT licence](https://github.com/GLO2003-H24-eq26/Restalo/blob/main/LICENSE.txt)
+
+
