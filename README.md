@@ -1,5 +1,8 @@
-https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/cd.yml/badge.svg https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/maven.yml/badge.svg
+<p align="center">
+<img src="https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/cd.yml/badge.svg" alt="Github Action"> 
+<img src="https://github.com/GLO2003-H24-eq26/Restalo/actions/workflows/maven.yml/badge.svg alt="Github Action"> 
 
+</p>
 # Projet - Restalo
 
 Le meilleur logiciel de réservation en restauration!
