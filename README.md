@@ -50,7 +50,7 @@ mvn compile
 ```
 ### Exécution
 
-##### demarrage d'un container pour la bse de donnée
+##### demarrage d'un container pour la base de donnée
 ```
 docker compose up -d
 ```
