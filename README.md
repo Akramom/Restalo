@@ -66,6 +66,13 @@ ou
 mvn exec:java
 
 ```
+
+##### execution avec une  image docker
+
+```
+docker run -p 8082:8082 -e PORT='8082' -e MONGO_CLUSTER_URL='mongodb://user:password@localhost:27017/' -e MONGO_DATABASE='restalo' image_id mvn exec:java
+
+```
 ### Créer un rapport de bogue
 
 Si vous voyez un message d’erreur ou si vous rencontrez un problème, veuillez [Créer un rapport de bogue](https://github.com/GLO2003-H24-eq26/Restalo/issues/new). Cet effort est tres apprécié.
