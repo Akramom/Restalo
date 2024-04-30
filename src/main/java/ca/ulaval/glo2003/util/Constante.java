@@ -25,5 +25,6 @@ public class Constante {
   public static final String URL = "http://0.0.0.0";
   public static final String PATTERN_EMAIL = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
   public static final String PATTERN_PHONE = "^\\+?\\d{10}$";
+  public static final int AJUST_TIME = 15;
   public static String PORT = "8080";
 }

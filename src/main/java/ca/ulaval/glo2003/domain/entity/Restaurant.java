@@ -2,6 +2,7 @@ package ca.ulaval.glo2003.domain.entity;
 
 import static ca.ulaval.glo2003.util.Constante.DEFAULT_DURATION;
 
+import ca.ulaval.glo2003.util.Constante;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Id;
@@ -17,82 +18,15 @@ import java.util.UUID;
 public class Restaurant {
 
   private String name;
-
-  public void setAvailabilities(ArrayList<Availability> availabilities) {
-    this.availabilities = availabilities;
-  }
-
   private int capacity;
   @Id private String id;
   private ReservationDuration reservationDuration;
   private Hours hours;
-
-  public String getOwnerId() {
-    return ownerId;
-  }
-
-  public void setOwnerId(String ownerId) {
-    this.ownerId = ownerId;
-  }
-
   private String ownerId;
   private List<Reservation> reservationList;
-
-  public List<Availability> getAvailabilities() {
-    if (availabilities == null) availabilities = new ArrayList<>();
-    return availabilities;
-  }
-
   private ArrayList<Availability> availabilities;
 
-  public Restaurant(
-      String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
-    this.id = Util.generateId();
-    this.name = name;
-    this.capacity = capacity;
-    this.hours = hours;
-    if (reservationDuration != null) this.reservationDuration = reservationDuration;
-    else this.reservationDuration = new ReservationDuration(DEFAULT_DURATION);
-    availabilities = new ArrayList<>();
-  }
-
-  public void addAvailabilities(LocalDate dateAvailability) {
-    if (availabilities == null) availabilities = new ArrayList<>();
-
-    LocalTime startTimeAvailability;
-    LocalTime endTimeAvailability;
-    startTimeAvailability = Util.ajustStartTimeToNext15Min(hours.getOpen());
-    endTimeAvailability =
-        Util.adjustToPrevious15Minutes(hours.getClose())
-            .minusMinutes(
-                reservationDuration == null ? DEFAULT_DURATION : reservationDuration.duration());
-    while (startTimeAvailability.isBefore(endTimeAvailability)
-        || startTimeAvailability.equals(endTimeAvailability)) {
-      LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
-      Availability availability = new Availability(start, capacity);
-      availability.setRestaurantId(id);
-      availabilities.add(availability);
-      startTimeAvailability = startTimeAvailability.plusMinutes(15);
-    }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof Restaurant that)) return false;
-    return capacity == that.capacity
-        && Objects.equals(name, that.name)
-        && Objects.equals(id, that.id)
-        && Objects.equals(reservationDuration, that.reservationDuration)
-        && Objects.equals(hours, that.hours)
-        && Objects.equals(ownerId, that.ownerId)
-        && Objects.equals(reservationList, that.reservationList);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(name, capacity, id, reservationDuration, hours, ownerId, reservationList);
-  }
+  public Restaurant() {}
 
   public Restaurant(
       String id, String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
@@ -105,11 +39,29 @@ public class Restaurant {
     availabilities = new ArrayList<>();
   }
 
-  public void generateId() {
-    this.id = UUID.randomUUID().toString().substring(0, 8);
+  public Restaurant(
+      String name, int capacity, Hours hours, ReservationDuration reservationDuration) {
+    this.id = Util.generateId();
+    this.name = name;
+    this.capacity = capacity;
+    this.hours = hours;
+    if (reservationDuration != null) this.reservationDuration = reservationDuration;
+    else this.reservationDuration = new ReservationDuration(DEFAULT_DURATION);
+    availabilities = new ArrayList<>();
   }
 
-  public Restaurant() {}
+  public String getOwnerId() {
+    return ownerId;
+  }
+
+  public void setOwnerId(String ownerId) {
+    this.ownerId = ownerId;
+  }
+
+  public List<Availability> getAvailabilities() {
+    if (availabilities == null) availabilities = new ArrayList<>();
+    return availabilities;
+  }
 
   public String getName() {
     return name;
@@ -127,15 +79,6 @@ public class Restaurant {
     return this.reservationDuration;
   }
 
-  public void setAvailability(Availability updatedAvailability) {
-    availabilities.stream()
-        .filter(availability -> availability.getId().equals(updatedAvailability.getId()))
-        .findFirst()
-        .ifPresent(
-            availability ->
-                availability.setRemainingPlaces(updatedAvailability.getRemainingPlaces()));
-  }
-
   public void setCapacity(int capacity) {
     this.capacity = capacity;
   }
@@ -144,13 +87,13 @@ public class Restaurant {
     return id;
   }
 
-  public Hours getHours() {
-    return hours;
-  }
-
   public void setId(String id) {
     this.id = id;
     if (availabilities == null) availabilities = new ArrayList<>();
+  }
+
+  public Hours getHours() {
+    return hours;
   }
 
   public void setReservations(ReservationDuration reservationDuration) {
@@ -161,14 +104,44 @@ public class Restaurant {
     this.hours = hours;
   }
 
-  public void addReservation(Reservation reservation) {
-    if (reservationList == null) reservationList = new ArrayList<>();
-    reservationList.add(reservation);
-  }
-
   public List<Reservation> getReservationList() {
     if (reservationList == null) reservationList = new ArrayList<>();
     return reservationList;
+  }
+
+  public void generateId() {
+    this.id = UUID.randomUUID().toString().substring(0, 8);
+  }
+
+  public void setAvailability(Availability updatedAvailability) {
+    availabilities.stream()
+        .filter(availability -> availability.getId().equals(updatedAvailability.getId()))
+        .findFirst()
+        .ifPresent(
+            availability ->
+                availability.setRemainingPlaces(updatedAvailability.getRemainingPlaces()));
+  }
+
+  public void addAvailabilities(LocalDate dateAvailability) {
+    if (availabilities == null) availabilities = new ArrayList<>();
+
+    LocalTime startTimeAvailability = ajustStartTime(hours.getOpen());
+    LocalTime endTimeAvailability = calculEndTime(hours.getClose());
+
+    while (startTimeAvailability.isBefore(endTimeAvailability)
+        || startTimeAvailability.equals(endTimeAvailability)) {
+      addAvailability(dateAvailability, startTimeAvailability, capacity);
+      startTimeAvailability = startTimeAvailability.plusMinutes(Constante.AJUST_TIME);
+    }
+  }
+
+  public void removeReservation(String reservationNumber) {
+    getReservationList().removeIf(reservation -> reservation.getNumber().equals(reservationNumber));
+  }
+
+  public void addReservation(Reservation reservation) {
+    if (reservationList == null) reservationList = new ArrayList<>();
+    reservationList.add(reservation);
   }
 
   @Override
@@ -191,7 +164,39 @@ public class Restaurant {
         + '}';
   }
 
-  public void removeReservation(String reservationNumber) {
-    getReservationList().removeIf(reservation -> reservation.getNumber().equals(reservationNumber));
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof Restaurant that)) return false;
+    return capacity == that.capacity
+        && Objects.equals(name, that.name)
+        && Objects.equals(id, that.id)
+        && Objects.equals(reservationDuration, that.reservationDuration)
+        && Objects.equals(hours, that.hours)
+        && Objects.equals(ownerId, that.ownerId)
+        && Objects.equals(reservationList, that.reservationList);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, capacity, id, reservationDuration, hours, ownerId, reservationList);
+  }
+
+  private void addAvailability(
+      LocalDate dateAvailability, LocalTime startTimeAvailability, int capacity) {
+    LocalDateTime start = LocalDateTime.of(dateAvailability, startTimeAvailability);
+    Availability availability = new Availability(start, capacity);
+    availability.setRestaurantId(id);
+    availabilities.add(availability);
+  }
+
+  private LocalTime calculEndTime(LocalTime close) {
+    return Util.adjustToPrevious15Minutes(close)
+        .minusMinutes(
+            reservationDuration == null ? DEFAULT_DURATION : reservationDuration.duration());
+  }
+
+  private LocalTime ajustStartTime(LocalTime open) {
+    return Util.ajustStartTimeToNext15Min(open);
   }
 }

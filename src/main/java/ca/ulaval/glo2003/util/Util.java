@@ -19,16 +19,16 @@ public class Util {
 
   public static LocalTime addToNext15MinSlot(LocalTime time) {
     int minutes = time.getMinute();
-    int minutesOverThePrevious15MinSlot = minutes % 15;
+    int minutesOverThePrevious15MinSlot = minutes % Constante.AJUST_TIME;
     if (minutesOverThePrevious15MinSlot == 0) {
       return time;
     }
-    return time.plusMinutes(15 - minutesOverThePrevious15MinSlot);
+    return time.plusMinutes(Constante.AJUST_TIME - minutesOverThePrevious15MinSlot);
   }
 
   public static LocalTime adjustToPrevious15Minutes(LocalTime time) {
     int minutes = time.getMinute();
-    int minutesOverThePrevious15MinSlot = minutes % 15;
+    int minutesOverThePrevious15MinSlot = minutes % Constante.AJUST_TIME;
     if (minutesOverThePrevious15MinSlot == 0) {
       return time;
     }

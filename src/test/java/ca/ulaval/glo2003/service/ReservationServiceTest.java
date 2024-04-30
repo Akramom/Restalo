@@ -10,7 +10,7 @@ import ca.ulaval.glo2003.application.service.AvailabilityService;
 import ca.ulaval.glo2003.application.service.ReservationService;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class ReservationServiceTest {
 
   private ReservationService reservationService;
-  private IRestaurantRepository restaurantRepository;
+  private RestaurantRepository restaurantRepository;
   private AvailabilityService availabilityService;
   private final ReservationAssembler reservationAssembler = new ReservationAssembler();
   public final String RESTAURANT_NAME = "un nom";
@@ -48,7 +48,7 @@ class ReservationServiceTest {
 
   @BeforeEach
   void setUp() {
-    restaurantRepository = mock(IRestaurantRepository.class);
+    restaurantRepository = mock(RestaurantRepository.class);
     availabilityService = mock(AvailabilityService.class);
     reservationService = new ReservationService(restaurantRepository);
     reservationService.setAvailabilityService(availabilityService);

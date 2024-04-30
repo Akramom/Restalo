@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class RestaurantService {
 
-  private final IRestaurantRepository restaurantRepository;
+  private final RestaurantRepository restaurantRepository;
   private final RestaurantValidator restaurantValidator;
   private final RestaurantAssembler restaurantAssembler;
   private final ReservationAssembler reservationAssembler;
@@ -39,7 +39,7 @@ public class RestaurantService {
     this.reservationService = reservationService;
   }
 
-  public RestaurantService(IRestaurantRepository restaurantRepository) {
+  public RestaurantService(RestaurantRepository restaurantRepository) {
     this.restaurantRepository = restaurantRepository;
     this.restaurantValidator = new RestaurantValidator();
     this.restaurantAssembler = new RestaurantAssembler();

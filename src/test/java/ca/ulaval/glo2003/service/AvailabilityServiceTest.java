@@ -12,7 +12,7 @@ import ca.ulaval.glo2003.domain.entity.Customer;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,7 +24,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 class AvailabilityServiceTest {
-  @Mock private IRestaurantRepository restaurantRepository;
+  @Mock private RestaurantRepository restaurantRepository;
 
   private AvailabilityService availabilityService;
 

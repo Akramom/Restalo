@@ -22,7 +22,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 public class Main {
   public static String BASE_URI;
 
-  private static IRestaurantRepository restaurantRepository;
+  private static RestaurantRepository restaurantRepository;
   private static PersistenceType persistence;
   private static String mongoClusterUrl;
   private static String mongoDatabase;
