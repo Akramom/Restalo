@@ -27,77 +27,79 @@ class AvailabilityServiceTest {
   @Mock private IRestaurantRepository restaurantRepository;
 
   private AvailabilityService availabilityService;
-
-  String restaurantId;
-  LocalDate date;
+  private Reservation reservation;
+  private final String RESTAURANT_ID = "1";
+  private final String RESERVATION_NUMBER = "res1";
+  private final int GROUP_SIZE = 4;
+  private LocalDate DATE = LocalDate.of(2002, 2, 20);
 
   @BeforeEach
   void setUp() {
     MockitoAnnotations.initMocks(this);
     availabilityService = new AvailabilityService(restaurantRepository);
-    restaurantId = "1";
-    date = LocalDate.now();
+    reservation =
+        new Reservation(
+            RESERVATION_NUMBER,
+            DATE,
+            LocalTime.of(12, 0),
+            LocalTime.of(13, 0),
+            GROUP_SIZE,
+            new Customer());
   }
 
   @Test
   void
-      givenDateAndRestaurantIdAndRestaurantNotExist_WhenGetAvailabilities_shouldThrowNotFoundException()
+      givenDateAndRestaurantIdAndRestaurantNotExist_whenGetAvailabilities_thenShouldThrowNotFoundException()
           throws NotFoundException {
 
-    when(restaurantRepository.isExistAvailabilityForADate(restaurantId, date))
+    when(restaurantRepository.isExistAvailabilityForADate(RESTAURANT_ID, DATE))
         .thenThrow(new NotFoundException(RESTAURANT_NOT_FOUND));
 
     NotFoundException exception =
         assertThrows(
             NotFoundException.class,
-            () -> availabilityService.getAvailabilities(restaurantId, date));
+            () -> availabilityService.getAvailabilities(RESTAURANT_ID, DATE));
     assertThat(exception.getMessage()).isEqualTo(RESTAURANT_NOT_FOUND);
   }
 
   @Test
-  void givenDateAndValidRestaurantId_WhenGetAvailabilities_theShouldReturnAvailabilities()
+  void givenDateAndValidRestaurantId_whenGetAvailabilities_thenShouldReturnAvailabilities()
       throws NotFoundException {
-
     List<Availability> expectedAvailabilities = new ArrayList<>();
-    when(restaurantRepository.getAvailabilitiesForADate(restaurantId, date))
+    when(restaurantRepository.getAvailabilitiesForADate(RESTAURANT_ID, DATE))
         .thenReturn(expectedAvailabilities);
 
     List<AvailabilityDto> actualAvailabilities =
-        availabilityService.getAvailabilities(restaurantId, date);
+        availabilityService.getAvailabilities(RESTAURANT_ID, DATE);
 
     assertThat(actualAvailabilities).isEqualTo(expectedAvailabilities);
   }
 
   @Test
-  void releaseAvailabilities_shouldReleaseAvailabilities() throws NotFoundException {
+  void whenReleaseAvailabilities_thenShouldReleaseAvailabilities() throws NotFoundException {
 
-    Reservation reservation =
-        new Reservation("res1", date, LocalTime.of(12, 0), LocalTime.of(13, 0), 4, new Customer());
     List<Availability> availabilities = new ArrayList<>();
-    when(restaurantRepository.getAvailabilitiesForADate(restaurantId, date))
+    when(restaurantRepository.getAvailabilitiesForADate(RESTAURANT_ID, DATE))
         .thenReturn(availabilities);
 
-    availabilityService.releaseAvailibilities(reservation, restaurantId);
+    availabilityService.releaseAvailibilities(reservation, RESTAURANT_ID);
 
     verify(restaurantRepository, times(availabilities.size())).updateAvailability(any());
   }
 
   @Test
-  void reserveAvailabilities_shouldReserveAvailabilities()
+  void whenReserveAvailabilities_thenShouldReserveAvailabilities()
       throws NotFoundException, InvalidParameterException {
 
-    Reservation reservation =
-        new Reservation("res1", date, LocalTime.of(12, 0), LocalTime.of(13, 0), 4, new Customer());
-
-    Availability availability = new Availability(LocalDateTime.of(date, LocalTime.of(12, 0)), 10);
+    Availability availability = new Availability(LocalDateTime.of(DATE, LocalTime.of(12, 0)), 10);
 
     List<Availability> availabilities = new ArrayList<>();
     availabilities.add(availability);
 
-    when(restaurantRepository.getAvailabilitiesForADate(restaurantId, date))
+    when(restaurantRepository.getAvailabilitiesForADate(RESTAURANT_ID, DATE))
         .thenReturn(availabilities);
 
-    availabilityService.reserveAvailabilities(reservation, restaurantId);
+    availabilityService.reserveAvailabilities(reservation, RESTAURANT_ID);
 
     verify(restaurantRepository, times(availabilities.size())).updateAvailability(any());
   }

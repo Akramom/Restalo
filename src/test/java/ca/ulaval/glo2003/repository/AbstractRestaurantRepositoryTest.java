@@ -2,13 +2,15 @@ package ca.ulaval.glo2003.repository;
 
 import static ca.ulaval.glo2003.util.Constante.RESTAURANT_NOT_FOUND;
 import static com.google.common.truth.Truth.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static org.junit.jupiter.api.Assertions.*;
 
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.*;
 
@@ -31,15 +33,13 @@ public abstract class AbstractRestaurantRepositoryTest {
   private static final String OWNER_ID = "00001";
   public static final String OTHER_OWNER_ID = "00002";
   public static final String RESTAURANT_NAME = "un nom";
-  public static final String OWNER_FIRST_NAME = "JOHN";
-  public static final String OWNER_LAST_NAME = "Equipe";
-  public static final String PHONE_NUMBER = "418-222-2222";
   public static final int RESERVATION_DURATION = 70;
   public static final int RESERVATION_GROUP_SIZE = 2;
   private static final LocalTime RESERVATION_START_TIME = LocalTime.of(12, 0);
   private static final LocalTime RESERVATION_CLOSE_TIME = LocalTime.of(18, 0);
   private static final LocalTime RESTAURANT_OPEN = LocalTime.of(10, 30, 45);
   private static final LocalTime RESTAURANT_CLOSE = LocalTime.of(19, 30, 45);
+  private final int NEW_REMAINING_PLACES = CAPACITY - RESERVATION_GROUP_SIZE;
 
   private Hours hours;
   private ReservationDuration reservationDuration;
@@ -49,8 +49,7 @@ public abstract class AbstractRestaurantRepositoryTest {
     repository = createPersistence();
 
     hours = new Hours(RESTAURANT_OPEN, RESTAURANT_CLOSE);
-    owner = new Owner(OWNER_LAST_NAME, OWNER_FIRST_NAME, PHONE_NUMBER);
-    owner.setOwnerId(OWNER_ID);
+    owner = new Owner(OWNER_ID);
     repository.addOwner(OWNER_ID);
     reservationDuration = new ReservationDuration(RESERVATION_DURATION);
     restaurant =
@@ -219,5 +218,97 @@ public abstract class AbstractRestaurantRepositoryTest {
     repository.deleteReservation(RESERVATION_ID, RESTAURANT_ID);
 
     assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(RESERVATION_ID));
+  }
+
+  @Test
+  void givenOwnerId_whenGetOwner_thenReturnsOwner() throws NotFoundException {
+    Owner returnedOwner = repository.getOwner(OWNER_ID);
+
+    assertEquals(returnedOwner.getOwnerId(), OWNER_ID);
+  }
+
+  @Test
+  void givenNonOwnerId_whenGetOwner_thenThrowsNotFoundException() {
+    assertThrows(NotFoundException.class, () -> repository.getOwner(NON_EXISTENT_ID));
+  }
+
+  @Test
+  void whenGetAllOwners_thenReturnsAllOwners() {
+    List<Owner> expectedList = new ArrayList<>();
+    expectedList.add(owner);
+
+    List<Owner> returnedList = repository.getOwners();
+
+    assertEquals(expectedList.size(), returnedList.size());
+    assertEquals(expectedList.get(0).getOwnerId(), returnedList.get(0).getOwnerId());
+  }
+
+  @Test
+  void whenGetAllRestaurants_thenReturnsAllRestaurants() throws NotFoundException {
+    List<Restaurant> expectedList = new ArrayList<>();
+    repository.addRestaurant(OWNER_ID, restaurant);
+    expectedList.add(restaurant);
+    repository.addRestaurant(OWNER_ID, otherRestaurant);
+    expectedList.add(otherRestaurant);
+
+    List<Restaurant> returnedList = repository.getAllRestaurants();
+
+    assertEquals(expectedList, returnedList);
+  }
+
+  @Test
+  void givenReservationNumber_whenGetRestaurantByReservationNumber_thenReturnsRestaurant()
+      throws NotFoundException {
+    repository.addRestaurant(OWNER_ID, restaurant);
+    repository.addReservation(reservation, RESTAURANT_ID);
+
+    Restaurant returnedRestaurant = repository.getRestaurantByReservationNumber(RESERVATION_ID);
+
+    assertEquals(restaurant, returnedRestaurant);
+  }
+
+  @Test
+  void
+      givenInvalidReservationNumber_whenGetRestaurantByReservationNumber_thenThrowsNotFoundException() {
+    assertThrows(
+        NotFoundException.class,
+        () -> repository.getRestaurantByReservationNumber(NON_EXISTENT_ID));
+  }
+
+  @Test
+  void givenDate_whenAddAvailabilitiesForADate_thenAvailabilitiesAreCreatedAtDate()
+      throws NotFoundException {
+    repository.addRestaurant(OWNER_ID, restaurant);
+    List<Availability> availabilitiesBefore =
+        new ArrayList<>(repository.getAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now()));
+    LocalTime lastReservationSlotPossible = RESTAURANT_CLOSE.minusMinutes(RESERVATION_DURATION);
+    long expectedListLength =
+        Math.ceilDiv(MINUTES.between(RESTAURANT_OPEN, lastReservationSlotPossible), 15);
+
+    repository.addAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now());
+    List<Availability> returnedAvailabilities =
+        repository.getAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now());
+
+    assertNotEquals(availabilitiesBefore, returnedAvailabilities);
+    assertEquals(expectedListLength, returnedAvailabilities.size());
+  }
+
+  @Test
+  void givenNewAvailability_whenUpdateAvailability_thenAvailibilityIsUpdated()
+      throws NotFoundException {
+    repository.addRestaurant(OWNER_ID, restaurant);
+    repository.addAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now());
+    String availabilityId =
+        repository.getAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now()).get(0).getId();
+    LocalDateTime date = LocalDateTime.of(LocalDate.now(), RESTAURANT_OPEN);
+    Availability newAvailability = new Availability(date, NEW_REMAINING_PLACES);
+    newAvailability.setRestaurantId(RESTAURANT_ID);
+    newAvailability.setId(availabilityId);
+
+    repository.updateAvailability(newAvailability);
+    List<Availability> newAvailibilities =
+        repository.getAvailabilitiesForADate(RESTAURANT_ID, LocalDate.now());
+
+    assertEquals(newAvailibilities.get(0).getRemainingPlaces(), NEW_REMAINING_PLACES);
   }
 }
