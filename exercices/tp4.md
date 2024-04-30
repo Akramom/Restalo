@@ -9,12 +9,13 @@
 2)Magic values: À chaque livrable, des magic values nous glissaient. En effet, une des mauvaises pratiques de l'équipe est d'utiliser des magic values. Pour résoudre ce problème, une bonne pratique à implanter individuellement est de refactoriser constamment nos parties avant chaque push afin de s'Assurer qu'aucune magic value n'ait glissé et les corriger au fur et à mesure. 
 
 ### 2. 
-
+Afin d'intégrer de nouveaux outils, nous commencions par les recherches afin de comprendre comment l'intégrer ou choisir les bons outils selon nos besoins. Nous procédions ensuite à l'intégration. Lorsque la configuration se déroule bien, nous exécutions alors les tests et nous nous assurions que tout fonctionnait comme prévu. Cependant, en cas de problème, notamment dans l'intégration de Sentry. Celui-ci fonctionnait avec la persistence in Memory, mais pas sur Mongo. Afin de détecter ce problème, nous avons procédé avec des tests manuels.
+Ce qui a été appris de cette démarche est que les tests unitaires sont toujours très importants à faire, malgré la présence des tests automatisés.
 
 ### 3. Quels sont les bons coups de votre équipe? De quelles parties êtes-vous fiers?
-1)Le premier point positif de notre équipe est que nous sommes tous ouverts d'essayer les différents issues et à la diversité de ceux-ci. Les membres étaient ouverts à sortir de leur zone de confort pour des fins d'apprentissage;
-2 Nous sommes fièrs de notre architecture. Willy a bien travaillé afin d'obtenir la meilleur architecture possible, en diminuant les problèmes de dépendances que nous avions aux premières remises.
-3 
+1)Le premier point positif de notre équipe est que nous sommes tous ouverts d'essayer les différents issues afin de diversifier notre apprentissage. Les membres étaient ouverts à sortir de leur zone de confort pour des fins d'apprentissage.
+2)Nous sommes fiers de notre architecture. L'équipe a bien travaillé afin d'obtenir la meilleur architecture possible, en diminuant les problèmes de dépendances que nous avions aux premières remises.
+3)Un autre point positif de notre travail est l'intégration CI puisqu'il fonctionne bien.
 
 ### 4. Quel conseil donneriez-vous aux prochains étudiants qui doivent faire ce projet?
 Notre meilleur conseil pour les futurs étudiants, serait de s'impliquer dans toutes les parties du projet, puisque chaque partie nous permet d'apprendre de nouvelles compétences.
@@ -153,11 +154,21 @@ en effet il est largement utilisé et respecte dans la communauté open source.a
 ###  fichier de contribution
 
 Le fichier de contribution du projet sur un template generer grace au generateur [Contributing Gen](https://generator.contributing.md/)
-que nous avons personnalisé en ajoutant  les sections principes fondamentaux, meilleures pratiques de développement et une convention de nommage de branche afin de decrire  les meilleures pratiques de collaboration et de développement que vous voulez encourager au sein du projet
+que nous avons personnalisé en ajoutant les sections principes fondamentaux, meilleures pratiques de développement et une convention de nommage de branche afin de decrire  les meilleures pratiques de collaboration et de développement que vous voulez encourager au sein du projet
 
-Ce generateur  a été choisi car il permet de créer rapidement et facilement un fichier CONTRIBUTING.md complet et personnalisé, en répondant à des questions simples sur le projet. 
+Ce generateur a été choisi car il permet de créer rapidement et facilement un fichier CONTRIBUTING.md complet et personnalisé, en répondant à des questions simples sur le projet. 
 il utilise des modèles et des meilleures pratiques éprouvés pour garantir que le fichier CONTRIBUTING.md est clair, concis et informatif.
 
+### SonarCloud
+Voir les images ci-dessous afin de l'analyse de SonarCloud et des problèmes soulevés:
+ <img src="Resources/SonarCloud.png"/>
+ <img src="Resources/SonarCloud2.png"/>
+ <img src="Resources/SonarCloud3.png"/>
+ <img src="Resources/SonarCloud4.png"/>
+ <img src="Resources/SonarCloud5.png"/>
+
+### Sentry 
+Voir les images ci-dessous de l'analyse et des problèmes identifiés par Sentry:
 
 
  
