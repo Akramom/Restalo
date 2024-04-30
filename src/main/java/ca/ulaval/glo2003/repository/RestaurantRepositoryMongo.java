@@ -197,14 +197,14 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public void updateRestaurant(Restaurant updatedRestaurant) {
 
     datastore
-            .find(Restaurant.class)
-            .filter(eq("id", updatedRestaurant.getId()))
-            .modify(
-                    UpdateOperators.set("hours", updatedRestaurant.getHours()),
-                    UpdateOperators.set("capacity", updatedRestaurant.getCapacity()),
-                    UpdateOperators.set("name", updatedRestaurant.getName()),
-                    UpdateOperators.set("reservationDuration", updatedRestaurant.getReservation()))
-            .execute();
+        .find(Restaurant.class)
+        .filter(eq("id", updatedRestaurant.getId()))
+        .modify(
+            UpdateOperators.set("hours", updatedRestaurant.getHours()),
+            UpdateOperators.set("capacity", updatedRestaurant.getCapacity()),
+            UpdateOperators.set("name", updatedRestaurant.getName()),
+            UpdateOperators.set("reservationDuration", updatedRestaurant.getReservation()))
+        .execute();
   }
 
   @Override
@@ -212,7 +212,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
     datastore
         .find(Availability.class)
         .filter(eq("restaurantId", restaurantId))
-        .filter(gte("date", date))
+        .filter(gte("start", date))
         .delete(new DeleteOptions().multi(true));
   }
 }
