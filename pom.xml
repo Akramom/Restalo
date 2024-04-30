@@ -15,6 +15,9 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.plugin.validation>verbose</maven.plugin.validation>
+        <sonar.projectKey>GLO2003-H24-eq26_Restalo</sonar.projectKey>
+        <sonar.organization>glo2003-h24-eq26</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
@@ -30,6 +33,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.7.0.1746</version>
+        </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
@@ -205,6 +213,12 @@
                     </java>
 
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.7.0.1746</version>
             </plugin>
         </plugins>
 

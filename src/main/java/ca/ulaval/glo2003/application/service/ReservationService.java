@@ -8,12 +8,12 @@ import ca.ulaval.glo2003.domain.entity.Restaurant;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.SearchReservationHelper;
-import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ReservationService {
-  private final IRestaurantRepository restaurantRepository;
+  private final RestaurantRepository restaurantRepository;
   private final ReservationValidator reservationValidator;
   private final SearchReservationHelper searchHelper;
   private final ReservationAssembler reservationAssembler;
@@ -24,7 +24,7 @@ public class ReservationService {
     this.availabilityService = availabilityService;
   }
 
-  public ReservationService(IRestaurantRepository restaurantRespository) {
+  public ReservationService(RestaurantRepository restaurantRespository) {
     this.restaurantRepository = restaurantRespository;
     this.reservationValidator = new ReservationValidator();
     this.searchHelper = new SearchReservationHelper();

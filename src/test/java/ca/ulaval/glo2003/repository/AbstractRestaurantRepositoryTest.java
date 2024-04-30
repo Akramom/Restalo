@@ -15,9 +15,9 @@ import java.util.List;
 import org.junit.jupiter.api.*;
 
 public abstract class AbstractRestaurantRepositoryTest {
-  abstract IRestaurantRepository createPersistence();
+  abstract RestaurantRepository createPersistence();
 
-  private IRestaurantRepository repository;
+  private RestaurantRepository repository;
 
   private Restaurant restaurant;
   private Restaurant otherRestaurant;

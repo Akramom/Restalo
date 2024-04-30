@@ -17,7 +17,7 @@ class RestaurantRepositoryMongoTest extends AbstractRestaurantRepositoryTest {
   ;
 
   @Override
-  IRestaurantRepository createPersistence() {
+  RestaurantRepository createPersistence() {
     datastoreProvider =
         new DatastoreProvider(mongoDBContainer.getConnectionString(), "restaloTest");
     return new RestaurantRepositoryMongo(datastoreProvider.provide());

@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RestaurantRepositoryMongo implements IRestaurantRepository {
+public class RestaurantRepositoryMongo implements RestaurantRepository {
 
   private Datastore datastore;
 
@@ -57,6 +57,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   @Override
   public Restaurant getOwnerRestaurantById(String ownerId, String restaurantId)
       throws NotFoundException {
+    getOwner(ownerId);
     return datastore
         .find(Restaurant.class)
         .filter(eq("ownerId", ownerId), eq("id", restaurantId))
@@ -74,6 +75,7 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
 
   @Override
   public List<Restaurant> getAllOwnerRestaurants(String ownerId) throws NotFoundException {
+    getOwner(ownerId);
     return datastore.find(Restaurant.class).filter(eq("ownerId", ownerId)).stream()
         .collect(Collectors.toList());
   }
@@ -109,7 +111,6 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
   public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
     getOwnerRestaurantById(ownerId, restaurantId);
-
     deleteRestaurantReservations(restaurantId);
     deleteRestaurant(restaurantId);
   }

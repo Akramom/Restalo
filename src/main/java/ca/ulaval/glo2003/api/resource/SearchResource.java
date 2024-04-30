@@ -32,7 +32,9 @@ public class SearchResource {
     List<RestaurantDto> restaurantDtos = restaurantService.searchRestaurant(searchDto);
 
     List<RestaurantResponse> restaurantResponses =
-        restaurantDtos.stream().map(this.restaurantResponseAssembler::fromDto2).toList();
+        restaurantDtos.stream()
+            .map(this.restaurantResponseAssembler::restaurantResponseFromDto)
+            .toList();
 
     return Response.ok().entity(restaurantResponses).build();
   }
