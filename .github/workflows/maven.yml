@@ -29,5 +29,7 @@ jobs:
       run: mvn test -Dtest=!resource/*
     - name: integration tests
       run: mvn test -Dtest=resource/*
+    - name: sonarCloud Check
+      run: mvn sonar:sonar -Dsonar.token=216fd7a0010ab6b08fe92db1d76eade8638360f4
     - name: package
       run: mvn  package verify -DskipTests
