@@ -29,7 +29,12 @@ public class RestaurantRequestAssembler {
     return new UpdateRestaurantDto(
         updateRestaurantRequest.name,
         updateRestaurantRequest.capacity,
-        updateRestaurantRequest.hours == null ? null : new HoursDto(updateRestaurantRequest.hours.getOpen(), updateRestaurantRequest.hours.getClose()),
-            updateRestaurantRequest.reservations == null ? null : new ReservationDurationDto(updateRestaurantRequest.reservations.duration()));
+        updateRestaurantRequest.hours == null
+            ? null
+            : new HoursDto(
+                updateRestaurantRequest.hours.getOpen(), updateRestaurantRequest.hours.getClose()),
+        updateRestaurantRequest.reservations == null
+            ? null
+            : new ReservationDurationDto(updateRestaurantRequest.reservations.duration()));
   }
 }

@@ -64,7 +64,7 @@ public class ReservationService {
       throws NotFoundException {
 
     List<Reservation> allReservations =
-        restaurantRepository.getRerservationsByRestaurantId(ownerId, restaurantId);
+        restaurantRepository.getReservationsByRestaurantId(ownerId, restaurantId);
     List<Reservation> reservations =
         searchHelper.searchReservation(allReservations, dateStr, customName);
 

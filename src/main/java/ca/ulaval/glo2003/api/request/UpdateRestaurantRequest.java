@@ -7,10 +7,10 @@ public class UpdateRestaurantRequest {
   public HoursRequest hours;
   public ReservationDurationRequest reservations;
 
-
   public UpdateRestaurantRequest() {}
 
-  public UpdateRestaurantRequest(String name, int capacity, HoursRequest hours,ReservationDurationRequest reservations) {
+  public UpdateRestaurantRequest(
+      String name, int capacity, HoursRequest hours, ReservationDurationRequest reservations) {
     this.name = name;
     this.capacity = capacity;
     this.hours = hours;

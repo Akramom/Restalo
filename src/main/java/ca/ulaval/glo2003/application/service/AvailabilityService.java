@@ -36,7 +36,7 @@ public class AvailabilityService {
   }
 
   public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date)
-          throws NotFoundException {
+      throws NotFoundException {
     restaurantRepository.deleteAvailabilityForFromDate(restaurantId, date);
   }
 

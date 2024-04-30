@@ -18,17 +18,17 @@ public class Restaurant {
 
   private String name;
 
-    public Restaurant(Restaurant oldRestaurant) {
-      this.id = oldRestaurant.getId();
-      this.name = oldRestaurant.getName();
-      this.capacity = oldRestaurant.getCapacity();
-      this.hours = oldRestaurant.getHours();
-      this.reservationDuration = oldRestaurant.getReservation();
-      this.availabilities = oldRestaurant.getAvailabilities();
-      this.reservationList=oldRestaurant.getReservationList();
-    }
+  public Restaurant(Restaurant oldRestaurant) {
+    this.id = oldRestaurant.getId();
+    this.name = oldRestaurant.getName();
+    this.capacity = oldRestaurant.getCapacity();
+    this.hours = oldRestaurant.getHours();
+    this.reservationDuration = oldRestaurant.getReservation();
+    this.availabilities = oldRestaurant.getAvailabilities();
+    this.reservationList = oldRestaurant.getReservationList();
+  }
 
-    public void setAvailabilities(ArrayList<Availability> availabilities) {
+  public void setAvailabilities(ArrayList<Availability> availabilities) {
     this.availabilities = availabilities;
   }
 
@@ -168,7 +168,7 @@ public class Restaurant {
   }
 
   public void setDuration(int duration) {
-    this.reservationDuration=new ReservationDuration(duration);
+    this.reservationDuration = new ReservationDuration(duration);
   }
 
   public void setHours(Hours hours) {

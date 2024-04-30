@@ -239,10 +239,11 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   @Override
   public void updateRestaurant(Restaurant updatedRestaurant) {
     owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .filter(restaurant -> restaurant.getId().equals(updatedRestaurant.getId()))
-            .findFirst()
-            .map(restaurant -> {
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .filter(restaurant -> restaurant.getId().equals(updatedRestaurant.getId()))
+        .findFirst()
+        .map(
+            restaurant -> {
               restaurant.setName(updatedRestaurant.getName());
               restaurant.setCapacity(updatedRestaurant.getCapacity());
               restaurant.setHours(updatedRestaurant.getHours());
@@ -253,9 +254,15 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
 
   @Override
   public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date) {
-    owners.stream().flatMap(owner -> owner.getRestaurants().stream())
-            .filter(restaurant -> restaurant.getId().equals(restaurantId))
-            .toList().getFirst().getAvailabilities()
-            .removeIf(availability -> availability.getStart().toLocalDate().equals(date)||availability.getStart().toLocalDate().isAfter(date));
+    owners.stream()
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .filter(restaurant -> restaurant.getId().equals(restaurantId))
+        .toList()
+        .getFirst()
+        .getAvailabilities()
+        .removeIf(
+            availability ->
+                availability.getStart().toLocalDate().equals(date)
+                    || availability.getStart().toLocalDate().isAfter(date));
   }
 }

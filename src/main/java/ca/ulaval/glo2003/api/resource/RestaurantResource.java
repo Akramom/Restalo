@@ -196,7 +196,8 @@ public class RestaurantResource {
           @NotNull(message = Constante.MISSING_OWNER_ID)
           @HeaderParam("Owner")
           String ownerId,
-      UpdateRestaurantRequest updateRestaurantRequest) throws Exception {
+      UpdateRestaurantRequest updateRestaurantRequest)
+      throws Exception {
 
     UpdateRestaurantDto UpdateRestaurantDto =
         restaurantRequestAssembler.toDto(updateRestaurantRequest);

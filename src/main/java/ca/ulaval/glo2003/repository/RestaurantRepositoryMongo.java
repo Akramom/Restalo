@@ -12,9 +12,6 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.util.Util;
 import dev.morphia.Datastore;
 import dev.morphia.DeleteOptions;
-import dev.morphia.query.Query;
-import dev.morphia.query.experimental.filters.Filter;
-import dev.morphia.query.experimental.filters.Filters;
 import dev.morphia.query.experimental.updates.UpdateOperators;
 import java.time.LocalDate;
 import java.util.List;
@@ -198,15 +195,24 @@ public class RestaurantRepositoryMongo implements IRestaurantRepository {
 
   @Override
   public void updateRestaurant(Restaurant updatedRestaurant) {
-    datastore.save(updatedRestaurant);
+
+    datastore
+            .find(Restaurant.class)
+            .filter(eq("id", updatedRestaurant.getId()))
+            .modify(
+                    UpdateOperators.set("hours", updatedRestaurant.getHours()),
+                    UpdateOperators.set("capacity", updatedRestaurant.getCapacity()),
+                    UpdateOperators.set("name", updatedRestaurant.getName()),
+                    UpdateOperators.set("reservationDuration", updatedRestaurant.getReservation()))
+            .execute();
   }
 
   @Override
   public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date) {
     datastore
-            .find(Availability.class)
-            .filter(eq("restaurantId", restaurantId))
-            .filter(gte("date", date))
-            .delete(new DeleteOptions().multi(true));
+        .find(Availability.class)
+        .filter(eq("restaurantId", restaurantId))
+        .filter(gte("date", date))
+        .delete(new DeleteOptions().multi(true));
   }
 }
