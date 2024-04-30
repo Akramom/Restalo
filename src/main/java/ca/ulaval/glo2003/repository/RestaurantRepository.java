@@ -8,7 +8,7 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface IRestaurantRepository {
+public interface RestaurantRepository {
   List<Owner> getOwners();
 
   Owner getOwner(String ownerId) throws NotFoundException;

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RestaurantRepositoryInMemory implements IRestaurantRepository {
+public class RestaurantRepositoryInMemory implements RestaurantRepository {
 
   private List<Owner> owners;
 
@@ -35,15 +35,16 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public Restaurant addRestaurant(String ownerId, Restaurant restaurant) {
+  public Restaurant addRestaurant(String ownerId, Restaurant restaurant) throws NotFoundException {
 
     if (restaurant.getId() == null) {
       restaurant.setId(Util.generateId());
     }
+
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
-        .toList()
-        .getFirst()
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException(OWNER_NOT_FOUND))
         .getRestaurants()
         .add(restaurant);
 
@@ -119,10 +120,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
 
   @Override
   public Reservation getReservationByNumber(String reservationNumber) throws NotFoundException {
-    return owners.stream()
-        .flatMap(owner -> owner.getRestaurants().stream())
-        .collect(Collectors.toList())
-        .stream()
+    return owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .flatMap(restaurant -> restaurant.getReservationList().stream())
         .filter(reservation -> reservation.getNumber().equals(reservationNumber))
         .findFirst()
@@ -131,12 +129,9 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
 
   @Override
   public Restaurant getRestaurantByReservationNumber(String number) throws NotFoundException {
-
+    getReservationByNumber(number);
     Restaurant wantedRestaurant =
-        owners.stream()
-            .flatMap(owner -> owner.getRestaurants().stream())
-            .collect(Collectors.toList())
-            .stream()
+        owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
             .filter(
                 restaurant ->
                     restaurant.getReservationList().stream()
@@ -150,7 +145,6 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
     getOwnerRestaurantById(ownerId, restaurantId);
-
     owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
         .toList()
@@ -180,7 +174,9 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
         .toList();
   }
 
-  public void addAvailabilitiesForADate(String restaurantId, LocalDate date) {
+  public void addAvailabilitiesForADate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    getRestaurantById(restaurantId);
     owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .toList()
@@ -196,8 +192,7 @@ public class RestaurantRepositoryInMemory implements IRestaurantRepository {
   }
 
   @Override
-  public void deleteReservation(String reservationNumber, String restaurantId)
-      throws NotFoundException {
+  public void deleteReservation(String reservationNumber, String restaurantId) {
     owners.stream().flatMap(owner -> owner.getRestaurants().stream()).toList().stream()
         .filter(restaurant -> restaurant.getId().equals(restaurantId))
         .findFirst()

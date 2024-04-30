@@ -8,7 +8,7 @@ import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Reservation;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
 import ca.ulaval.glo2003.domain.exception.NotFoundException;
-import ca.ulaval.glo2003.repository.IRestaurantRepository;
+import ca.ulaval.glo2003.repository.RestaurantRepository;
 import ca.ulaval.glo2003.util.Util;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class AvailabilityService {
   private final AvailabilityAssembler availabilityAssembler;
 
-  private IRestaurantRepository restaurantRepository;
+  private RestaurantRepository restaurantRepository;
 
-  public AvailabilityService(IRestaurantRepository restaurantRepository) {
+  public AvailabilityService(RestaurantRepository restaurantRepository) {
     this.restaurantRepository = restaurantRepository;
     this.availabilityAssembler = new AvailabilityAssembler();
   }

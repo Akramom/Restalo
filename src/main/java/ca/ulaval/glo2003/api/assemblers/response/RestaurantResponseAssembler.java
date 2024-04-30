@@ -5,7 +5,7 @@ import ca.ulaval.glo2003.api.response.restaurant.RestaurantResponse;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 
 public class RestaurantResponseAssembler {
-  public OwnerRestaurantResponse fromDto(RestaurantDto restaurantDto) {
+  public OwnerRestaurantResponse ownerRestaurantResponseFromDto(RestaurantDto restaurantDto) {
     return new OwnerRestaurantResponse(
         restaurantDto.id(),
         restaurantDto.name(),
@@ -14,7 +14,7 @@ public class RestaurantResponseAssembler {
         restaurantDto.reservations());
   }
 
-  public RestaurantResponse fromDto2(RestaurantDto restaurantDto) {
+  public RestaurantResponse restaurantResponseFromDto(RestaurantDto restaurantDto) {
     return new RestaurantResponse(
         restaurantDto.id(), restaurantDto.name(), restaurantDto.capacity(), restaurantDto.hours());
   }

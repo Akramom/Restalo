@@ -81,7 +81,9 @@ public class RestaurantResource {
     List<RestaurantDto> restaurantDtos = restaurantService.getAllRestaurantsOfOwner(ownerId);
 
     List<OwnerRestaurantResponse> restaurantResponses =
-        restaurantDtos.stream().map(this.restaurantResponseAssembler::fromDto).toList();
+        restaurantDtos.stream()
+            .map(this.restaurantResponseAssembler::ownerRestaurantResponseFromDto)
+            .toList();
 
     return Response.ok(restaurantResponses).build();
   }
@@ -99,7 +101,7 @@ public class RestaurantResource {
     RestaurantDto restaurantDto = restaurantService.getRestaurantByIdOfOwner(ownerId, restaurantId);
 
     OwnerRestaurantResponse restaurantResponse =
-        this.restaurantResponseAssembler.fromDto(restaurantDto);
+        this.restaurantResponseAssembler.ownerRestaurantResponseFromDto(restaurantDto);
 
     return Response.ok(restaurantResponse).build();
   }

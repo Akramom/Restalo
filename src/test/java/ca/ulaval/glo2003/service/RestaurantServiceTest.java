@@ -197,7 +197,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() {
+  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() throws NotFoundException {
     String nonExistingReservationNumber = "nonExisting";
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
@@ -208,7 +208,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenNoParameterSearchInput_thenReturnsEveryRestaurants() {
+  void givenNoParameterSearchInput_thenReturnsEveryRestaurants() throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     expectedRestaurants.add(restaurant);
@@ -227,7 +227,7 @@ class RestaurantServiceTest {
     assertThat(foundRestaurants).isEqualTo(expectedRestaurants);
   }
 
-  void addOwnerAndRestaurantsRepository() {
+  void addOwnerAndRestaurantsRepository() throws NotFoundException {
     restaurantRespository.addOwner(OWNER_ID);
     restaurantRespository.addRestaurant(OWNER_ID, restaurant);
     restaurantRespository.addRestaurant(OWNER_ID, secondRestaurant);
@@ -236,7 +236,8 @@ class RestaurantServiceTest {
 
   @Test
   void
-      givenNameSearchInput_whenMatchingRestaurantNamesExistsNotCaseOrSpaceSensitive_thenReturnsListWithMatchingRestaurants() {
+      givenNameSearchInput_whenMatchingRestaurantNamesExistsNotCaseOrSpaceSensitive_thenReturnsListWithMatchingRestaurants()
+          throws NotFoundException {
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     restaurant.setName("La vie");
     expectedRestaurants.add(restaurant);
@@ -254,7 +255,7 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOnlyNameSearchInput_thenReturnsListRestaurantsMatchingName() {
+  void givenOnlyNameSearchInput_thenReturnsListRestaurantsMatchingName() throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     expectedRestaurants.add(restaurant);
@@ -273,7 +274,8 @@ class RestaurantServiceTest {
 
   @Test
   void
-      givenHoursSearchInput_whenMatchingRestaurantHoursExists_thenReturnListWithMatchingRestaurants() {
+      givenHoursSearchInput_whenMatchingRestaurantHoursExists_thenReturnListWithMatchingRestaurants()
+          throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     LocalTime openAfterFromSearchInput = LocalTime.of(13, 50, 45);
@@ -292,7 +294,8 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOnlyOpenedSearchInput_thenReturnsListRestaurantsMatchingHours() {
+  void givenOnlyOpenedSearchInput_thenReturnsListRestaurantsMatchingHours()
+      throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedRestaurants = new ArrayList<>();
     expectedRestaurants.add(restaurant);
@@ -310,7 +313,8 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOnlyFromHourSearchInput_thenReturnsListRestaurantsMatchingHours() {
+  void givenOnlyFromHourSearchInput_thenReturnsListRestaurantsMatchingHours()
+      throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedList = new ArrayList<>();
     expectedList.add(restaurant);
@@ -328,7 +332,8 @@ class RestaurantServiceTest {
   }
 
   @Test
-  void givenOnlyToHourSearchInput_thenReturnsListRestaurantsMatchingHours() {
+  void givenOnlyToHourSearchInput_thenReturnsListRestaurantsMatchingHours()
+      throws NotFoundException {
     addOwnerAndRestaurantsRepository();
     List<Restaurant> expectedList = new ArrayList<>();
     expectedList.add(restaurant);
