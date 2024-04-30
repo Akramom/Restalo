@@ -13,7 +13,10 @@ public class SearchRestaurantHelper {
   BiPredicate<Restaurant, String> nameFilter =
       (restaurant, name) -> Util.containsSubstr_toLowerC(restaurant.getName(), name);
   BiPredicate<Restaurant, LocalTime> openedFromFilter =
-      (restaurant, from) -> restaurant.getHours().getClose().isAfter(from);
+      (restaurant, from) ->
+          restaurant.getHours().getClose().isAfter(from)
+              && (restaurant.getHours().getOpen().isBefore(from)
+                  || restaurant.getHours().getOpen().equals(from));
   BiPredicate<Restaurant, LocalTime> openedToFilter =
       (restaurant, to) ->
           restaurant.getHours().getClose().equals(to)
