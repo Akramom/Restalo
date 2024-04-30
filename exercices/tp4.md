@@ -67,7 +67,7 @@ Deuxièmement, on a appris à avoir une bonne architecture de projet. En effet, 
 -Willy: J'ai utilisé Tabnine qui est un outil qui permet de générer automatiquement du code. Je l'ai notamment utilisé pour la génération de quelques tests unitaires. Il permet donc d'accélérer ce processus qui peut en temps normal, prendre pas mal de temps. De plus, je trouve, personnellement, qu'il est assez fiable pour ce type de tâches.
 -Rihab: Pour ma part, ChatGPT m'a permis de comprendre certaines erreurs générées par l'IDE. J'ai également fait appel à lui pour la correction de certains tests qui ne passaient pas.
 -Rami: j'ai utilisé les outils d'intelligence artificielle ChatGPT et Gemini pour m'aider à programmer dans le cadre du projet et du cours. Ces outils d'intelligence artificielle peuvent effectuer des révisions de qualité sur le code, identifier et expliquer les lois et les principes violés, ainsi que proposer des corrections. De plus, cela m'a permis d'approfondir mes connaissances et d'explorer de nouvelles idées pour l'implémentation des fonctionnalités. Dans le cadre du cours, cela m'a permis d'obtenir des explications plus détaillées et des exemples concrets pour mieux comprendre les concepts enseignés.
--Élizabeth:
+-Elizabeth: Non, je n'ai pas utilisé d'IA pour réaliser le projet. Personnellement, j'ai quelques problèmes éthiques et moraux avec l'IA, alors je préfère ne pas l'utiliser à moins d'être forcée. 
 -Akram: 
 
 ### 2. Quel est le principal avantage qu'offre une telle technologie?
