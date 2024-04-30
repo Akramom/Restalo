@@ -45,7 +45,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   private ReservationDuration reservationDuration;
 
   @BeforeEach
-  public void setUp() {
+  void setUp() {
     repository = createPersistence();
 
     hours = new Hours(RESTAURANT_OPEN, RESTAURANT_CLOSE);
@@ -75,7 +75,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void givenOwnerIdAndRestaurantId_whenAddRestaurant_thenRestaurantIsAddInRepository()
+  void givenOwnerIdAndRestaurantId_whenAddRestaurant_thenRestaurantIsAddInRepository()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -85,7 +85,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void
+  void
       givenOwnerIdAndRestaurantId_whenGetRestaurantAndRestaurantIsInRepository_thenReturnRestaurant()
           throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -96,7 +96,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void
+  void
       givenOwnerIdAndRestaurantId_whenRestaurantNotInRepository_thenGetRestaurantShouldThrowNotFoundError() {
     NotFoundException notFoundException =
         assertThrows(
@@ -107,7 +107,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void givenAnOwnerId_whenGetAllOwnerRestaurants_thenReturnListOfRestaurantsForTheOwner()
+  void givenAnOwnerId_whenGetAllOwnerRestaurants_thenReturnListOfRestaurantsForTheOwner()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
     repository.addRestaurant(OWNER_ID, otherRestaurant);
@@ -120,7 +120,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
+  void givenRestaurantIdInRepository_whenGetRestaurantById_thenReturnsRestaurant()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -130,9 +130,8 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void
-      givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
-          throws NotFoundException {
+  void givenRestaurantIdAndReservation_whenAddReservation_thenReservationIsAddedToRestaurant()
+      throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
 
     Reservation addedReservation = repository.addReservation(reservation, RESTAURANT_ID);
@@ -142,7 +141,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void givenInvalidRestaurantId_whenAddReservation_thenThrowsNotFoundException()
+  void givenInvalidRestaurantId_whenAddReservation_thenThrowsNotFoundException()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
 
@@ -153,7 +152,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void givenReservationNumber_whenGetReservationByNumber_thenReturnsReservation()
+  void givenReservationNumber_whenGetReservationByNumber_thenReturnsReservation()
       throws NotFoundException {
     reservation.setNumber(RESERVATION_ID);
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -166,15 +165,14 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void getReservationByNumber_whenNotExists_thenThrowsNotFoundException()
-      throws NotFoundException {
+  void getReservationByNumber_whenNotExists_thenThrowsNotFoundException() throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
 
     assertThrows(NotFoundException.class, () -> repository.getReservationByNumber(NON_EXISTENT_ID));
   }
 
   @Test
-  public void
+  void
       deleteOwnerRestaurantById_whenOwnerAndRestaurantIdValid_thenDeletesRestaurantAndReservations()
           throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
@@ -193,7 +191,7 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void deleteOwnerRestaurantById_whenOwnerDoesntOwnRestaurant_thenThrowsNotFoundException()
+  void deleteOwnerRestaurantById_whenOwnerDoesntOwnRestaurant_thenThrowsNotFoundException()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
     repository.addOwner(OTHER_OWNER_ID);
@@ -204,13 +202,13 @@ public abstract class AbstractRestaurantRepositoryTest {
   }
 
   @Test
-  public void deleteOwnerRestaurantById_whenRestaurantDoesntExist_thenThrowsNotFoundException() {
+  void deleteOwnerRestaurantById_whenRestaurantDoesntExist_thenThrowsNotFoundException() {
     assertThrows(
         NotFoundException.class, () -> repository.deleteRestaurantIfOwner(RESTAURANT_ID, OWNER_ID));
   }
 
   @Test
-  public void deleteReservation_whenOwnerAndRestaurantIdValid_thenDeletesReservation()
+  void deleteReservation_whenOwnerAndRestaurantIdValid_thenDeletesReservation()
       throws NotFoundException {
     repository.addRestaurant(OWNER_ID, restaurant);
     repository.addReservation(reservation, RESTAURANT_ID);
@@ -252,6 +250,23 @@ public abstract class AbstractRestaurantRepositoryTest {
     expectedList.add(otherRestaurant);
 
     List<Restaurant> returnedList = repository.getAllRestaurants();
+
+    assertEquals(expectedList, returnedList);
+  }
+
+  @Test
+  void
+      givenValidRestaurantId_whenGetReservationsByRestaurantId_thenReturnsReservationsToRestaurant()
+          throws NotFoundException {
+    List<Reservation> expectedList = new ArrayList<>();
+    expectedList.add(reservation);
+    expectedList.add(otherReservation);
+    repository.addRestaurant(OWNER_ID, restaurant);
+    repository.addReservation(reservation, RESTAURANT_ID);
+    repository.addReservation(otherReservation, RESTAURANT_ID);
+
+    List<Reservation> returnedList =
+        repository.getRerservationsByRestaurantId(OWNER_ID, RESTAURANT_ID);
 
     assertEquals(expectedList, returnedList);
   }
