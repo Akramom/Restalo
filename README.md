@@ -27,7 +27,7 @@ docker compose up -d
  ##### persistence BD
 
 ```
-MONGO_CLUSTER_URL='mongodb://admin:admin@localhost:27017/' MONGO_DATABASE='restalo' SENTRY_DSN='https://2394ba6d463c6084cdcf709801c55847@o4507098785972224.ingest.de.sentry.io/4507098849738832' mvn exec:java -D persistence='mongo'
+MONGO_CLUSTER_URL='mongodb://admin:admin@localhost:27017/' MONGO_DATABASE='restalo' mvn exec:java -D persistence='mongo'
 ```
  ##### persistence inMemory
 
