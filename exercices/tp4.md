@@ -170,8 +170,18 @@ Voir les images ci-dessous afin de l'analyse de SonarCloud et des problèmes sou
 ### Sentry 
 Voir les images ci-dessous de l'analyse et des problèmes identifiés par Sentry:
 
+<img src="Resources/MongoSecurityException_Long_1.png"/>
+<img src="Resources/MongoSecurityException_Long_2.png"/>
+<img src="Resources/MongoSecurityException_Long_3.png"/>
+<img src="Resources/MongoSecurityException_Long_4.png"/>
+<img src="Resources/MongoSecurityException_Long_5.png"/>
+<img src="Resources/MongoSecurityException_Long_6.png"/>
+<img src="Resources/MongoSecurityException_Short.png"/>
+<img src="Resources/NotAllowedException_Long_1.png"/>
+<img src="Resources/NotAllowedException_Long_2.png"/>
+<img src="Resources/NotAllowedException_Long_3.png"/>
+<img src="Resources/NotAllowedException_Short.png"/>
 
- 
 
 
 
