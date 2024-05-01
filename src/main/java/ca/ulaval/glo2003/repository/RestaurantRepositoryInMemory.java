@@ -200,7 +200,7 @@ public class RestaurantRepositoryInMemory implements RestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     return owners.stream()
         .filter(owner -> owner.getOwnerId().equals(ownerId))
@@ -212,5 +212,22 @@ public class RestaurantRepositoryInMemory implements RestaurantRepository {
         .findFirst()
         .orElseThrow(() -> new NotFoundException(RESTAURANT_NOT_FOUND))
         .getReservationList();
+  }
+
+  @Override
+  public void updateReservation(Reservation updatedReservation) {
+    owners.stream()
+        .flatMap(owner -> owner.getRestaurants().stream())
+        .flatMap(restaurant -> restaurant.getReservationList().stream())
+        .filter(reservation -> reservation.getNumber().equals(updatedReservation.getNumber()))
+        .findFirst()
+        .map(
+            reservation -> {
+              reservation.setDate(updatedReservation.getDate());
+              reservation.setStartTime(updatedReservation.getStartTime());
+              reservation.setEndTime(updatedReservation.getEndTime());
+              reservation.setGroupSize(updatedReservation.getGroupSize());
+              return reservation;
+            });
   }
 }

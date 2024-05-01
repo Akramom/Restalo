@@ -266,7 +266,7 @@ public abstract class AbstractRestaurantRepositoryTest {
     repository.addReservation(otherReservation, RESTAURANT_ID);
 
     List<Reservation> returnedList =
-        repository.getRerservationsByRestaurantId(OWNER_ID, RESTAURANT_ID);
+        repository.getReservationsByRestaurantId(OWNER_ID, RESTAURANT_ID);
 
     assertEquals(expectedList, returnedList);
   }

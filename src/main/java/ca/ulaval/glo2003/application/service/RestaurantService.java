@@ -1,5 +1,7 @@
 package ca.ulaval.glo2003.application.service;
 
+import static ca.ulaval.glo2003.util.Constante.NUMBER_OF_PLACES_UNAVAILABLE;
+
 import ca.ulaval.glo2003.application.assembler.ReservationAssembler;
 import ca.ulaval.glo2003.application.assembler.RestaurantAssembler;
 import ca.ulaval.glo2003.application.assembler.SearchAssembler;
@@ -104,7 +106,9 @@ public class RestaurantService {
 
     this.reservationService.verifyValidReservationParameter(restaurantId, reservationDto);
     Reservation reservation = reservationAssembler.fromDto(reservationDto);
-    this.availabilityService.reserveAvailabilities(reservation, restaurantId);
+    if (!this.availabilityService.reserveAvailabilities(reservation, restaurantId))
+      throw new InvalidParameterException(NUMBER_OF_PLACES_UNAVAILABLE);
+
     Reservation addedReservation = restaurantRepository.addReservation(reservation, restaurantId);
     return new ReservationAssembler().toDto(addedReservation);
   }

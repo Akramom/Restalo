@@ -171,11 +171,24 @@ public class RestaurantRepositoryMongo implements RestaurantRepository {
   }
 
   @Override
-  public List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  public List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException {
     getOwner(ownerId);
     getOwnerRestaurantById(ownerId, restaurantId);
     return datastore.find(Reservation.class).filter(eq("restaurantId", restaurantId)).stream()
         .toList();
+  }
+
+  @Override
+  public void updateReservation(Reservation updatedReservation) {
+    datastore
+        .find(Reservation.class)
+        .filter(eq("number", updatedReservation.getNumber()))
+        .modify(
+            UpdateOperators.set("date", updatedReservation.getDate()),
+            UpdateOperators.set("startTime", updatedReservation.getStartTime()),
+            UpdateOperators.set("endTime", updatedReservation.getEndTime()),
+            UpdateOperators.set("groupSize", updatedReservation.getGroupSize()))
+        .execute();
   }
 }

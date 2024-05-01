@@ -44,6 +44,8 @@ public interface RestaurantRepository {
 
   void deleteReservation(String reservationNumber, String restaurantId) throws NotFoundException;
 
-  List<Reservation> getRerservationsByRestaurantId(String ownerId, String restaurantId)
+  List<Reservation> getReservationsByRestaurantId(String ownerId, String restaurantId)
       throws NotFoundException;
+
+  void updateReservation(Reservation updatedReservation) throws NotFoundException;
 }

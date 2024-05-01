@@ -110,7 +110,7 @@ class ReservationServiceTest {
       throws NotFoundException {
     List<Reservation> expectedReservations = new ArrayList<>();
     expectedReservations.add(reservation);
-    when(restaurantRepository.getRerservationsByRestaurantId(OWNER_ID, RESTAURANT_ID))
+    when(restaurantRepository.getReservationsByRestaurantId(OWNER_ID, RESTAURANT_ID))
         .thenReturn(expectedReservations);
 
     List<ReservationDto> result =
