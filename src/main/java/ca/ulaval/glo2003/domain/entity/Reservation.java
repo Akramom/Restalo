@@ -18,14 +18,14 @@ public class Reservation {
 
   private String restaurantId;
 
-  public Reservation(Reservation oldReservation) {
-    this.date = oldReservation.date;
-    this.startTime = oldReservation.startTime;
-    this.endTime = oldReservation.endTime;
-    this.groupSize = oldReservation.groupSize;
-    this.customer = oldReservation.customer;
-    this.number = oldReservation.number;
-    this.restaurantId = oldReservation.restaurantId;
+  public Reservation(Reservation reservation) {
+    this.date = reservation.date;
+    this.startTime = reservation.startTime;
+    this.endTime = reservation.endTime;
+    this.groupSize = reservation.groupSize;
+    this.customer = reservation.customer;
+    this.number = reservation.number;
+    this.restaurantId = reservation.restaurantId;
   }
 
   public String getRestaurantId() {

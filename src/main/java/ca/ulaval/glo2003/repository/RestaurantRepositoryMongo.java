@@ -2,6 +2,7 @@ package ca.ulaval.glo2003.repository;
 
 import static ca.ulaval.glo2003.util.Constante.*;
 import static dev.morphia.query.experimental.filters.Filters.eq;
+import static dev.morphia.query.experimental.filters.Filters.gte;
 
 import ca.ulaval.glo2003.domain.entity.Availability;
 import ca.ulaval.glo2003.domain.entity.Owner;
@@ -190,5 +191,28 @@ public class RestaurantRepositoryMongo implements RestaurantRepository {
             UpdateOperators.set("endTime", updatedReservation.getEndTime()),
             UpdateOperators.set("groupSize", updatedReservation.getGroupSize()))
         .execute();
+  }
+
+  @Override
+  public void updateRestaurant(Restaurant updatedRestaurant) {
+
+    datastore
+        .find(Restaurant.class)
+        .filter(eq("id", updatedRestaurant.getId()))
+        .modify(
+            UpdateOperators.set("hours", updatedRestaurant.getHours()),
+            UpdateOperators.set("capacity", updatedRestaurant.getCapacity()),
+            UpdateOperators.set("name", updatedRestaurant.getName()),
+            UpdateOperators.set("reservationDuration", updatedRestaurant.getReservation()))
+        .execute();
+  }
+
+  @Override
+  public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date) {
+    datastore
+        .find(Availability.class)
+        .filter(eq("restaurantId", restaurantId))
+        .filter(gte("start", date))
+        .delete(new DeleteOptions().multi(true));
   }
 }

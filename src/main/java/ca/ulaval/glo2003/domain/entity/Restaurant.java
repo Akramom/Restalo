@@ -24,7 +24,7 @@ public class Restaurant {
   private Hours hours;
   private String ownerId;
   private List<Reservation> reservationList;
-  private ArrayList<Availability> availabilities;
+  private List<Availability> availabilities;
 
   public Restaurant() {}
 
@@ -50,12 +50,26 @@ public class Restaurant {
     availabilities = new ArrayList<>();
   }
 
+  public Restaurant(Restaurant oldRestaurant) {
+    this.id = oldRestaurant.getId();
+    this.name = oldRestaurant.getName();
+    this.capacity = oldRestaurant.getCapacity();
+    this.hours = oldRestaurant.getHours();
+    this.reservationDuration = oldRestaurant.getReservation();
+    this.availabilities = oldRestaurant.getAvailabilities();
+    this.reservationList = oldRestaurant.getReservationList();
+  }
+
   public String getOwnerId() {
     return ownerId;
   }
 
   public void setOwnerId(String ownerId) {
     this.ownerId = ownerId;
+  }
+
+  public void setAvailabilities(ArrayList<Availability> availabilities) {
+    this.availabilities = availabilities;
   }
 
   public List<Availability> getAvailabilities() {
@@ -98,6 +112,10 @@ public class Restaurant {
 
   public void setReservations(ReservationDuration reservationDuration) {
     this.reservationDuration = reservationDuration;
+  }
+
+  public void setDuration(int duration) {
+    this.reservationDuration = new ReservationDuration(duration);
   }
 
   public void setHours(Hours hours) {

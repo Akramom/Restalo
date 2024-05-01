@@ -35,6 +35,11 @@ public class AvailabilityService {
         .collect(Collectors.toList());
   }
 
+  public void deleteAvailabilityForFromDate(String restaurantId, LocalDate date)
+      throws NotFoundException {
+    restaurantRepository.deleteAvailabilityForFromDate(restaurantId, date);
+  }
+
   public void releaseAvailibilities(Reservation reservation, String restaurantId)
       throws NotFoundException {
     List<AvailabilityDto> availabilities = getAvailabilities(restaurantId, reservation.getDate());

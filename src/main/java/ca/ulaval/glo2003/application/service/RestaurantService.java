@@ -8,6 +8,7 @@ import ca.ulaval.glo2003.application.assembler.SearchAssembler;
 import ca.ulaval.glo2003.application.dtos.ReservationDto;
 import ca.ulaval.glo2003.application.dtos.RestaurantDto;
 import ca.ulaval.glo2003.application.dtos.SearchDto;
+import ca.ulaval.glo2003.application.dtos.UpdateRestaurantDto;
 import ca.ulaval.glo2003.application.validator.RestaurantValidator;
 import ca.ulaval.glo2003.domain.entity.*;
 import ca.ulaval.glo2003.domain.exception.InvalidParameterException;
@@ -15,6 +16,9 @@ import ca.ulaval.glo2003.domain.exception.NotFoundException;
 import ca.ulaval.glo2003.domain.search.SearchRestaurantHelper;
 import ca.ulaval.glo2003.repository.*;
 import ca.ulaval.glo2003.util.Util;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -130,5 +134,111 @@ public class RestaurantService {
   public void deleteRestaurantIfOwner(String restaurantId, String ownerId)
       throws NotFoundException {
     restaurantRepository.deleteRestaurantIfOwner(restaurantId, ownerId);
+  }
+
+  public void updateRestaurant(
+      String ownerId, String restaurantId, UpdateRestaurantDto updateRestaurantDto)
+      throws Exception {
+
+    Restaurant oldRestaurant = restaurantRepository.getOwnerRestaurantById(ownerId, restaurantId);
+    LocalDate actualDate = LocalDate.now();
+    List<Reservation> reservations =
+        restaurantRepository.getReservationsByRestaurantId(ownerId, restaurantId).stream()
+            .filter(reservation -> reservation.getDate().isAfter(actualDate))
+            .toList();
+    removeReservationBeforeUpdate(restaurantId, reservations, actualDate);
+    Restaurant updatedRestaurant = createUpdateRestaurant(updateRestaurantDto, oldRestaurant);
+    updateRestaurantDetails(updatedRestaurant);
+    List<Reservation> reservationToAdd = getValidReservations(reservations, updatedRestaurant);
+    addReservations(reservationToAdd, updatedRestaurant);
+  }
+
+  private void removeReservationBeforeUpdate(
+      String restaurantId, List<Reservation> reservations, LocalDate actualDate)
+      throws NotFoundException {
+    for (Reservation reservation : reservations) {
+      reservationService.deleteReservation(reservation.getNumber());
+    }
+    availabilityService.deleteAvailabilityForFromDate(restaurantId, actualDate);
+  }
+
+  private void addReservations(List<Reservation> reservationToAdd, Restaurant updatedRestaurant)
+      throws NotFoundException, InvalidParameterException {
+    for (Reservation reservation : reservationToAdd) {
+      addReservation(reservationAssembler.toDto(reservation), updatedRestaurant.getId());
+      availabilityService.reserveAvailabilities(reservation, updatedRestaurant.getId());
+    }
+  }
+
+  private static List<Reservation> getValidReservations(
+      List<Reservation> reservations, Restaurant updatedRestaurant) {
+    reservations.stream()
+        .peek(
+            reservation ->
+                reservation.setEndTime(
+                    Util.calculEndTime(
+                        reservation.getStartTime(),
+                        updatedRestaurant.getReservation().duration())));
+
+    reservations =
+        reservations.stream().sorted(Comparator.comparing(Reservation::getDate)).toList();
+
+    reservations =
+        reservations.stream()
+            .filter(
+                reservation ->
+                    reservation.getStartTime().isBefore(updatedRestaurant.getHours().getClose())
+                        && !reservation
+                            .getEndTime()
+                            .isAfter(updatedRestaurant.getHours().getClose())
+                        && !reservation
+                            .getStartTime()
+                            .isBefore(updatedRestaurant.getHours().getOpen()))
+            .toList();
+
+    List<Reservation> reservationToAdd = new ArrayList<>();
+    int restaurantCapacity = updatedRestaurant.getCapacity();
+
+    for (Reservation reservation : reservations) {
+      restaurantCapacity = restaurantCapacity - reservation.getGroupSize();
+      if (restaurantCapacity < 0) break;
+      reservationToAdd.add(reservation);
+    }
+    return reservationToAdd;
+  }
+
+  private void updateRestaurantDetails(Restaurant updatedRestaurant) throws Exception {
+    this.verifyRestaurantParameter(restaurantAssembler.toDto(updatedRestaurant));
+    restaurantRepository.updateRestaurant(updatedRestaurant);
+  }
+
+  private Restaurant createUpdateRestaurant(
+      UpdateRestaurantDto updateRestaurantDto, Restaurant oldRestaurant) {
+    Restaurant updatedRestaurant = new Restaurant(oldRestaurant);
+
+    Hours hours =
+        updateRestaurantDto.hours() == null
+            ? oldRestaurant.getHours()
+            : new Hours(
+                updateRestaurantDto.hours().getOpen() == null
+                    ? oldRestaurant.getHours().getOpen()
+                    : updateRestaurantDto.hours().getOpen(),
+                updateRestaurantDto.hours().getClose() == null
+                    ? oldRestaurant.getHours().getClose()
+                    : updateRestaurantDto.hours().getClose());
+    updatedRestaurant.setHours(hours);
+    updatedRestaurant.setName(
+        updateRestaurantDto.name() == null ? oldRestaurant.getName() : updateRestaurantDto.name());
+    updatedRestaurant.setCapacity(
+        updateRestaurantDto.capacity() == 0
+            ? oldRestaurant.getCapacity()
+            : updateRestaurantDto.capacity());
+    updatedRestaurant.setDuration(
+        updateRestaurantDto.reservations() == null
+            ? oldRestaurant.getReservation().duration()
+            : updateRestaurantDto.reservations().duration() == 0
+                ? oldRestaurant.getReservation().duration()
+                : updateRestaurantDto.reservations().duration());
+    return updatedRestaurant;
   }
 }

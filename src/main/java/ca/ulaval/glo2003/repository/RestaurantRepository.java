@@ -48,4 +48,8 @@ public interface RestaurantRepository {
       throws NotFoundException;
 
   void updateReservation(Reservation updatedReservation) throws NotFoundException;
+
+  void updateRestaurant(Restaurant updatedRestaurant);
+
+  void deleteAvailabilityForFromDate(String restaurantId, LocalDate date);
 }
