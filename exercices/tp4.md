@@ -183,6 +183,50 @@ Voir les images ci-dessous de l'analyse et des problèmes identifiés par Sentry
 <img src="Resources/NotAllowedException_Short.png"/>
 
 
+### Architecture
+## Architecture d'Availability
+<img src="Resources/availibility_architecture.png"/>
+
+## Architecture de Reservations
+<img src="Resources/reservations_architecture.png"/>
+
+## Architecture de Restaurants
+<img src="Resources/restaurants_architecture.png"/>
+
+## Architecture de Search
+<img src="Resources/search_architecture.png"/>
+
+
+On retrouve plusieurs classes principales dans les 4 diagrammes précédents qui peuvent être regroupées comme suit: 
+
+1) Couche API
+
+Les classes Resources, telles que RestaurantResource, ReservationResource, et SearchResource: agissent comme des contrôleurs dans l'architecture, traitant les requêtes entrantes.
+
+Les classes Request et Response, telles que OwnerReservationResponse, ReservationResponse, SearchRequest, ReservationRequest, etc:
+ elles encapsulent respectivement les requêtes et les responses de l'API. Elles permettent une sérialisation et désérialisation des données pour le transfert sur le réseau.
+
+Les classes Assemblers, telles que ReservationRequestAssembler, RestaurantRequestAssembler, etc: Elles sont responsables de la conversion qui aide à séparer les tâches de l'API de celles de l'Application.
+
+2) Coucche Application
+
+Les classes Service, telles que RestaurantService et ReservationService: Elles agissent comme intermédiaire entre les ressources API et les repositories.
+
+Les Dtos, telles que ReservationDto, ReservationDto, SearchDto et AvailabilityDto: Elles de transférer les données utilisées pour transférer des informations entre les couches de l'application sans exposer les logiques des classes concernées qui ne doivent pas être visibles aux autres couches/classes.
+
+Les classes Validators, telles que ReservationValidator et RestaurantValidator: Elles s'assurent que les données reçues de l'API respectent certaines contraintes imposées.
+
+3) Couche Repository et domaine
+
+La classe IRestaurantRepository et ses versions InMemory et Mongo:
+ Il s'agit de notre interface contenant les méthodes nécessaires pour interagir avec la base de données. Les implémentations InMemory et Mongo fournissent le code pour interagir avec les sources de données respectives.
+
+Les classes du domaine Restaurant et Reservation : Elles contiennent les données et les comportements associés aux restaurants et aux réservations.
+
+4) Classe util:
+La classe Util fournit des fonctions ou des méthodes utilitaires communes utilisées à travers l'app.
+
+Nous avons séparé notre architecture comme suit afin de diminuer les dépendances et de faciliter la compréhension du code/ sa propreté.
 
 
 
