@@ -8,7 +8,7 @@
 1)Les tests: Une de nos principales problématiques est la couverture des tests. Nous nous sommes rendus que pas mal de tests manquaient et qu'on se retrouvait régulièrement avec des méthodes non testées. Une solution que l'équipe peut mettre en place est les TDD. Cela nous assurera une meilleure couverture.
 2)Magic values: À chaque livrable, des magic values nous glissaient. En effet, une des mauvaises pratiques de l'équipe est d'utiliser des magic values. Pour résoudre ce problème, une bonne pratique à implanter individuellement est de refactoriser constamment nos parties avant chaque push afin de s'Assurer qu'aucune magic value n'ait glissé et les corriger au fur et à mesure. 
 
-### 2. 
+### 2. Décrivez la démarche que vous aviez entrepris afin d'intégrer de nouveaux outils technologiques. Quelles étaient les étapes du processus? Comment avez-vous réagis aux différents bogues? Exploriez-vous à l'aide de tests unitaires ou manuels? Qu'avez-vous appris suite à cette démarche?
 Afin d'intégrer de nouveaux outils, nous commencions par les recherches afin de comprendre comment l'intégrer ou choisir les bons outils selon nos besoins. Nous procédions ensuite à l'intégration. Lorsque la configuration se déroule bien, nous exécutions alors les tests et nous nous assurions que tout fonctionnait comme prévu. Cependant, en cas de problème, notamment dans l'intégration de Sentry. Celui-ci fonctionnait avec la persistence in Memory, mais pas sur Mongo. Afin de détecter ce problème, nous avons procédé avec des tests manuels.
 Ce qui a été appris de cette démarche est que les tests unitaires sont toujours très importants à faire, malgré la présence des tests automatisés.
 
@@ -66,8 +66,11 @@ Deuxièmement, on a appris à avoir une bonne architecture de projet. En effet, 
 
 ### 1. Avez-vous utilisé, dans le cadre du cours, du projet ou de façon personnelle, un outil d'intelligence artificielle (style ChatGPT) pour vous aider à programmer?
 -Willy: J'ai utilisé Tabnine qui est un outil qui permet de générer automatiquement du code. Je l'ai notamment utilisé pour la génération de quelques tests unitaires. Il permet donc d'accélérer ce processus qui peut en temps normal, prendre pas mal de temps. De plus, je trouve, personnellement, qu'il est assez fiable pour ce type de tâches.
+
 -Rihab: Pour ma part, ChatGPT m'a permis de comprendre certaines erreurs générées par l'IDE. J'ai également fait appel à lui pour la correction de certains tests qui ne passaient pas.
+
 -Rami: j'ai utilisé les outils d'intelligence artificielle ChatGPT et Gemini pour m'aider à programmer dans le cadre du projet et du cours. Ces outils d'intelligence artificielle peuvent effectuer des révisions de qualité sur le code, identifier et expliquer les lois et les principes violés, ainsi que proposer des corrections. De plus, cela m'a permis d'approfondir mes connaissances et d'explorer de nouvelles idées pour l'implémentation des fonctionnalités. Dans le cadre du cours, cela m'a permis d'obtenir des explications plus détaillées et des exemples concrets pour mieux comprendre les concepts enseignés.
+
 -Elizabeth: Non, je n'ai pas utilisé d'IA pour réaliser le projet. Personnellement, j'ai quelques problèmes éthiques et moraux avec l'IA, alors je préfère ne pas l'utiliser à moins d'être forcée. 
 -Akram: 
 
